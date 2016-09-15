@@ -21,7 +21,7 @@ Array.prototype.random = function() {
     // arrays length (serves as the max possible index).
     // Finally, rounds the number down.
     return this[Math.floor(Math.random() * this.length)];
-}
+};
 
 // example
 console.log([5, 6, 7, 8].random());
