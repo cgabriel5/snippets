@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width" name="viewport">
+    <title>AutoExpand Textarea</title>
+    <style>
+    html {
+        box-sizing: border-box;
+    }
+
+    *,
+    :before,
+    :after {
+        box-sizing: inherit;
+    }
+
+    .textarea {
+        padding: 7px;
+        border-radius: 3px;
+        border: 1px solid rgba(0, 0, 0, 0.5);
+        resize: none;
+        width: 400px;
+        font-size: 16px;
+        font-family: Tahoma;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    </style>
+    <script>
+    document.onreadystatechange = function() {
+
+        "use strict";
+
+        /* [functions.utils] */
+        /**
+         * @description [Auto expands textarea based on its text content.]
+         * @param  {HTMLElement} textarea   [The textarea element.]
+         * @param  {Number} max_height [The max height the textarea should grow to.]
+         */
+        function expand(textarea, max_height) {
+            // get textarea styles
+            var styles = getComputedStyle(textarea, null);
+            // get top,bottom border thickness
+            var border_thickness_top = parseInt(styles.borderTopWidth, 10),
+                border_thickness_bottom = parseInt(styles.borderBottomWidth, 10);
+            // always reset height to 0px to help with backspace key
+            textarea.style.minHeight = "0px";
+            // set textarea height, height => (scrollheight + its top,bottom border thickness)
+            textarea.style.minHeight = Math.min((textarea.scrollHeight + (border_thickness_top + border_thickness_bottom)), max_height) + "px";
+            // to maintain scroll, autoscroll to bottom
+            textarea.scrollTop = textarea.scrollHeight;
+        }
+
+        // all resources have loaded
+        if (document.readyState == "complete") {
+
+            // cache the textarea
+            var textarea = document.getElementById("textarea");
+
+            // textarea event listener
+            textarea.addEventListener("input", function(e) {
+                expand(textarea, 200);
+            });
+
+        }
+
+    };
+    </script>
+</head>
+
+<body>
+    <textarea id="textarea" class="textarea"></textarea>
+</body>
+
+</html>
