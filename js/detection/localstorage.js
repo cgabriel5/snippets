@@ -20,3 +20,14 @@ if (storage) {
 } else {
     // :(
 }
+
+// localStorage API
+
+// gets count of stored pairs
+localStorage.length;
+// removes all local data from localStorage
+localStorage.clear();
+// gets stored item value
+localStorage.getItem("<key_name>");
+// sets key:value data pair in local storage
+localStorage.setItem("<key_name>", "<key_value>");
