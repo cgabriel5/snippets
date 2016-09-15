@@ -37,8 +37,8 @@
         /* [functions.utils] */
         /**
          * @description [Auto expands textarea based on its text content.]
-         * @param  {HTMLElement} textarea   [The textarea element.]
-         * @param  {Number} max_height [The max height the textarea should grow to.]
+         * @param  {HTMLElement} textarea   [Textarea element.]
+         * @param  {Number} max_height      [Max height textarea allowed to expand.]
          */
         function expand(textarea, max_height) {
             // get textarea styles
@@ -57,7 +57,7 @@
         // all resources have loaded
         if (document.readyState == "complete") {
 
-            // cache the textarea
+            // cache textarea
             var textarea = document.getElementById("textarea");
 
             // textarea event listener
