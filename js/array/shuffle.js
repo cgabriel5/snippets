@@ -24,6 +24,8 @@ function shuffle(array) {
 // example
 console.log(shuffle([1, 2, 3, 4]));
 
+// ==================================================
+
 // for the prototypal people
 Array.prototype.shuffle = function() {
     var counter = this.length;
