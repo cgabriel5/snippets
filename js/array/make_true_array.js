@@ -30,6 +30,6 @@ function to_array(alo) {
 console.log(to_array({ 0: "a", 1: "b", length: 2 }));
 
 function test(a, b, c) {
-    console.log(to_array(arguments)); // functions arguments object
+    console.log(to_array(arguments)); // functions argument object
 }
 test("a", {}, 3);
