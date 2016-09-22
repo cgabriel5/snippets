@@ -35,3 +35,36 @@ function class__(cobject) {
     return constructor;
 
 }
+
+// usage
+var MyClass = class__({
+
+    // class constructor
+    "constructor__": function() {},
+
+    // class methods
+    "methods__": {
+        "method1": function() {},
+        "method2": function() {}
+    },
+
+    // class to extend
+    "extend__": false
+
+});
+
+var MySubClass = class__({
+
+    // class constructor
+    "constructor__": function() {},
+
+    // class methods
+    "methods__": {
+        "method1": function() {},
+        "method2": function() {}
+    },
+
+    // class to extend
+    "extend__": MyClass
+
+});
