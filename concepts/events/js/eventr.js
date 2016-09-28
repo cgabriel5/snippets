@@ -46,14 +46,29 @@
 
             // apply handler to all elements
             for (var i = 0, l = elements.length; i < l; i++) {
-                var element = elements[i];
-                ((typeof element === "string") ? document.getElementById(element.replace(/^\#/, "")) : document).addEventListener(event, fn, false);
+                var element = document.getElementById(elements[i].replace(/^\#/, ""));
+                if (!element.events) {
+                    element.events = {};
+                    element.events[event + ((namespace) ? ("." + namespace) : "")] = fn;
+                } else {
+                    element.events[event + ((namespace) ? ("." + namespace) : "")] = fn;
+                }
+                console.log(">>>>>>", [element]);
+                element.addEventListener(event, fn, false);
             }
 
             // store event in db
 
         },
-        "remove": function(options) {},
+        "remove": function(options) {
+            var elements = options.elements.split(" "),
+                event = options.event,
+                namespace = options.namespace;
+            for (var i = 0, l = elements.length; i < l; i++) {
+                var element = document.getElementById(elements[i].replace(/^\#/, ""));
+                element.removeEventListener(event, element.events[(event + ((namespace) ? ("." + namespace) : ""))], false);
+            }
+        },
         "update": function(options) {},
     };
 
@@ -96,7 +111,7 @@ document.onreadystatechange = function() {
 
         eventrjs.events.add({
             "id": "some-event-id-reference", // default: null
-            "fire": 1, // default: Infinity
+            "fire": 10, // default: Infinity
             "elements": "#tape", // default: document
             "filter": "filter_1", // default: null
             "handler": "handler_1", // required
@@ -104,6 +119,13 @@ document.onreadystatechange = function() {
             "namespace": "namespace1" // default: null
         });
 
+        setTimeout(function() {
+            eventrjs.events.remove({
+                "elements": "#tape",
+                "event": "click",
+                "namespace": "namespace1"
+            });
+        }, 2000);
     }
 
 };
