@@ -12,9 +12,9 @@ function which_animation_event() {
             "MozAnimation": "animationend",
             "WebkitAnimation": "webkitAnimationEnd"
         };
-    for (var t in animations) {
-        if (el.style[t] !== undefined) {
-            return animations[t];
+    for (var animation in animations) {
+        if (el.style[animation] !== undefined) {
+            return animations[animation];
         }
     }
 }
@@ -38,9 +38,9 @@ function which_transition_event() {
             "MozTransition": "transitionend",
             "WebkitTransition": "webkitTransitionEnd"
         };
-    for (var t in transitions) {
-        if (el.style[t] !== undefined) {
-            return transitions[t];
+    for (var transition in transitions) {
+        if (el.style[transition] !== undefined) {
+            return transitions[transition];
         }
     }
 }
