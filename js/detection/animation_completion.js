@@ -10,7 +10,8 @@ function which_animation_event() {
             "animation": "animationend",
             "OAnimation": "oAnimationEnd",
             "MozAnimation": "animationend",
-            "WebkitAnimation": "webkitAnimationEnd"
+            "WebkitAnimation": "webkitAnimationEnd",
+            "MSAnimation": "MSAnimationEnd"
         };
     for (var animation in animations) {
         if (el.style[animation] !== undefined) {
@@ -36,7 +37,8 @@ function which_transition_event() {
             "transition": "transitionend",
             "OTransition": "oTransitionEnd",
             "MozTransition": "transitionend",
-            "WebkitTransition": "webkitTransitionEnd"
+            "WebkitTransition": "webkitTransitionEnd",
+            "MSTransition": "MSTransitionEnd"
         };
     for (var transition in transitions) {
         if (el.style[transition] !== undefined) {
