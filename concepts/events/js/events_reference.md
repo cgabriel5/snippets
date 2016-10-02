@@ -204,31 +204,8 @@ window.addEventListener("pagehide", handler);
 window.addEventListener("popstate", handler);
 ```
 
-## Animation Events
-
-```js
-// https://www.sitepoint.com/css3-animation-javascript-event-handlers/
-
-// W3C standard         Firefox             webkit                      Opera                   IE10
-// animationstart       animationstart      webkitAnimationStart        oanimationstart         MSAnimationStart
-// animationiteration   animationiteration  webkitAnimationIteration    oanimationiteration     MSAnimationIteration
-// animationend         animationend        webkitAnimationEnd          oanimationend           MSAnimationEnd
-
-function PrefixedEvent(element, type, callback) {
-    var prefixes = ["webkit", "moz", "MS", "o", ""];
-    for (var i = 0, l = prefixes.length; i < l; i++) {
-        if (!prefixes[i]) type = type.toLowerCase();
-        element.addEventListener(prefixes[i] + type, callback, false);
-    }
-}
-
-// animation listener events
-PrefixedEvent(element, "AnimationStart", handler);
-PrefixedEvent(element, "AnimationIteration", handler);
-PrefixedEvent(element, "AnimationEnd", handler);
-
-// transitionend: [https://developer.mozilla.org/en-US/docs/Web/Events/transitionend]
-```
+## CSS Events 
+[View snippet](https://github.com/cgabriel5/snippets/blob/master/js/detection/which_animation_transition_event.js) for prefixed animation/transition CSS events. Functions determine which prefix the user's browser supports for `animationstart`, `animationend`, or `animationiteration` and `transitionend` events.
 
 ## Form Events
 
@@ -619,10 +596,11 @@ document.addEventListener(visibilityChange, function() {
 ## URL Events
 
 ```js
+// fires when the URL hash has changed
 // https://developer.mozilla.org/en-US/docs/Web/Events/hashchange
 window.addEventListener("hashchange", handler, false);
 ```
 
 ## Resources
-* [MDN Event Reference](https://developer.mozilla.org/en-US/docs/Web/Events)
-* [W3Schools DOM Events](http://www.w3schools.com/jsref/dom_obj_event.asp)
+* [MDN Events Reference](https://developer.mozilla.org/en-US/docs/Web/Events)
+* [W3Schools DOM Events Reference](http://www.w3schools.com/jsref/dom_obj_event.asp)
