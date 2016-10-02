@@ -310,18 +310,18 @@ window.addEventListener("resize", handler);
 // http://stackoverflow.com/questions/6413036/get-current-clipboard-content
 // https://w3c.github.io/clipboard-apis/#the-cut-action
 // test snippets:
-document.addEventListener('paste', function(e) {
+document.addEventListener("paste", function(e) {
     console.log(e, e.clipboardData.getData("text/plain"));
 });
 
-document.addEventListener('copy', function(e) {
-    e.clipboardData.setData('text/plain', 'Hello, world!');
-    e.clipboardData.setData('text/html', '<b>Hello, world!</b>');
+document.addEventListener("copy", function(e) {
+    e.clipboardData.setData("text/plain", "Hello, world!");
+    e.clipboardData.setData("text/html", "<b>Hello, world!</b>");
     e.preventDefault(); // prevent browser from setting data to clipboard
 });
 
-document.addEventListener('cut', function(e) {
-    e.clipboardData.setData('text/plain', 'Hello, world!!!');
+document.addEventListener("cut", function(e) {
+    e.clipboardData.setData("text/plain", "Hello, world!!!");
     e.preventDefault(); // prevent browser from setting data to clipboard
 });
 ```
