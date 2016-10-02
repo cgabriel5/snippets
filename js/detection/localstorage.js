@@ -31,3 +31,11 @@ localStorage.clear();
 localStorage.getItem("<key_name>");
 // sets key:value data pair in local storage
 localStorage.setItem("<key_name>", "<key_value>");
+
+// **Note: fires when any changes to localstorage or sessionstorage are made
+// **Note: changes made on the same page will not be listened to. only
+// storage modifications made on other tabs of the same domain will be
+// listened to.
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+// https://developer.mozilla.org/en-US/docs/Web/API/StorageEvent
+window.addEventListener("storage", handler, false);
