@@ -1,5 +1,5 @@
-## What This Is
-This document serves as a future reference to myself and documents the use cases of many JavaScript Events.
+## Events Resource
+This resource serves to document JavaScript's many events for my future self.
 
 ## Most Common Events
 
