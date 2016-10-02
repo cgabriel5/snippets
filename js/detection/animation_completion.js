@@ -1,21 +1,36 @@
+// https://www.sitepoint.com/css3-animation-javascript-event-handlers/
+// W3C standard         Firefox             webkit                      Opera                   IE10
+// animationstart       animationstart      webkitAnimationStart        oanimationstart         MSAnimationStart
+// animationiteration   animationiteration  webkitAnimationIteration    oanimationiteration     MSAnimationIteration
+// animationend         animationend        webkitAnimationEnd          oanimationend           MSAnimationEnd
+
 /**
- * @description [Determines which animation event the user's...
- *               browser supports and returns it.]
- * @return {String} [The browser prefixed animation event.]
+ * @description [Determines which animation[start|end|interation] event
+ *               the user's browser supports and returns it.]
+ * @param  {String} type [The event type: either start, end, or iteration.]
+ * @return {String}      [The browser prefixed animation event.]
  * @source [https://davidwalsh.name/css-animation-callback]
  */
-function which_animation_event() {
+function which_animation_event(type) {
+    // lowercase type
+    type = type.toLowerCase();
     var el = document.createElement("div"),
         animations = {
-            "animation": "animationend",
-            "OAnimation": "oAnimationEnd",
-            "MozAnimation": "animationend",
-            "WebkitAnimation": "webkitAnimationEnd",
-            "MSAnimation": "MSAnimationEnd"
+            "animation": "animation",
+            "OAnimation": "oAnimation",
+            "oanimation": "oanimation",
+            "MozAnimation": "animation",
+            "WebkitAnimation": "webkitAnimation",
+            "MSAnimation": "MSAnimation"
         };
     for (var animation in animations) {
         if (el.style[animation] !== undefined) {
-            return animations[animation];
+            // cache value
+            var value = animations[animation];
+            // determine if suffix needs to be capitalized
+            var end = (value.match(/[A-Z]/) ? (type.charAt(0).toUpperCase() + type.substring(1)) : type);
+            // return prefixed event
+            return value + end;
         }
     }
 }
@@ -26,23 +41,33 @@ document.addEventListener(which_animation_event(), function() {
 });
 
 /**
- * @description [Determines which transition event the user's...
- *               browser supports and returns it.]
- * @return {String} [The browser prefixed transition event.]
+ * @description [Determines which animation[start|end|interation] event
+ *               the user's browser supports and returns it.]
+ * @param  {String} type [The event type: either start, end, or iteration.]
+ * @return {String}      [The browser prefixed transition event.]
  * @source [https://davidwalsh.name/css-animation-callback]
  */
-function which_transition_event() {
+function which_transition_event(type) {
+    // lowercase type
+    type = type.toLowerCase();
     var el = document.createElement("div"),
         transitions = {
-            "transition": "transitionend",
-            "OTransition": "oTransitionEnd",
-            "MozTransition": "transitionend",
-            "WebkitTransition": "webkitTransitionEnd",
-            "MSTransition": "MSTransitionEnd"
+            "transition": "transition",
+            // opera prefix info: [https://developer.mozilla.org/en-US/docs/Web/Events/transitionend]
+            "OTransition": "oTransition",
+            "otransition": "otransition",
+            "MozTransition": "transition",
+            "WebkitTransition": "webkitTransition",
+            "MSTransition": "MSTransition"
         };
     for (var transition in transitions) {
         if (el.style[transition] !== undefined) {
-            return transitions[transition];
+            // cache value
+            var value = transitions[transition];
+            // determine if suffix needs to be capitalized
+            var end = (value.match(/[A-Z]/) ? (type.charAt(0).toUpperCase() + type.substring(1)) : type);
+            // return prefixed event
+            return value + end;
         }
     }
 }
