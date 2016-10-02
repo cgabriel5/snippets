@@ -72,6 +72,12 @@ function which_transition_event(type) {
     }
 }
 
+// **Note: Only transitionend is supported. transitionstart is still experimental and should
+// not be used. transitioniteration does not even exist. Therefore, at the moment, only "end" should
+// be supplied.
+// transitionstart: https://developer.mozilla.org/en-US/docs/Web/Events/transitionstart
+// https://developer.mozilla.org/en-US/docs/Web/API/TransitionEvent
+
 // usage
 document.addEventListener(which_transition_event("end"), function() {
     console.log('transition finished!');
