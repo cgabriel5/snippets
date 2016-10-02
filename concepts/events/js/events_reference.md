@@ -1,37 +1,56 @@
-// events list: [https://developer.mozilla.org/en-US/docs/Web/Events],
-// [http://www.w3schools.com/jsref/dom_obj_event.asp]
+## What This Is
+This document serves as a future reference to myself and documents the use cases of many JavaScript Events.
 
-// ===================================== Supported Events
+## Most Common Events
 
-var doc = "readystatechange DOMContentLoaded";
-var resource = "error abort load beforeunload unload";
-var network = "offline online";
-var focus = "focus blur focusin focusout";
-var input = "input change";
-var websockets = "open message close";
-var session_history = "pagehide pageshow popstate";
-var css = "animationstart animationend animationiteration transitionend";
-var form = "reset submit";
-var printing = "beforeprint afterprint";
-var text_composition = "compositionstart compositionupdate compositionend";
-var view = "fullscreenchange fullscreenerror resize scroll";
-var clipboard = "cut copy paste";
-var keyboard = "keydown keypress keyup";
-var mouse = "mouseenter mouseleave mouseover mouseout mousemove mousedown mouseup click dblclick contextmenu wheel";
-var selection = "select selectstart selectionchange";
-var drag_drop = "drag dragstart dragend dragenter dragover dragleave drop";
-var media = "durationchange loadedmetadata loadeddata canplay canplaythrough ended emptied stalled suspend play playing pause waiting seeking seeked ratechange timeupdate volumechange";
-var progress = "loadstart loadend progress timeout";
-var storage = "storage";
-var page_visibility = "visibilitychange";
-var url = "hashchange";
-var need_prefix = "animationstart animationend animationiteration transitionend fullscreenchange fullscreenerror visibilitychange";
+```js
+var doc         = "readystatechange DOMContentLoaded";
+var resource    = "error abort load beforeunload unload";
+var network     = "offline online";
+var focus       = "focus blur focusin focusout";
+var input       = "input change";
+var websockets  = "open message close";
+var history     = "pagehide pageshow popstate";
+var css         = "animationstart animationend animationiteration transitionend";
+var form        = "reset submit";
+var printing    = "beforeprint afterprint";
+var composition = "compositionstart compositionupdate compositionend";
+var view        = "fullscreenchange fullscreenerror resize scroll";
+var clipboard   = "cut copy paste";
+var keyboard    = "keydown keypress keyup";
+var mouse       = "mouseenter mouseleave mouseover mouseout mousemove ";
+    mouse      += "mousedown mouseup click dblclick contextmenu wheel";
+var selection   = "select selectstart selectionchange";
+var drag_drop   = "drag dragstart dragend dragenter dragover dragleave drop";
+var media       = "durationchange loadedmetadata loadeddata canplay ";
+    media      += "canplaythrough ended emptied stalled suspend play playing ";
+    media      += "pause waiting seeking seeked ratechange timeupdate ";
+    media      += "volumechange";
+var progress    = "loadstart loadend progress timeout";
+var storage     = "storage";
+var visibility  = "visibilitychange";
+var url         = "hashchange";
+```
 
-// example handler used:
+## Prefixed Events 
+
+These events, when used, must be vendor prefixed: `animationstart` `animationend` `animationiteration` `transitionend` `fullscreenchange` `fullscreenerror` `visibilitychange`
+
+## Example Handler Used
+```js
 var handler = function(e) { console.log(e.type, e); };
+```
 
-// ===================================== Load Events
+## Target Elements 
+The element or object the event can be attached to.
+```js
+// for example, when this is seeing, the event can be attached to the window, document, or an HTMLElement
+(window | document | element).addEventListener("click", handler, false);
+```
 
+## Load Events
+
+```js
 // https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded
 // same as document.readyState === "interactive"
 // https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
@@ -39,7 +58,9 @@ var handler = function(e) { console.log(e.type, e); };
 document.addEventListener("DOMContentLoaded", function(event) {
     console.log("DOM fully loaded and parsed");
 });
+```
 
+```js
 // https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
 // listen to page load
 document.addEventListener("readystatechange", function(event) {
@@ -54,7 +75,9 @@ document.addEventListener("readystatechange", function(event) {
     // alternative to load event
     if (document.readyState === "complete") initApplication();
 });
+```
 
+```js
 // https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded
 // **Target Elements: resources like: scripts, images, style sheets
 // listen to page load
@@ -62,22 +85,29 @@ window.addEventListener("load", function(event) {
     // page has fully loaded, init app
     initApplication(); //  same as... (document.readyState === "complete")
 });
+```
 
+```js
 // listen to a xhr request
 xhr.addEventListener("readystatechange", handler, false);
 
 // better method to listen to a xhr request
-// http://stackoverflow.com/questions/9181090/is-onload-equal-to-readystate-4-in-xmlhttprequest/19247992#19247992
+// [http://stackoverflow.com/questions/9181090/is-onload-equal-to-readystate-4-in-
+// xmlhttprequest/19247992#19247992]
 // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
 xhr.addEventListener("load", handler, false);
+```
 
+```js
 // lsiten to when an image loaded
 var img = new Image();
 img.addEventListener("load", handler, false);
 img.src = "/the-url.extension";
+```
 
-// ===================================== Error Events
+## Error Events
 
+```js
 // listen for xhr request error
 xhr.addEventListener("error", handler, false);
 
@@ -85,14 +115,18 @@ xhr.addEventListener("error", handler, false);
 var img = new Image();
 img.addEventListener("error", handler, false);
 img.src = "/the-url.extension";
+```
 
-// ===================================== Abort Events
+## Abort Events
 
+```js
 // listen for xhr request abort
 xhr.addEventListener("abort", handler, false);
+```
 
-// ===================================== BeforeUnload Events
+## BeforeUnload Events
 
+```js
 // https://developer.mozilla.org/en-US/docs/Web/Events/beforeunload
 window.addEventListener("beforeunload", function(e) {
     var confirmationMessage = "\o/";
@@ -103,9 +137,11 @@ window.addEventListener("beforeunload", function(e) {
 
 // https://developer.mozilla.org/en-US/docs/Web/Events/unload
 window.addEventListener("unload", handler, false);
+```
 
-// ===================================== Network Events
+## Network Events
 
+```js
 // check if user is online [https://davidwalsh.name/detecting-online]
 if (navigator.onLine) {
     // user is online
@@ -119,9 +155,11 @@ window.addEventListener("online", function() {
 window.addEventListener("offline", function() {
     console.log("connection lost! :(");
 }, false);
+```
 
-// ===================================== Focus Events
+## Focus Events
 
+```js
 // typically used with form elements
 // when the window or element gains focus
 (window | element).addEventListener("focus", handler, false); // set capture to true to allow delegation
@@ -132,23 +170,31 @@ window.addEventListener("offline", function() {
 // this event does bubble
 element.addEventListener("focusin", handler);
 element.addEventListener("focusout", handler);
+```
 
-// ===================================== Input Events
+## Input Events
 
+```js
 // listens to an elements user input (every text changes)
 element.addEventListener("input", handler, false);
 
 // listen to when an input value changes after an element loses focus
-// http://stackoverflow.com/questions/17047497/what-is-the-difference-between-change-and-input-event-for-an-input-element/17047607#17047607
-// http://rakshasingh.weebly.com/blog/what-is-the-difference-between-oninput-and-onchange-events-in-javascript
+// [http://stackoverflow.com/questions/17047497/what-is-the-difference-between-change-
+// and-input-event-for-an-input-element/17047607#17047607]
+// [http://rakshasingh.weebly.com/blog/what-is-the-difference-between-oninput-and-
+// onchange-events-in-javascript]
 element.addEventListener("change", handler, false);
+```
 
-// ===================================== EventSource Events
+## EventSource Events
 
+```js
 // https://www.html5rocks.com/en/tutorials/eventsource/basics/
+```
 
-// ===================================== Page History Events
+## Page History Events
 
+```js
 // https://developer.mozilla.org/en-US/docs/Web/API/History_API
 // https://developer.mozilla.org/en-US/docs/Web/Events/popstate
 // https://developer.mozilla.org/en-US/docs/Web/Events/pageshow
@@ -156,9 +202,11 @@ element.addEventListener("change", handler, false);
 window.addEventListener("pageshow", handler);
 window.addEventListener("pagehide", handler);
 window.addEventListener("popstate", handler);
+```
 
-// ===================================== Animation Events
+## Animation Events
 
+```js
 // https://www.sitepoint.com/css3-animation-javascript-event-handlers/
 
 // W3C standard         Firefox             webkit                      Opera                   IE10
@@ -180,9 +228,11 @@ PrefixedEvent(element, "AnimationIteration", handler);
 PrefixedEvent(element, "AnimationEnd", handler);
 
 // transitionend: [https://developer.mozilla.org/en-US/docs/Web/Events/transitionend]
+```
 
-// ===================================== Form Events
+## Form Events
 
+```js
 // get form element
 var form = document.getElementById("form");
 
@@ -190,9 +240,11 @@ var form = document.getElementById("form");
 form.addEventListener("reset", handler, false);
 // listen when a form is submitted
 form.addEventListener("submit", handler, false);
+```
 
-// ===================================== Printing Events
+## Printing Events
 
+```js
 // only supported in FF and IE
 window.addEventListener("beforeprint", handler, false);
 window.addEventListener("afterprint", handler, false);
@@ -200,9 +252,11 @@ window.addEventListener("afterprint", handler, false);
 // for chrome [https://www.tjvantoll.com/2012/06/15/detecting-print-requests-with-javascript/]
 
 // sadly opera does not support anything here
+```
 
-// ===================================== TextComposition Events
+## TextComposition Events
 
+```js
 // http://blog.evanyou.me/2014/01/03/composition-event/
 // https://www.stum.de/2016/06/24/handling-ime-events-in-javascript/
 // https://developer.mozilla.org/en-US/docs/Mozilla/IME_handling_guide
@@ -210,9 +264,11 @@ window.addEventListener("afterprint", handler, false);
 element.addEventListener("compositionstart", handler, false);
 element.addEventListener("compositionend", handler, false);
 element.addEventListener("compositionupdate", handler, false);
+```
 
-// ===================================== View Events
+## View Events
 
+```js
 // https://developer.mozilla.org/en-US/docs/Web/API/Element/requestFullScreen
 // https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
 // https://davidwalsh.name/fullscreen
@@ -234,9 +290,11 @@ document.addEventListener("MSFullscreenError", handler);
 // throttled/debounced when used.
 window.addEventListener("resize", handler);
 (window | document | element).addEventListener("scroll", handler);
+```
 
-// ===================================== ClipBoard Events
+## ClipBoard Events
 
+```js
 // https://developer.mozilla.org/en-US/docs/Web/Events/copy
 (window | document | element).addEventListener("copy", handler);
 // https://developer.mozilla.org/en-US/docs/Web/Events/cut
@@ -266,9 +324,11 @@ document.addEventListener('cut', function(e) {
     e.clipboardData.setData('text/plain', 'Hello, world!!!');
     e.preventDefault(); // prevent browser from setting data to clipboard
 });
+```
 
-// ===================================== Keyboard Events
+## Keyboard Events
 
+```js
 // http://keycode.info
 // https://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
 // http://stackoverflow.com/questions/3396754/onkeypress-vs-onkeyup-and-onkeydown/3396805#3396805
@@ -277,9 +337,11 @@ document.addEventListener('cut', function(e) {
 (window | document | element).addEventListener("keydown", handler, false);
 (window | document | element).addEventListener("keypress", handler, false);
 (window | document | element).addEventListener("keyup", handler, false);
+```
 
-// ===================================== Mouse Events
+## Mouse Events
 
+```js
 // custom functions for these two events might be neccessary
 // **Note: these events get fired only when entering the target element
 // and not when hovering any child elements
@@ -308,9 +370,11 @@ document.addEventListener('cut', function(e) {
 // https://developer.mozilla.org/en-US/docs/Web/Events/DOMMouseScroll
 // https://developer.mozilla.org/en-US/docs/Web/API/MouseScrollEvent
 // https://developer.mozilla.org/en-US/docs/Web/Events/mousewheel
+```
 
-// ===================================== Selection Events
+## Selection Events
 
+```js
 // https://developer.mozilla.org/en-US/docs/Web/Events
 
 // listen to when text gets slected
@@ -320,9 +384,11 @@ document.addEventListener('cut', function(e) {
 (window | document | inputElement | textareaElement).addEventListener("selectstart", handler, false);
 // https://developer.mozilla.org/en-US/docs/Web/Events/selectionchange
 (document | inputElement | textareaElement).addEventListener("selectionchange", handler, false);
+```
 
-// ===================================== Drag-N-Drop Events
+## Drag-N-Drop Events
 
+```js
 // http://www.webdesignerdepot.com/2013/08/how-to-use-html5s-drag-and-drop/
 // https://www.html5rocks.com/en/tutorials/dnd/basics/
 
@@ -347,9 +413,11 @@ document.addEventListener('cut', function(e) {
 // more info: [https://www.html5rocks.com/en/tutorials/dnd/basics/#toc-dnd-files],
 // [https://www.html5rocks.com/en/tutorials/file/dndfiles/]
 // read files in js: [https://www.html5rocks.com/en/tutorials/file/dndfiles/#toc-selecting-files-dnd]
+```
 
-// ===================================== Media Events
+## Media Events
 
+```js
 // process of loading an audio/video: [http://www.w3schools.com/jsref/event_ondurationchange.asp]
 // 1. loadstart,
 // 2. durationchange,
@@ -358,7 +426,8 @@ document.addEventListener('cut', function(e) {
 // 5. progress,
 // 6. canplay,
 // 7. canplaythrough
-// example of video loading: [https://msdn.microsoft.com/en-us/library/ff974159(v=vs.85).aspx], [http://samples.msdn.microsoft.com/Workshop/samples/media/videoevents.htm]
+// example of video loading: [https://msdn.microsoft.com/en-us/library/ff974159(v=vs.85).aspx], 
+// [http://samples.msdn.microsoft.com/Workshop/samples/media/videoevents.htm]
 
 // listen to when the audio/video duration changes fom NaN to the actual
 // duration of the said audio/video.
@@ -453,16 +522,22 @@ document.addEventListener('cut', function(e) {
 // http://www.w3schools.com/jsref/event_oncomplete.asp
 // https://developer.mozilla.org/en-US/docs/Web/Events/volumechange
 (audioElement | videoElement).addEventListener("volumechange", handler, false);
+```
 
-// ===================================== Progress Events
+## Progress Events
 
+```js
 // example: [http://samples.msdn.microsoft.com/Workshop/samples/media/videoevents.htm]
-// for video and audio elements: occurs when Windows Internet Explorer begins looking for media data [https://msdn.microsoft.com/en-us/library/ff974159(v=vs.85).aspx]
-// when working with files: [https://www.nczonline.net/blog/2012/05/22/working-with-files-in-javascript-part-3/]
+// for video and audio elements: 
+// occurs when Windows Internet Explorer begins looking for media data 
+// [https://msdn.microsoft.com/en-us/library/ff974159(v=vs.85).aspx]
+// when working with files: 
+// [https://www.nczonline.net/blog/2012/05/22/working-with-files-in-javascript-part-3/]
 // listen to when an audio or video has started to load
 (videoElement | audioElement).addEventListener("loadstart", handler, false);
 
-// when working with files: [https://www.nczonline.net/blog/2012/05/22/working-with-files-in-javascript-part-3/]
+// when working with files: 
+// [https://www.nczonline.net/blog/2012/05/22/working-with-files-in-javascript-part-3/]
 // https://developer.mozilla.org/en-US/docs/Web/Events/loadend
 // **Note: this event will ALWAYS fire and will fire after the error, abort, or
 // load events have fired.
@@ -490,18 +565,22 @@ xhr.addEventListener("loadend", handler, false);
 // listen if the XHR request timedout (progression terminated due to present time expiring,
 // server took too long to respond)
 xhr.addEventListener("timeout", handler, false);
+```
 
-// ===================================== Storage Events
+## Storage Events
 
+```js
 // **Note: changes made on the same page will not be listened to. only
 // storage modifications made on other tabs of the same domain will be
 // listened to.
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
 // https://developer.mozilla.org/en-US/docs/Web/API/StorageEvent
 window.addEventListener("storage", handler, false);
+```
 
-// ===================================== PageVisibility Events
+## PageVisibility Events
 
+```js
 // https://davidwalsh.name/page-visibility
 // https: //developer.mozilla.org/en-US/docs/Web/Events/visibilitychange
 // http://www.html5rocks.com/en/tutorials/pagevisibility/intro/
@@ -535,8 +614,15 @@ document.addEventListener(visibilityChange, function() {
         console.log("play video");
     }
 }, false);
+```
 
-// ===================================== URL Events
+## URL Events
 
+```js
 // https://developer.mozilla.org/en-US/docs/Web/Events/hashchange
 window.addEventListener("hashchange", handler, false);
+```
+
+## Resources
+* [MDN Event Reference](https://developer.mozilla.org/en-US/docs/Web/Events)
+* [W3Schools DOM Events](http://www.w3schools.com/jsref/dom_obj_event.asp)
