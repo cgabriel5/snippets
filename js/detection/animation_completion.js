@@ -36,7 +36,7 @@ function which_animation_event(type) {
 }
 
 // usage
-document.addEventListener(which_animation_event(), function() {
+document.addEventListener(which_animation_event("end"), function() {
     console.log('animation finished!');
 });
 
@@ -73,6 +73,6 @@ function which_transition_event(type) {
 }
 
 // usage
-document.addEventListener(which_transition_event(), function() {
+document.addEventListener(which_transition_event("end"), function() {
     console.log('transition finished!');
 });
