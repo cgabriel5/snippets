@@ -205,6 +205,7 @@ window.addEventListener("popstate", handler);
 ```
 
 ## CSS Events 
+
 [View snippet](https://github.com/cgabriel5/snippets/blob/master/js/detection/which_animation_transition_event.js) for prefixed animation/transition CSS events. Functions determine which prefix the user's browser supports for `animationstart`, `animationend`, or `animationiteration` and `transitionend` events.
 
 ## Form Events
@@ -557,41 +558,7 @@ window.addEventListener("storage", handler, false);
 
 ## PageVisibility Events
 
-```js
-// https://davidwalsh.name/page-visibility
-// https: //developer.mozilla.org/en-US/docs/Web/Events/visibilitychange
-// http://www.html5rocks.com/en/tutorials/pagevisibility/intro/
-
-// https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-// get the correct prefix: [https://davidwalsh.name/page-visibility]
-// Set the name of the hidden property and the change event for visibility
-var hidden, visibilityChange;
-if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
-    hidden = "hidden";
-    visibilityChange = "visibilitychange";
-} else if (typeof document.mozHidden !== "undefined") {
-    hidden = "mozHidden";
-    visibilityChange = "mozvisibilitychange";
-} else if (typeof document.msHidden !== "undefined") {
-    hidden = "msHidden";
-    visibilityChange = "msvisibilitychange";
-} else if (typeof document.webkitHidden !== "undefined") {
-    hidden = "webkitHidden";
-    visibilityChange = "webkitvisibilitychange";
-}
-
-// fired when the content of a tab has become visible or has been hidden
-// Add a listener that constantly changes the title
-document.addEventListener(visibilityChange, function() {
-    if (document[hidden]) { // tab hidden
-        console.log("stop video");
-        // stop video
-    } else { // tab back in view
-        // play video
-        console.log("play video");
-    }
-}, false);
-```
+[View snippet](https://github.com/cgabriel5/snippets/blob/master/js/detection/which_visibility.js) for prefixed page visibilitychange event. Function returns the correctly prefixed visibilitychange event.
 
 ## URL Events
 
