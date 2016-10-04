@@ -24,50 +24,166 @@
     // events
     eventrjs.events = {
         "add": function(options) {
-            // get options
-            var id = options.id || null,
-                fire = (options.fire) ? Math.abs(options.fire) : Infinity,
-                elements = (options.elements) ? options.elements.split(" ") : [document],
-                filter = options.filter || null,
-                handler = eventrjs.db.handlers[options.handler],
+            // get event options
+            var anchors = options.anchors,
                 event = options.event,
-                namespace = options.namespace;
+                fire = options.fire || Infinity,
+                handler = options.handler,
+                filters = options.filters,
+                namespace;
 
-            // create handler function
-            var fn = function(e) {
-                // if a filter is provided the filter check must return an element passing filter
-                // else if no filter passed skip check entirely and just run the user provided handler
-                if (filter && !(eventrjs.db.filters[filter](e.target))) return;
-                e.eventrjsDelegate = ((filter) ? this : null); // add deligate target to object
-                e.eventrjsCurrentTarget = e.target; // add deligate target to object
-                if (fire >= 1) handler.call(e, e); // invoke user handle
-                fire--;
-            };
+            // prepare anchors
+            var anchors_ = [];
+            if (anchors) {
+                anchors = anchors.trim().replace(/\s+/g, " ").split(" ");
+                for (var i = 0, l = anchors.length; i < l; i++) {
+                    var anchor = anchors[i],
+                        element = null;
 
-            // apply handler to all elements
-            for (var i = 0, l = elements.length; i < l; i++) {
-                var element = document.getElementById(elements[i].replace(/^\#/, ""));
-                if (!element.events) {
-                    element.events = {};
-                    element.events[event + ((namespace) ? ("." + namespace) : "")] = fn;
-                } else {
-                    element.events[event + ((namespace) ? ("." + namespace) : "")] = fn;
+                    // determine what the anchor element is
+                    // either the window, document, or an actual element
+                    if (anchor === "window") {
+                        element = window;
+                    } else if (anchor === "document") {
+                        element = document;
+                    } else {
+                        // get the element from DOM
+                        var ele = document.getElementById(anchors[i].replace(/^\#/, ""));
+                        if (ele) element = ele;
+                    }
+                    // add anchor element to anchors_ array
+                    if (element) anchors_.push(element);
                 }
-                console.log(">>>>>>", [element]);
-                element.addEventListener(event, fn, false);
             }
 
-            // store event in db
+            // separate event and namespace
+            var dot_index = event.indexOf(".");
+            if (-~dot_index) { // has namespace
+                namespace = event.substring(dot_index + 1, event.length);
+                event = event.substring(0, dot_index);
+            }
+
+            // get handler function
+            handler = eventrjs.db.handlers[handler];
+            // if no handle exists return
+            if (!handler) return;
+
+            // get the provided filter functions
+            var filters_ = [],
+                filter_db = eventrjs.db.filters;
+            if (filters) {
+                filters = filters.trim().replace(/\s+/g, " ").split(" ");
+                for (var i = 0, l = filters.length; i < l; i++) {
+                    // check that filter exists
+                    var filter = filter_db[filters[i]];
+                    if (filter) filters_.push(filter);
+                }
+            }
+
+            // wrap user handle + apply provided filters
+            var fn;
+            if (filters_.length) {
+                // console.log("function with filter was made");
+                fn = function(e) {
+                    // loop through all filters
+                    for (var i = 0, l = filters_.length; i < l; i++) {
+
+                        // filter check must return an element to pass
+                        // any filter must pass to invoke the handler
+                        var check = filters_[i](e.target);
+                        if (check && fire >= 1) {
+                            // console.log(filters_[i].name); // log the filter's function name
+                            e.eventrjsDelegate = this; // add deligate target to object
+                            e.eventrjsCurrentTarget = e.target; // add deligate target to object
+                            // fire if any filter passes
+                            if (fire >= 1) handler.call(e, e); // invoke handler
+                            fire--; // decrease handler fire count
+                            return; // only one filter needs to pass
+                        }
+
+                    }
+                }
+            } else {
+                // console.log("function without filters was made");
+                fn = function(e) {
+                    e.eventrjsDelegate = null; // add deligate target to object
+                    e.eventrjsCurrentTarget = e.target; // add deligate target to object
+                    if (fire >= 1) handler.call(e, e); // invoke user handle
+                    fire--;
+                }
+            }
+
+            // loop over anchors and apply listeners
+            for (var i = 0, l = anchors_.length; i < l; i++) {
+                // grab the anchor element
+                var anchor = anchors_[i];
+                // attach event to event object
+                if (!anchor.events) {
+                    anchor.events = {};
+                    anchor.events[event + ((namespace) ? ("." + namespace) : "")] = fn;
+                } else {
+                    anchor.events[event + ((namespace) ? ("." + namespace) : "")] = fn;
+                }
+
+                // attch event to anchor element
+                anchor.addEventListener(event, fn, false);
+            }
 
         },
         "remove": function(options) {
-            var elements = options.elements.split(" "),
+
+            // get event options
+            var anchors = options.anchors,
                 event = options.event,
-                namespace = options.namespace;
-            for (var i = 0, l = elements.length; i < l; i++) {
-                var element = document.getElementById(elements[i].replace(/^\#/, ""));
-                element.removeEventListener(event, element.events[(event + ((namespace) ? ("." + namespace) : ""))], false);
+                namespace;
+
+            // prepare anchors
+            var anchors_ = [];
+            if (anchors) {
+                anchors = anchors.trim().replace(/\s+/g, " ").split(" ");
+                for (var i = 0, l = anchors.length; i < l; i++) {
+                    var anchor = anchors[i],
+                        element = null;
+
+                    // determine what the anchor element is
+                    // either the window, document, or an actual element
+                    if (anchor === "window") {
+                        element = window;
+                    } else if (anchor === "document") {
+                        element = document;
+                    } else {
+                        // get the element from DOM
+                        var ele = document.getElementById(anchors[i].replace(/^\#/, ""));
+                        if (ele) element = ele;
+                    }
+                    // add anchor element to anchors_ array
+                    if (element) anchors_.push(element);
+                }
             }
+
+            // separate event and namespace
+            var dot_index = event.indexOf(".");
+            if (-~dot_index) { // has namespace
+                namespace = event.substring(dot_index + 1, event.length);
+                event = event.substring(0, dot_index);
+            }
+
+            // loop over anchors and remove listeners
+            for (var i = 0, l = anchors_.length; i < l; i++) {
+                // grab the anchor element
+                var anchor = anchors_[i],
+                    events = anchor.events,
+                    event_name = (event + ((namespace) ? ("." + namespace) : ""));
+                // check that event even exists on anchor
+                var fn = events[event_name];
+                if (fn) {
+                    // remove event from anchors events
+                    delete events[event_name];
+                    // remove event to anchor element
+                    element.removeEventListener(event, fn, false);
+                }
+            }
+
         },
         "update": function(options) {},
     };
@@ -89,14 +205,15 @@ document.onreadystatechange = function() {
         eventrjs.filters({
             "filter_1": function(target) {
                 // filters are applied through funneljs
-
                 // check if the target element passes filter check
                 var is_target = funneljs(target).classes("orange").attrs("[!data-app]");
                 if (is_target.pop().length) return is_target.pop()[0];
-
-                // this check grabs the target elements parents and checks the parents.
-                // having a match on any of the parents means the target element is a
-                // child of the delegate element.
+                return null;
+            },
+            "filter_2": function(target) {
+                // filters are applied through funneljs
+                // this check grabs the target elements parents and checks the parents.having a match
+                // on any of the parents means the target element is a child of the delegate element.
                 var is_delegate_target = funneljs(target).parents().classes("orange").attrs("[!data-app]");
                 if (is_delegate_target.pop().length) return is_delegate_target.pop()[0];
                 return null;
@@ -105,27 +222,36 @@ document.onreadystatechange = function() {
 
         eventrjs.handlers({
             "handler_1": function(e) {
-                console.log("Handler here", e.eventrjsDelegate, e.eventrjsCurrentTarget);
+                console.log("Handler 1 here", [e.eventrjsDelegate], e.eventrjsCurrentTarget);
+            },
+            "handler_2": function(e) {
+                console.log("Handler 2 here", e.eventrjsDelegate, e.eventrjsCurrentTarget);
             }
         });
 
         eventrjs.events.add({
-            "id": "some-event-id-reference", // default: null
-            "fire": 10, // default: Infinity
-            "elements": "#tape", // default: document
-            "filter": "filter_1", // default: null
-            "handler": "handler_1", // required
-            "event": "click", // required
-            "namespace": "namespace1" // default: null
+            "anchors": "#tape",
+            "event": "click.namespace1.namespace2",
+            "fire": 5,
+            "handler": "handler_1",
+            "filters": "filter_1 filter_2"
+        });
+
+        eventrjs.events.add({
+            "anchors": "#tape",
+            "event": "click.namespace1",
+            "fire": 10,
+            "handler": "handler_2",
+            "filters": "filter_1 filter_2"
         });
 
         setTimeout(function() {
             eventrjs.events.remove({
-                "elements": "#tape",
-                "event": "click",
-                "namespace": "namespace1"
+                "anchors": "#tape",
+                "event": "click.namespace1.namespace2",
             });
         }, 2000);
+
     }
 
 };
