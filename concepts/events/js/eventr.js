@@ -105,6 +105,7 @@
                             // fire handler if there is still a fire count
                             if (fire >= 1) {
 
+                                // when filters are used the _anchor and delegate are the same
                                 e.eventrjsAnchor = _anchor; //  the element to which the event is attached
                                 e.eventrjsDelegate = _anchor; // add deligate target to object
                                 e.eventrjsCurrentTarget = e.target; // add deligate target to object
@@ -122,7 +123,7 @@
                             if (fire === 0) {
                                 // remove event from anchor
                                 eventrjs.events.remove({
-                                    "anchors": e.eventrjsDelegate.id,
+                                    "anchors": (_anchor === document ? "document" : (_anchor === window ? "window" : "#" + _anchor.id)),
                                     "event": event + "." + namespace,
                                 });
                             }
@@ -139,6 +140,8 @@
                     // fire handler if there is still a fire count
                     if (fire >= 1) {
 
+                        // in the anbsence of filters there is no delegate as the event is directly
+                        // attched to the _anchor
                         e.eventrjsAnchor = _anchor; //  the element to which the event is attached
                         e.eventrjsDelegate = null; // add deligate target to object
                         e.eventrjsCurrentTarget = e.target; // add deligate target to object
@@ -156,7 +159,7 @@
                     if (fire === 0) {
                         // remove event from anchor
                         eventrjs.events.remove({
-                            "anchors": "document",
+                            "anchors": (_anchor === document ? "document" : (_anchor === window ? "window" : "#" + _anchor.id)),
                             "event": event + "." + namespace,
                         });
                     }
@@ -293,18 +296,18 @@ document.onreadystatechange = function() {
             }
         });
 
-        eventrjs.events.add({
-            "anchors": "#tape",
-            "event": "click.namespace1.namespace2",
-            "fire": 10,
-            "handlers": "handler_1 handler_3",
-            // "filters": "filter_1 filter_2"
-        });
+        // eventrjs.events.add({
+        //     "anchors": "#tape",
+        //     "event": "click.namespace1.namespace2",
+        //     "fire": 10,
+        //     "handlers": "handler_1 handler_3",
+        //     // "filters": "filter_1 filter_2"
+        // });
 
         eventrjs.events.add({
             "anchors": "document",
             "event": "click.namespace1",
-            "fire": 10,
+            "fire": 2,
             "handlers": "handler_2",
             "filters": "filter_1 filter_2"
         });
