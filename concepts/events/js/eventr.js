@@ -28,7 +28,7 @@
             var anchors = options.anchors,
                 event = options.event,
                 fire = options.fire || Infinity,
-                handler = options.handler,
+                handlers = options.handlers,
                 filters = options.filters,
                 namespace;
 
@@ -63,10 +63,19 @@
                 event = event.substring(0, dot_index);
             }
 
-            // get handler function
-            handler = eventrjs.db.handlers[handler];
-            // if no handle exists return
-            if (!handler) return;
+            // get all the handler functions
+            var handlers_ = [];
+            if (handlers) {
+                handlers = handlers.trim().replace(/\s+/g, " ").split(" ");
+                for (var i = 0, l = handlers.length; i < l; i++) {
+                    var handler = eventrjs.db.handlers[handlers[i]];
+                    // check if handler exists
+                    if (handler) {
+                        // add handler to handlers_ array
+                        handlers_.push(handler);
+                    }
+                }
+            }
 
             // get the provided filter functions
             var filters_ = [],
@@ -96,7 +105,12 @@
                             e.eventrjsDelegate = this; // add deligate target to object
                             e.eventrjsCurrentTarget = e.target; // add deligate target to object
                             // fire if any filter passes
-                            if (fire >= 1) handler.call(e, e); // invoke handler
+                            if (fire >= 1) {
+                                // invoke all handlers
+                                for (var j = 0, ll = handlers_.length; j < ll; j++) {
+                                    handlers_[j].call(e, e); // invoke handler
+                                }
+                            }
                             fire--; // decrease handler fire count
                             return; // only one filter needs to pass
                         }
@@ -174,6 +188,8 @@
                 var anchor = anchors_[i],
                     events = anchor.events,
                     event_name = (event + ((namespace) ? ("." + namespace) : ""));
+                // if not events object exists on achor skip
+                if (events === undefined) continue;
                 // check that event even exists on anchor
                 var fn = events[event_name];
                 if (fn) {
@@ -226,6 +242,9 @@ document.onreadystatechange = function() {
             },
             "handler_2": function(e) {
                 console.log("Handler 2 here", e.eventrjsDelegate, e.eventrjsCurrentTarget);
+            },
+            "handler_3": function(e) {
+                console.log("Handler 3 here", e.eventrjsDelegate, e.eventrjsCurrentTarget);
             }
         });
 
@@ -233,7 +252,7 @@ document.onreadystatechange = function() {
             "anchors": "#tape",
             "event": "click.namespace1.namespace2",
             "fire": 5,
-            "handler": "handler_1",
+            "handlers": "handler_1 handler_3",
             "filters": "filter_1 filter_2"
         });
 
@@ -241,7 +260,7 @@ document.onreadystatechange = function() {
             "anchors": "#tape",
             "event": "click.namespace1",
             "fire": 10,
-            "handler": "handler_2",
+            "handlers": "handler_2",
             "filters": "filter_1 filter_2"
         });
 
@@ -250,7 +269,7 @@ document.onreadystatechange = function() {
                 "anchors": "#tape",
                 "event": "click.namespace1.namespace2",
             });
-        }, 2000);
+        }, 5000);
 
     }
 
