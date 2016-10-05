@@ -100,18 +100,23 @@
                         // filter check must return an element to pass
                         // any filter must pass to invoke the handler
                         var check = filters_[i](e.target);
-                        if (check && fire >= 1) {
+                        if (check) {
 
-                            e.eventrjsAnchor = _anchor; //  the element to which the event is attached
-                            e.eventrjsDelegate = this; // add deligate target to object
-                            e.eventrjsCurrentTarget = e.target; // add deligate target to object
+                            // fire handler if there is still a fire count
+                            if (fire >= 1) {
 
-                            // invoke all handlers
-                            for (var j = 0, ll = handlers_.length; j < ll; j++) {
-                                handlers_[j].call(e, e); // invoke handler
+                                e.eventrjsAnchor = _anchor; //  the element to which the event is attached
+                                e.eventrjsDelegate = _anchor; // add deligate target to object
+                                e.eventrjsCurrentTarget = e.target; // add deligate target to object
+
+                                // invoke all handlers
+                                for (var j = 0, ll = handlers_.length; j < ll; j++) {
+                                    handlers_[j].call(e, e); // invoke handler
+                                }
+
+                                fire--; // decrease handler fire count
+
                             }
-
-                            fire--; // decrease handler fire count
 
                             // when fire count hits zero remove the handler
                             if (fire === 0) {
@@ -137,14 +142,15 @@
                         e.eventrjsAnchor = _anchor; //  the element to which the event is attached
                         e.eventrjsDelegate = null; // add deligate target to object
                         e.eventrjsCurrentTarget = e.target; // add deligate target to object
+
                         // invoke all handlers
                         for (var i = 0, l = handlers_.length; i < l; i++) {
                             handlers_[i].call(e, e); // invoke handler
                         }
 
-                    }
+                        fire--; // decrease handler fire count
 
-                    fire--; // decrease handler fire count
+                    }
 
                     // when fire count hits zero remove the handler
                     if (fire === 0) {
@@ -276,42 +282,41 @@ document.onreadystatechange = function() {
         });
 
         eventrjs.handlers({
-            "handler_1": function(e) {
+            "handler_1": function(e, targets) {
                 console.log("Handler 1 here", e.eventrjsAnchor, e.eventrjsDelegate, e.eventrjsCurrentTarget);
             },
-            "handler_2": function(e) {
+            "handler_2": function(e, targets) {
                 console.log("Handler 2 here", e.eventrjsAnchor, e.eventrjsDelegate, e.eventrjsCurrentTarget);
             },
-            "handler_3": function(e) {
+            "handler_3": function(e, targets) {
                 console.log("Handler 3 here", e.eventrjsAnchor, e.eventrjsDelegate, e.eventrjsCurrentTarget);
             }
         });
 
         eventrjs.events.add({
             "anchors": "#tape",
-            // "anchors": "#tape",
             "event": "click.namespace1.namespace2",
-            "fire": 5,
-            // "handlers": "handler_1",
+            "fire": 10,
             "handlers": "handler_1 handler_3",
             // "filters": "filter_1 filter_2"
         });
 
-        // eventrjs.events.add({
-        //     "anchors": "#tape",
-        //     "event": "click.namespace1",
-        //     "fire": 10,
-        //     "handlers": "handler_2",
-        //     "filters": "filter_1 filter_2"
-        // });
+        eventrjs.events.add({
+            "anchors": "document",
+            "event": "click.namespace1",
+            "fire": 10,
+            "handlers": "handler_2",
+            "filters": "filter_1 filter_2"
+        });
 
-        // setTimeout(function() {
-        //     console.log("removed");
-        //     eventrjs.events.remove({
-        //         "anchors": "document",
-        //         "event": "click.namespace1.namespace2",
-        //     });
-        // }, 2000);
+        setTimeout(function() {
+            console.log("removed");
+            eventrjs.events.remove({
+                "anchors": "document",
+                "event": "click.namespace1",
+                // "event": "click.namespace1.namespace2",
+            });
+        }, 2000);
 
     }
 
