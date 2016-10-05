@@ -107,8 +107,8 @@
 
                                 // when filters are used the _anchor and delegate are the same
                                 e.eventrjsAnchor = _anchor; //  the element to which the event is attached
-                                e.eventrjsDelegate = _anchor; // add deligate target to object
-                                e.eventrjsCurrentTarget = e.target; // add deligate target to object
+                                e.eventrjsDelegate = _anchor; // add delegate target to object
+                                e.eventrjsCurrentTarget = e.target; // add delegate target to object
 
                                 // invoke all handlers
                                 for (var j = 0, ll = handlers_.length; j < ll; j++) {
@@ -135,16 +135,16 @@
                 };
             } else {
 
-                fn = function(e, _anchor) { // no delegation. events attched directly to anchors
+                fn = function(e, _anchor) { // no delegation. events attached directly to anchors
 
                     // fire handler if there is still a fire count
                     if (fire >= 1) {
 
-                        // in the anbsence of filters there is no delegate as the event is directly
-                        // attched to the _anchor
+                        // in the absence of filters there is no delegate as the event is directly
+                        // attached to the _anchor
                         e.eventrjsAnchor = _anchor; //  the element to which the event is attached
-                        e.eventrjsDelegate = null; // add deligate target to object
-                        e.eventrjsCurrentTarget = e.target; // add deligate target to object
+                        e.eventrjsDelegate = null; // add delegate target to object
+                        e.eventrjsCurrentTarget = e.target; // add delegate target to object
 
                         // invoke all handlers
                         for (var i = 0, l = handlers_.length; i < l; i++) {
@@ -236,7 +236,7 @@
                 var anchor = anchors_[i],
                     events = anchor.events,
                     event_name = (event + ((namespace) ? ("." + namespace) : ""));
-                // if not events object exists on achor skip
+                // if not events object exists on anchor skip
                 if (events === undefined) continue;
                 // check that event even exists on anchor
                 var fn = events[event_name];
