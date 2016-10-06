@@ -3,6 +3,21 @@
 
     var eventrjs = function() {};
 
+    /**
+     * @description [Removes supplied event from supplied anchor.]
+     * @param  {String} event     [The event to remove.]
+     * @param  {String} namespace [The event namespace.]
+     * @param  {document|window|HTMLElement} anchor    [The anchor from what to remove event.]
+     */
+    function zeroed(event, namespace, anchor) {
+        console.log("removed 111", event, namespace, anchor);
+        // remove event from anchor
+        eventrjs.events.remove({
+            "anchors": (anchor === document ? "document" : (anchor === window ? "window" : "#" + anchor.id)),
+            "event": event + "." + namespace,
+        });
+    }
+
     // contain filters + handlers in db property
     eventrjs.db = {
         "filters": null,
@@ -120,13 +135,7 @@
                             }
 
                             // when fire count hits zero remove the handler
-                            if (fire === 0) {
-                                // remove event from anchor
-                                eventrjs.events.remove({
-                                    "anchors": (_anchor === document ? "document" : (_anchor === window ? "window" : "#" + _anchor.id)),
-                                    "event": event + "." + namespace,
-                                });
-                            }
+                            if (fire === 0) zeroed(event, namespace, _anchor);
 
                             return; // only one filter needs to pass
                         }
@@ -156,13 +165,7 @@
                     }
 
                     // when fire count hits zero remove the handler
-                    if (fire === 0) {
-                        // remove event from anchor
-                        eventrjs.events.remove({
-                            "anchors": (_anchor === document ? "document" : (_anchor === window ? "window" : "#" + _anchor.id)),
-                            "event": event + "." + namespace,
-                        });
-                    }
+                    if (fire === 0) zeroed(event, namespace, _anchor);
 
                 };
 
