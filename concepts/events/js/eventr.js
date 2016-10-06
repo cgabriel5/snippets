@@ -18,6 +18,18 @@
         });
     }
 
+    /**
+     * @description [Loops over all handlers to run them.]
+     * @param  {EventObject} e        [The event object to pass to handler.]
+     * @param  {Array} handlers [The array of the handlers to run.]
+     */
+    function invoke_handlers(e, handlers) {
+        console.log("invoking the handlers");
+        for (var i = 0, l = handlers.length; i < l; i++) {
+            handlers[i].call(e, e); // invoke handler, pass event object
+        }
+    }
+
     // contain filters + handlers in db property
     eventrjs.db = {
         "filters": null,
@@ -126,9 +138,7 @@
                                 e.eventrjsCurrentTarget = e.target; // add delegate target to object
 
                                 // invoke all handlers
-                                for (var j = 0, ll = handlers_.length; j < ll; j++) {
-                                    handlers_[j].call(e, e); // invoke handler
-                                }
+                                invoke_handlers(e, handlers_);
 
                                 fire--; // decrease handler fire count
 
@@ -156,9 +166,7 @@
                         e.eventrjsCurrentTarget = e.target; // add delegate target to object
 
                         // invoke all handlers
-                        for (var i = 0, l = handlers_.length; i < l; i++) {
-                            handlers_[i].call(e, e); // invoke handler
-                        }
+                        invoke_handlers(e, handlers_);
 
                         fire--; // decrease handler fire count
 
@@ -312,7 +320,7 @@ document.onreadystatechange = function() {
             "event": "click.namespace1",
             "fire": 2,
             "handlers": "handler_2",
-            "filters": "filter_1 filter_2"
+            // "filters": "filter_1 filter_2"
         });
 
         setTimeout(function() {
