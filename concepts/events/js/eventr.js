@@ -30,6 +30,23 @@
         }
     }
 
+    /**
+     * @description [Add anchor, delegate, and event current target to event object.]
+     * @param  {EventObject} e        [The event object to which to add properties.]
+     * @param  {document|window|HTMLElement} _anchor  [The anchor the target which triggers the event.]
+     * @param  {document|window|HTMLElement|Null} delegate [If provided, the target to delegate event to.]
+     */
+    function event_anchors(e, _anchor, delegate) {
+        console.log("<<<", _anchor, delegate, e.target);
+        console.log("event object modified");
+        // **Note: when filters are used the _anchor and delegate are the same
+        e.eventrjsAnchor = _anchor; //  the element to which the event is attached
+        // **Note: in the absence of filters there is no delegate as the event is directly
+        // attached to the _anchor
+        e.eventrjsDelegate = (delegate ? _anchor : null); // add delegate target to object
+        e.eventrjsCurrentTarget = e.target; // add delegate target to object
+    }
+
     // contain filters + handlers in db property
     eventrjs.db = {
         "filters": null,
@@ -132,10 +149,8 @@
                             // fire handler if there is still a fire count
                             if (fire >= 1) {
 
-                                // when filters are used the _anchor and delegate are the same
-                                e.eventrjsAnchor = _anchor; //  the element to which the event is attached
-                                e.eventrjsDelegate = _anchor; // add delegate target to object
-                                e.eventrjsCurrentTarget = e.target; // add delegate target to object
+                                // add correct anchors to event object
+                                event_anchors(e, _anchor, _anchor);
 
                                 // invoke all handlers
                                 invoke_handlers(e, handlers_);
@@ -159,11 +174,8 @@
                     // fire handler if there is still a fire count
                     if (fire >= 1) {
 
-                        // in the absence of filters there is no delegate as the event is directly
-                        // attached to the _anchor
-                        e.eventrjsAnchor = _anchor; //  the element to which the event is attached
-                        e.eventrjsDelegate = null; // add delegate target to object
-                        e.eventrjsCurrentTarget = e.target; // add delegate target to object
+                        // add correct anchors to event object
+                        event_anchors(e, _anchor, null);
 
                         // invoke all handlers
                         invoke_handlers(e, handlers_);
