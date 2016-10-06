@@ -157,7 +157,7 @@
                         if (check) {
 
                             // fire handler if there is still a fire count
-                            if (fire >= 1) {
+                            if (options.fire >= 1) {
 
                                 // add correct anchors to event object
                                 event_anchors(e, _anchor, _anchor);
@@ -165,12 +165,12 @@
                                 // invoke all handlers
                                 invoke_handlers(e, handlers_);
 
-                                fire--; // decrease handler fire count
+                                options.fire--; // decrease handler fire count
 
                             }
 
                             // when fire count hits zero remove the handler
-                            if (fire === 0) zeroed(event, namespace, _anchor);
+                            if (options.fire === 0) zeroed(event, namespace, _anchor);
 
                             return; // only one filter needs to pass
                         }
@@ -182,7 +182,7 @@
                 fn = function(e, _anchor) { // no delegation. events attached directly to anchors
 
                     // fire handler if there is still a fire count
-                    if (fire >= 1) {
+                    if (options.fire >= 1) {
 
                         // add correct anchors to event object
                         event_anchors(e, _anchor, null);
@@ -190,12 +190,12 @@
                         // invoke all handlers
                         invoke_handlers(e, handlers_);
 
-                        fire--; // decrease handler fire count
+                        options.fire--; // decrease handler fire count
 
                     }
 
                     // when fire count hits zero remove the handler
-                    if (fire === 0) zeroed(event, namespace, _anchor);
+                    if (options.fire === 0) zeroed(event, namespace, _anchor);
 
                 };
 
@@ -302,7 +302,37 @@
             delete options.disabled;
             // console.log("the options from the diable method", options);
         },
-        "update": function(options) {},
+        "update": function(options) {
+            // get the event from the event pool
+            // var options = event_db[id];
+            var event = event_db[options.id];
+            if (!event) return; // no event exists just return
+            // ...else update event
+
+            // define vars
+            var fire = options.fire;
+
+            // update fire count if provided
+            if (fire !== undefined) {
+                console.log("UPDATE", event);
+                console.log("fire count: ", event.fire);
+                event.fire = options.fire;
+                console.log("fire count: ", event.fire);
+            }
+
+            // delete options.disabled;
+            // console.log("the options from the diable method", options);
+
+            // eventrjs.events.add({
+            //     "id": "some-event-id",
+            //     "anchors": "document",
+            //     "event": "click.namespace1",
+            //     "fire": 10,
+            //     "handlers": "handler_2",
+            //     "filters": "filter_1 filter_2"
+            // });
+
+        },
     };
 
     // add to global scope for ease of use
@@ -376,14 +406,22 @@ document.onreadystatechange = function() {
             eventrjs.events.enable("some-event-id");
         }, 5000);
 
-        // setTimeout(function() {
-        //     console.log("removed");
-        //     eventrjs.events.remove({
-        //         "anchors": "document",
-        //         "event": "click.namespace1",
-        //         // "event": "click.namespace1.namespace2",
-        //     });
-        // }, 2000);
+        setTimeout(function() {
+            console.log("some-event-id updated (+)");
+            eventrjs.events.update({
+                "id": "some-event-id",
+                "fire": 10
+            });
+        }, 7000);
+
+        setTimeout(function() {
+            console.log("removed");
+            eventrjs.events.remove({
+                "anchors": "document",
+                "event": "click.namespace1",
+                // "event": "click.namespace1.namespace2",
+            });
+        }, 9000);
 
     }
 
