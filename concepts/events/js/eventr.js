@@ -1,6 +1,9 @@
 (function() {
     "use strict";
 
+    // events db
+    var event_db = {};
+
     var eventrjs = function() {};
 
     /**
@@ -10,7 +13,7 @@
      * @param  {document|window|HTMLElement} anchor    [The anchor from what to remove event.]
      */
     function zeroed(event, namespace, anchor) {
-        console.log("removed 111", event, namespace, anchor);
+        // console.log("removed 111", event, namespace, anchor);
         // remove event from anchor
         eventrjs.events.remove({
             "anchors": (anchor === document ? "document" : (anchor === window ? "window" : "#" + anchor.id)),
@@ -24,7 +27,7 @@
      * @param  {Array} handlers [The array of the handlers to run.]
      */
     function invoke_handlers(e, handlers) {
-        console.log("invoking the handlers");
+        // console.log("invoking the handlers");
         for (var i = 0, l = handlers.length; i < l; i++) {
             handlers[i].call(e, e); // invoke handler, pass event object
         }
@@ -37,8 +40,8 @@
      * @param  {document|window|HTMLElement|Null} delegate [If provided, the target to delegate event to.]
      */
     function event_anchors(e, _anchor, delegate) {
-        console.log("<<<", _anchor, delegate, e.target);
-        console.log("event object modified");
+        // console.log("<<<", _anchor, delegate, e.target);
+        // console.log("event object modified");
         // **Note: when filters are used the _anchor and delegate are the same
         e.eventrjsAnchor = _anchor; //  the element to which the event is attached
         // **Note: in the absence of filters there is no delegate as the event is directly
@@ -138,6 +141,13 @@
             if (filters_.length) {
                 fn = function(e, _anchor) { // delegation through provided filters
 
+                    // console.log("the options iside the handelr", options);
+
+                    if (options.disabled && options.disabled === true) {
+                        // console.log("handler is disabled :(");
+                        return;
+                    }
+
                     // loop through all filters
                     for (var i = 0, l = filters_.length; i < l; i++) {
 
@@ -199,7 +209,7 @@
 
                 // new fn
                 var fn_x = function(e) {
-                    return fn.call(null, e, anchor);
+                    return fn.call(null, e, anchor, options);
                 };
 
                 // attach event to event object
@@ -212,6 +222,10 @@
 
                 // attch event to anchor element
                 anchor.addEventListener(event, fn_x, false);
+
+                // add event object to pool
+                if (options.id) event_db[options.id] = options;
+                // console.log("pool", event_db);
             }
 
         },
@@ -272,6 +286,22 @@
             }
 
         },
+        "disable": function(id) {
+            // get the event from the event pool
+            var options = event_db[id];
+            if (!options) return; // no event exists just return
+            // ...else disable event
+            options.disabled = true;
+            // console.log("the options from the diable method", options);
+        },
+        "enable": function(id) {
+            // get the event from the event pool
+            var options = event_db[id];
+            if (!options) return; // no event exists just return
+            // ...else enable event
+            delete options.disabled;
+            // console.log("the options from the diable method", options);
+        },
         "update": function(options) {},
     };
 
@@ -328,21 +358,32 @@ document.onreadystatechange = function() {
         // });
 
         eventrjs.events.add({
+            "id": "some-event-id",
             "anchors": "document",
             "event": "click.namespace1",
-            "fire": 2,
+            "fire": 10,
             "handlers": "handler_2",
-            // "filters": "filter_1 filter_2"
+            "filters": "filter_1 filter_2"
         });
 
         setTimeout(function() {
-            console.log("removed");
-            eventrjs.events.remove({
-                "anchors": "document",
-                "event": "click.namespace1",
-                // "event": "click.namespace1.namespace2",
-            });
-        }, 2000);
+            console.log("some-event-id disabled (✕)");
+            eventrjs.events.disable("some-event-id");
+        }, 3000);
+
+        setTimeout(function() {
+            console.log("some-event-id enabled (✔)");
+            eventrjs.events.enable("some-event-id");
+        }, 5000);
+
+        // setTimeout(function() {
+        //     console.log("removed");
+        //     eventrjs.events.remove({
+        //         "anchors": "document",
+        //         "event": "click.namespace1",
+        //         // "event": "click.namespace1.namespace2",
+        //     });
+        // }, 2000);
 
     }
 
