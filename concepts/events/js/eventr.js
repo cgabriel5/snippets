@@ -1,10 +1,8 @@
 (function() {
+
     "use strict";
 
-    // events db
-    var event_db = {};
-
-    var eventrjs = function() {};
+    /* [functions.utils] */
 
     /**
      * @description [Removes supplied event from supplied anchor.]
@@ -13,9 +11,8 @@
      * @param  {document|window|HTMLElement} anchor    [The anchor from what to remove event.]
      */
     function zeroed(event, namespace, anchor) {
-        // console.log("removed 111", event, namespace, anchor);
         // remove event from anchor
-        eventrjs.events.remove({
+        eventr.events.remove({
             "anchors": (anchor === document ? "document" : (anchor === window ? "window" : "#" + anchor.id)),
             "event": event + "." + namespace,
         });
@@ -27,7 +24,6 @@
      * @param  {Array} handlers [The array of the handlers to run.]
      */
     function invoke_handlers(e, handlers) {
-        // console.log("invoking the handlers");
         for (var i = 0, l = handlers.length; i < l; i++) {
             handlers[i].call(e, e); // invoke handler, pass event object
         }
@@ -36,41 +32,62 @@
     /**
      * @description [Add anchor, delegate, and event current target to event object.]
      * @param  {EventObject} e        [The event object to which to add properties.]
-     * @param  {document|window|HTMLElement} _anchor  [The anchor the target which triggers the event.]
+     * @param  {document|window|HTMLElement} _anchor  [The anchor/target which triggers the event.]
      * @param  {document|window|HTMLElement|Null} delegate [If provided, the target to delegate event to.]
      */
     function event_anchors(e, _anchor, delegate) {
-        // console.log("<<<", _anchor, delegate, e.target);
-        // console.log("event object modified");
         // **Note: when filters are used the _anchor and delegate are the same
-        e.eventrjsAnchor = _anchor; //  the element to which the event is attached
+        e.eventrAnchor = _anchor; //  the element to which the event is attached
         // **Note: in the absence of filters there is no delegate as the event is directly
         // attached to the _anchor
-        e.eventrjsDelegate = (delegate ? _anchor : null); // add delegate target to object
-        e.eventrjsCurrentTarget = e.target; // add delegate target to object
+        e.eventrDelegate = (delegate ? _anchor : null); // add delegate target to object
+        e.eventrCurrentTarget = e.target; // add delegate target to object
     }
 
-    // contain filters + handlers in db property
-    eventrjs.db = {
+    /* [app.main] */
+
+    // define vars
+    var pool = {}, // where added events will be stored
+        eventr = function() {};
+
+    /**
+     * @description [db property will contain the user provided handlers + filters for later access.]
+     * @type {Object}
+     */
+    eventr.db = {
         "filters": null,
         "handlers": null,
     };
 
-    // filters
-    eventrjs.filters = function(filters_) {
-        // set filters
-        eventrjs.db.filters = filters_;
+    /**
+     * @description [Add the user filters to db for later access.]
+     * @param  {Object} handlers_ [User provided object containing the filters for which to use.]
+     */
+    eventr.filters = function(filters_) {
+        eventr.db.filters = filters_; // store filters
     };
 
-    // handlers
-    eventrjs.handlers = function(handlers_) {
-        // set handlers
-        eventrjs.db.handlers = handlers_;
+    /**
+     * @description [Add the user handlers to db for later access.]
+     * @param  {Object} handlers_ [User provided object containing the handlers for which to use.]
+     */
+    eventr.handlers = function(handlers_) {
+        eventr.db.handlers = handlers_; // store handlers
     };
 
-    // events
-    eventrjs.events = {
+    /**
+     * @description [The main methods: add, remove, disable, enable, & update.]
+     * @type {Object}
+     */
+    eventr.events = {
+        /**
+         * @description [Method adds event.]
+         * @param  {Object} options [An object containing the event options (anchors,
+         *                           event[+ optional namespace], fire, handlers, & filters)]
+         * @return {Object} options [Return the provided options back.]
+         */
         "add": function(options) {
+
             // get event options
             var anchors = options.anchors,
                 event = options.event,
@@ -115,7 +132,7 @@
             if (handlers) {
                 handlers = handlers.trim().replace(/\s+/g, " ").split(" ");
                 for (var i = 0, l = handlers.length; i < l; i++) {
-                    var handler = eventrjs.db.handlers[handlers[i]];
+                    var handler = eventr.db.handlers[handlers[i]];
                     // check if handler exists
                     if (handler) {
                         // add handler to handlers_ array
@@ -126,7 +143,7 @@
 
             // get the provided filter functions
             var filters_ = [],
-                filter_db = eventrjs.db.filters;
+                filter_db = eventr.db.filters;
             if (filters) {
                 filters = filters.trim().replace(/\s+/g, " ").split(" ");
                 for (var i = 0, l = filters.length; i < l; i++) {
@@ -139,14 +156,18 @@
             // wrap user handle + apply provided filters
             var fn;
             if (filters_.length) {
+
+                /**
+                 * @description [The handler wrapper function. The user handler is wrapper in a
+                 *               function to apply filters and loop over handlers to invoke them.]
+                 * @param  {EventObject} e        [The event object to which to add properties.]
+                 * @param  {document|window|HTMLElement} _anchor  [The anchor/target which triggers the event.]
+                 * @return {Null}         [Return from loop when any filter is passed. Passing any filter invokes
+                 *                         the list of handlers.]
+                 */
                 fn = function(e, _anchor) { // delegation through provided filters
 
-                    // console.log("the options iside the handelr", options);
-
-                    if (options.disabled && options.disabled === true) {
-                        // console.log("handler is disabled :(");
-                        return;
-                    }
+                    if (options.disabled && options.disabled === true) return;
 
                     // loop through all filters
                     for (var i = 0, l = filters_.length; i < l; i++) {
@@ -177,8 +198,15 @@
 
                     }
                 };
+
             } else {
 
+                /**
+                 * @description [The handler wrapper function. The user handler is wrapper in a
+                 *               function to apply filters and loop over handlers to invoke them.]
+                 * @param  {EventObject} e        [The event object to which to add properties.]
+                 * @param  {document|window|HTMLElement} _anchor  [The anchor/target which triggers the event.]
+                 */
                 fn = function(e, _anchor) { // no delegation. events attached directly to anchors
 
                     // fire handler if there is still a fire count
@@ -207,7 +235,11 @@
                 // grab the anchor element
                 var anchor = anchors_[i];
 
-                // new fn
+                /**
+                 * @description [Rewrap handler function to feed neccessary parameters.]
+                 * @param  {EventObject} e [The event object that will get properties added to.]
+                 * @return {Function}   [The newly wrapped function with passed in parameters.]
+                 */
                 var fn_x = function(e) {
                     return fn.call(null, e, anchor, options);
                 };
@@ -224,11 +256,19 @@
                 anchor.addEventListener(event, fn_x, false);
 
                 // add event object to pool
-                if (options.id) event_db[options.id] = options;
-                // console.log("pool", event_db);
+                if (options.id) pool[options.id] = options;
+
             }
 
+            // return the options back
+            return options;
+
         },
+        /**
+         * @description [Method removes provided event from provided anchor(s).]
+         * @param  {Object} options [An object containing the event's anchors and
+         *                           event[+ optional namespace].]
+         */
         "remove": function(options) {
 
             // get event options
@@ -286,26 +326,36 @@
             }
 
         },
+        /**
+         * @description [Method disables event.]
+         * @param  {String} id [The user set ID of the event to disable.]
+         */
         "disable": function(id) {
             // get the event from the event pool
-            var options = event_db[id];
+            var options = pool[id];
             if (!options) return; // no event exists just return
             // ...else disable event
             options.disabled = true;
-            // console.log("the options from the diable method", options);
         },
+        /**
+         * @description [Method enables event.]
+         * @param  {String} id [The user set ID of the event to enable.]
+         */
         "enable": function(id) {
             // get the event from the event pool
-            var options = event_db[id];
+            var options = pool[id];
             if (!options) return; // no event exists just return
             // ...else enable event
             delete options.disabled;
-            // console.log("the options from the diable method", options);
         },
+        /**
+         * @description [Method updates event. **Note: currently only updates fire count.]
+         * @param  {Object} options [The new options properties to update event with.]
+         */
         "update": function(options) {
             // get the event from the event pool
-            // var options = event_db[id];
-            var event = event_db[options.id];
+            // var options = pool[id];
+            var event = pool[options.id];
             if (!event) return; // no event exists just return
             // ...else update event
 
@@ -313,30 +363,13 @@
             var fire = options.fire;
 
             // update fire count if provided
-            if (fire !== undefined) {
-                console.log("UPDATE", event);
-                console.log("fire count: ", event.fire);
-                event.fire = options.fire;
-                console.log("fire count: ", event.fire);
-            }
-
-            // delete options.disabled;
-            // console.log("the options from the diable method", options);
-
-            // eventrjs.events.add({
-            //     "id": "some-event-id",
-            //     "anchors": "document",
-            //     "event": "click.namespace1",
-            //     "fire": 10,
-            //     "handlers": "handler_2",
-            //     "filters": "filter_1 filter_2"
-            // });
+            if (fire !== undefined) event.fire = options.fire;
 
         },
     };
 
     // add to global scope for ease of use
-    window.eventrjs = eventrjs;
+    window.eventrjs = eventr;
 
 })();
 
@@ -369,13 +402,13 @@ document.onreadystatechange = function() {
 
         eventrjs.handlers({
             "handler_1": function(e, targets) {
-                console.log("Handler 1 here", e.eventrjsAnchor, e.eventrjsDelegate, e.eventrjsCurrentTarget);
+                console.log("Handler 1 here", e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
             },
             "handler_2": function(e, targets) {
-                console.log("Handler 2 here", e.eventrjsAnchor, e.eventrjsDelegate, e.eventrjsCurrentTarget);
+                console.log("Handler 2 here", e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
             },
             "handler_3": function(e, targets) {
-                console.log("Handler 3 here", e.eventrjsAnchor, e.eventrjsDelegate, e.eventrjsCurrentTarget);
+                console.log("Handler 3 here", e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
             }
         });
 
