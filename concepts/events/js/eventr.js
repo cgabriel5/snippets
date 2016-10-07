@@ -167,6 +167,7 @@
                  */
                 fn = function(e, _anchor) { // delegation through provided filters
 
+                    // return if disabled flag set
                     if (options.disabled && options.disabled === true) return;
 
                     // loop through all filters
@@ -208,6 +209,9 @@
                  * @param  {document|window|HTMLElement} _anchor  [The anchor/target which triggers the event.]
                  */
                 fn = function(e, _anchor) { // no delegation. events attached directly to anchors
+
+                    // return if disabled flag set
+                    if (options.disabled && options.disabled === true) return;
 
                     // fire handler if there is still a fire count
                     if (options.fire >= 1) {
@@ -402,23 +406,23 @@ document.onreadystatechange = function() {
 
         eventrjs.handlers({
             "handler_1": function(e, targets) {
-                console.log("Handler 1 here", e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
+                console.log("Handler 1 here"); //, e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
             },
             "handler_2": function(e, targets) {
-                console.log("Handler 2 here", e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
+                console.log("Handler 2 here"); //, e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
             },
             "handler_3": function(e, targets) {
-                console.log("Handler 3 here", e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
+                console.log("Handler 3 here"); //, e.eventrAnchor, e.eventrDelegate, e.eventrCurrentTarget);
             }
         });
 
-        // eventrjs.events.add({
-        //     "anchors": "#tape",
-        //     "event": "click.namespace1.namespace2",
-        //     "fire": 10,
-        //     "handlers": "handler_1 handler_3",
-        //     // "filters": "filter_1 filter_2"
-        // });
+        eventrjs.events.add({
+            "anchors": "#tape",
+            "event": "click.namespace1.namespace2",
+            "fire": 10,
+            "handlers": "handler_1 handler_3",
+            // "filters": "filter_1 filter_2"
+        });
 
         eventrjs.events.add({
             "id": "some-event-id",
@@ -426,7 +430,7 @@ document.onreadystatechange = function() {
             "event": "click.namespace1",
             "fire": 10,
             "handlers": "handler_2",
-            "filters": "filter_1 filter_2"
+            // "filters": "filter_1 filter_2"
         });
 
         setTimeout(function() {
