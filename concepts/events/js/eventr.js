@@ -325,7 +325,7 @@
                     // remove event from anchors events
                     delete events[event_name];
                     // remove event to anchor element
-                    element.removeEventListener(event, fn, false);
+                    anchor.removeEventListener(event, fn, false);
                 }
             }
 
