@@ -2,20 +2,20 @@
 
 A lightweight JavaScript library for handling events.
 
-## What it does
+### What it does
 
 * Listens/Removes events
 * Disables/Enables events
 * Updatable events
 * Limit handler function execution
 
-## Add to project
+### Add to project
 
 ```html
 <script src="my_js_directory_path/eventrjs.js"></script>
 ```
 
-## Access library
+### Access library
 
 ```js
 var eventr = eventrjs;
@@ -23,7 +23,7 @@ var eventr = eventrjs;
 var eventr = window.eventrjs;
 ```
 
-## Handlers
+### Handlers
 
 Handlers must be stored before listening to any events.
 
@@ -51,7 +51,7 @@ eventr.handlers({
 });
 ```
 
-## Delegation
+### Delegation
 
 In order to use event delegation the use of `filters` is needed. A `filter` is just a function that is fed the event's target element. The `filter` if passed should return the `target` otherwise `null`.
 
@@ -76,7 +76,7 @@ eventr.filters({
 });
 ```
 
-## Add (listen) to an event: Syntax
+### Add (listen) to an event: Syntax
 
 ```js
 eventr.events.add({
@@ -102,7 +102,7 @@ eventr.events.add({
 });
 ```
 
-## Add (listen) to an event: Usage
+### Add (listen) to an event: Usage
 
 ```js
 // get from global scope
@@ -124,7 +124,7 @@ eventr.events.add({
 });
 ```
 
-## Remove event: Syntax
+### Remove event: Syntax
 
 ```js
 eventr.events.add({
@@ -138,7 +138,7 @@ eventr.events.add({
 });
 ```
 
-## Remove event: Usage
+### Remove event: Usage
 
 ```js
 // remove resize event from window
