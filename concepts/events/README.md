@@ -23,32 +23,21 @@ var eventr = eventrjs;
 var eventr = window.eventrjs;
 ```
 
-## API
-`eventr.handlers()` &mdash; Stores event handlers.
+### API Method Table
 
-`eventr.filters()` &mdash; Stores delegation filters if delegation is needed.
+Method | Function
+------------ | -------------
+**handlers** | Stores event handlers
+**filters** | Stores delegation filters (if delegation is needed)
+**add** | Listens to an added event
+**remove** | Remove an event from eventrjs
+**disable** | Disables an event until enabled
+**enable** | Enables a disabled event
+**update** | Updates an event (i.e. change fire count)
 
-`eventr.events.add()` &mdash; Listens to an added event.
+### Handlers
 
-`eventr.events.remove()` &mdash; Remove an event from eventrjs.
-
-`eventr.events.disable()` &mdash; Disables an event until enabled.
-
-`eventr.events.enable()` &mdash; Enables a disabled event.
-
-`eventr.events.update()` &mdash; Updates an event (i.e. change fire count).
-
-### event.handlers()
-
-Event handlers must be stored before listening to any events.
-
-**Note:** eventrjs adds 3 new properties to the event object for convenience. They are the following:
-
-`e.eventrAnchor` &mdash; The element which the event is attached to.
-
-`e.eventrDelegate` &mdash; Only provided when delegation filters are used. If present same as `e.eventrAnchor` otherwise `null`.
-
-`e.eventrCurrentTarget` &mdash; The element that started the event.
+**event.handlers** &mdash; Stores event handlers. Event handlers must be stored before listening to any events.
 
 ```js
 var handler_3 = function(e) {
@@ -66,7 +55,17 @@ eventr.handlers({
 });
 ```
 
-### event.filters() `event-delegation`
+**Note:** eventrjs adds 3 new properties to the event object for convenience. They are the following:
+
+Property Name | Description
+------------- | -----------
+e.eventrAnchor | The element which the event is attached to
+e.eventrDelegate | Only provided when delegation filters are used. If present same as `e.eventrAnchor` otherwise `null`
+e.eventrCurrentTarget | The element that started the event
+
+### Delegation
+
+**event.filters** `event-delegation` &mdash; Stores delegation filters if delegation is needed.
 
 In order to use event delegation the use of `filters` is needed. A `filter` is just a function that is fed the event's target element. The `filter` if passed should return the `target` otherwise `null`.
 
@@ -94,7 +93,9 @@ eventr.filters({
 });
 ```
 
-### eventr.events.add() `syntax`
+### Listen To An Event
+
+**eventr.events.add** &mdash;  `syntax` Listens to an added event.
 
 ```js
 eventr.events.add({
@@ -126,27 +127,9 @@ eventr.events.add({
 });
 ```
 
-### eventr.events.add() `usage`
+### Stop Listening To An Event
 
-```js
-// set handler(s)
-eventr.handlers({
-    "handler_1": function(e) {
-        console.log(e.type);
-    }
-});
-
-// Listen to window resize event & fire handler 10 times.
-eventr.events.add({
-    "anchors": "window",
-    "event": "resize",
-    "fire": 50,
-    "handlers": "handler_1",
-    "id": "resize-event"
-});
-```
-
-### eventr.events.remove() `syntax`
+**eventr.events.remove** &mdash;  `syntax` Remove an event from eventrjs.
 
 ```js
 eventr.events.remove({
@@ -160,45 +143,27 @@ eventr.events.remove({
 });
 ```
 
-### eventr.events.remove() `usage`
+### Disable An Event
 
-```js
-// remove resize event from window
-eventr.events.remove({
-    "anchors": "window",
-    "event": "resize"
-});
-```
-
-### eventr.events.disable() `syntax`
+**eventr.events.disable** &mdash;  `syntax` Disables an event until enabled.
 
 ```js
 // Takes 1 parameter of type String => the ID of the event
 eventr.events.disable(String: eventID);
 ```
 
-### eventr.events.disable() `usage`
+### Enable An Event
 
-```js
-// Disable event with id of "resize event".
-eventr.events.disable("resize-event");
-```
-
-### eventr.events.enable() `syntax`
+**eventr.events.enable** &mdash;  `syntax` Enables a disabled event.
 
 ```js
 // Takes 1 parameter of type String => the ID of the event.
 eventr.events.enable(String: eventID);
 ```
 
-### eventr.events.enable() `usage`
+### Update An Event
 
-```js
-// Enable event with id of "resize event".
-eventr.events.enable("resize-event");
-```
-
-### eventr.events.update() `syntax`
+**eventr.events.update** &mdash;  `syntax` Updates an event (i.e. change fire count).
 
 **Note:** At the moment only updating the `fire` count is possible.
 
@@ -214,11 +179,64 @@ eventrjs.events.update({
 });
 ```
 
-### eventr.events.update() `usage`
+### Example Usage
+
 
 ```js
-// Update the fire count to 20 of the event with ID "resize-event".
-eventr.events.update({
-    "id": "resize-event",
-    "fire": "20"
+// cache library for use
+var eventr = window.eventrjs;
+
+// set handler(s)
+eventr.handlers({
+    "handler_1": function(e) {
+        console.log(e.type);
+    }
 });
+
+// listen to window resize event & fire handler 250 times
+eventr.events.add({
+    "anchors": "window",
+    "event": "resize",
+    "fire": 250,
+    "handlers": "handler_1",
+    "id": "resize-event"
+});
+
+// disable event with id of "resize event" after 3 seconds
+setTimeout(function() {
+
+    console.log("disable event (-)");
+    eventr.events.disable("resize-event");
+
+}, 3000);
+
+// enable event with id of "resize event" after 3 seconds
+setTimeout(function() {
+
+    console.log("enable event (✔)");
+    eventr.events.enable("resize-event");
+
+}, 5000);
+
+// update the fire count to 250 of the event with ID "resize-event"
+setTimeout(function() {
+
+    console.log("update event (+)");
+    eventr.events.update({
+        "id": "resize-event",
+        "fire": "250"
+    });
+
+}, 7000);
+
+// remove resize event from window after 10 seconds
+setTimeout(function() {
+
+    console.log("remove event (✕)");
+    eventr.events.remove({
+        "anchors": "window",
+        "event": "resize"
+    });
+
+}, 10000);
+```
