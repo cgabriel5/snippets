@@ -240,3 +240,8 @@ setTimeout(function() {
 
 }, 10000);
 ```
+
+### TODO
+
+- [ ] Add more functionality to update() method (allow for updatable handlers, filters)
+- [ ] Add throttle/debounce capability
