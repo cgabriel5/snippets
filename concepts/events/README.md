@@ -245,3 +245,7 @@ setTimeout(function() {
 
 - [ ] Add more functionality to update() method (allow for updatable handlers, filters)
 - [ ] Add throttle/debounce capability
+
+## License
+
+This project uses the [MIT License](https://github.com/cgabriel5/snippets/blob/master/concepts/events/LICENSE.txt).
