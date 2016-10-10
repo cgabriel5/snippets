@@ -23,21 +23,38 @@ var eventr = eventrjs;
 var eventr = window.eventrjs;
 ```
 
-### Handlers
+## API
+`eventr.handlers()` &mdash; Stores event handlers.
 
-Handlers must be stored before listening to any events.
+`eventr.filters()` &mdash; Stores delegation filters if delegation is needed.
 
-**Note:** 3 properties get added to the event object for convenience. They are the following:
+`eventr.events.add()` &mdash; Listens to an added event.
 
-```e.eventrAnchor``` &mdash; The element which the event is attached to.
+`eventr.events.remove()` &mdash; Remove an event from eventrjs.
 
-```e.eventrDelegate``` &mdash; Only present when using event delegation (filters). If present the same as the anchor. Otherwise, null.
+`eventr.events.disable()` &mdash; Disables an event until enabled.
 
-```e.eventrCurrentTarget``` &mdash; The element that started the event.
+`eventr.events.enable()` &mdash; Enables a disabled event.
 
+`eventr.events.update()` &mdash; Updates an event (i.e. change fire count).
 
+### event.handlers()
+
+Event handlers must be stored before listening to any events.
+
+**Note:** eventrjs adds 3 new properties to the event object for convenience. They are the following:
+
+`e.eventrAnchor` &mdash; The element which the event is attached to.
+
+`e.eventrDelegate` &mdash; Only provided when delegation filters are used. If present same as `e.eventrAnchor` otherwise `null`.
+
+`e.eventrCurrentTarget` &mdash; The element that started the event.
 
 ```js
+var handler_3 = function(e) {
+    console.log("Handler 3");
+};
+
 eventr.handlers({
     "handler_1": function(e) {
         console.log("Handler 1");
@@ -45,13 +62,11 @@ eventr.handlers({
     "handler_2": function(e) {
         console.log("Handler 2");
     },
-    "handler_3": function(e) {
-        console.log("Handler 3");
-    }
+    "handler_3": handler_3
 });
 ```
 
-### Delegation
+### event.filters() `event-delegation`
 
 In order to use event delegation the use of `filters` is needed. A `filter` is just a function that is fed the event's target element. The `filter` if passed should return the `target` otherwise `null`.
 
@@ -63,20 +78,23 @@ The first two filters below use [funneljs](https://github.com/cgabriel5/funneljs
 eventr.filters({
     "filter_1": function(target) { // uses funneljs
         // target element must have the orange class and no data-app attribute
-        return (funneljs(target).classes("orange").attrs("[!data-app]").pop().length) ? target : null;
+        var check = (funneljs(target).classes("orange").attrs("[!data-app]").pop().length);
+        return check ? target : null;
     },
     "filter_2": function(target) { // uses funneljs
         // target element's parents must have the orange class and no data-app attribute
-        return (funneljs(target).parents().classes("orange").attrs("[!data-app]").pop().length) ? target : null;
+        var check = (funneljs(target).parents().classes("orange").attrs("[!data-app]").pop().length);
+        return check ? target : null;
     },
     "filter_3": function(target) { // uses Vanilla JavaScript
         // target element must have the orange class and no data-app attribute
-        return (target.classList.contains("orange") && !target.hasAttribute("data-app")) ? target : null;
+        var check = (target.classList.contains("orange") && !target.hasAttribute("data-app"));
+        return check ? target : null;
     }
 });
 ```
 
-### Add (listen) to an event: Syntax
+### eventr.events.add() `syntax`
 
 ```js
 eventr.events.add({
@@ -87,7 +105,8 @@ eventr.events.add({
     // {String: REQUIRED} The event & optional namespace.
     "event": "event.namespace1",
 
-    // {Number: OPTIONAL} The number of times the handler should fire.
+    // {Number: OPTIONAL} The number of times the handler should fire. The 
+    // event is removed after fire count has zeroed.
     "fire": 10,
 
     // {String: OPTIONAL} Meant for event delegation, they are the filters to 
@@ -97,17 +116,19 @@ eventr.events.add({
 
     // {String: REQUIRED} The handlers to fire. Handlers are fired from 
     // left to right.
-    "handlers": "handler_1 handler_2 handler_n"    
+    "handlers": "handler_1 handler_2 handler_n"
+
+    // {String: OPTIONAL} ID is used to reference event to disable/enable 
+    // and update event.
+    // **Note: ID needs to be unique.
+    "id": "some-event-id"
 
 });
 ```
 
-### Add (listen) to an event: Usage
+### eventr.events.add() `usage`
 
 ```js
-// get from global scope
-var eventr = window.eventrjs;
-
 // set handler(s)
 eventr.handlers({
     "handler_1": function(e) {
@@ -115,35 +136,89 @@ eventr.handlers({
     }
 });
 
-// listen to window resize event & fire handler 10 times
+// Listen to window resize event & fire handler 10 times.
 eventr.events.add({
     "anchors": "window",
     "event": "resize",
     "fire": 50,
-    "handlers": "handler_1"
+    "handlers": "handler_1",
+    "id": "resize-event"
 });
 ```
 
-### Remove event: Syntax
+### eventr.events.remove() `syntax`
 
 ```js
-eventr.events.add({
+eventr.events.remove({
     
     // {String: REQUIRED} The anchors the event was attached to.
     "anchors": "window document #some_element_id", 
     
     // {String: REQUIRED} The event & optional namespace provided.
-    "event": "event.namespace1",  
+    "event": "event.namespace1"
 
 });
 ```
 
-### Remove event: Usage
+### eventr.events.remove() `usage`
 
 ```js
 // remove resize event from window
 eventr.events.remove({
     "anchors": "window",
-    "event": "resize",
+    "event": "resize"
 });
 ```
+
+### eventr.events.disable() `syntax`
+
+```js
+// Takes 1 parameter of type String => the ID of the event
+eventr.events.disable(String: eventID);
+```
+
+### eventr.events.disable() `usage`
+
+```js
+// Disable event with id of "resize event".
+eventr.events.disable("resize-event");
+```
+
+### eventr.events.enable() `syntax`
+
+```js
+// Takes 1 parameter of type String => the ID of the event.
+eventr.events.enable(String: eventID);
+```
+
+### eventr.events.enable() `usage`
+
+```js
+// Enable event with id of "resize event".
+eventr.events.enable("resize-event");
+```
+
+### eventr.events.update() `syntax`
+
+**Note:** At the moment only updating the `fire` count is possible.
+
+```js
+eventrjs.events.update({
+
+    // {String: REQUIRED} The ID of the event.
+    "id": "some-event-id",
+
+    // {Number: REQUIRED} The new fire count.
+    "fire": 10
+
+});
+```
+
+### eventr.events.update() `usage`
+
+```js
+// Update the fire count to 20 of the event with ID "resize-event".
+eventr.events.update({
+    "id": "resize-event",
+    "fire": "20"
+});
