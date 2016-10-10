@@ -2,20 +2,20 @@
 
 A lightweight JavaScript library for handling events.
 
-### What it does
+### What It Does
 
 * Listens/Removes events
 * Disables/Enables events
 * Updatable events
 * Limit handler function execution
 
-### Add to project
+### Add To Project
 
 ```html
-<script src="my_js_directory_path/eventrjs.js"></script>
+<script src="my_js_directory_path/eventr.js"></script>
 ```
 
-### Access library
+### Access Library
 
 ```js
 var eventr = eventrjs;
