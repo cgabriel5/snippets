@@ -2,9 +2,9 @@
 
 An online personal reference to snippets, concepts, and boiler code I have made/documented/found while my time programming.
 
-### Why?
+### Purpose
 
-I want to document anything I deem useful along my programming journey.
+To document anything deemed useful along my programming journey for quick future reference.
 
 ### License
 
