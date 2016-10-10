@@ -117,7 +117,7 @@ eventr.events.add({
 
     // {String: REQUIRED} The handlers to fire. Handlers are fired from 
     // left to right.
-    "handlers": "handler_1 handler_2 handler_n"
+    "handlers": "handler_1 handler_2 handler_n",
 
     // {String: OPTIONAL} ID is used to reference event to disable/enable 
     // and update event.
@@ -179,7 +179,7 @@ eventrjs.events.update({
 });
 ```
 
-### Example Usage
+### Example Usage Concept
 
 
 ```js
