@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <script src="ajax.js"></script>
+    <script src="js/ajax.js"></script>
+    <script src="js/app.js"></script>
     <title>AJAX Test</title>
 </head>
 
