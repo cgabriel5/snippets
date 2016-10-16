@@ -14,23 +14,33 @@ document.onreadystatechange = function() {
         }
 
         // ----------------------------------------------- ajax get w/ 404 error
-        Ajax({
-                "method": "GET",
-                "url": "test.php?verified=false",
-                "cache": false,
-                "id": "get-posts"
-            })
-            .then(check_status)
-            .then(function(data) {
-                console.log("Server Response: ", data);
-            })
-            .catch(function(error) {
-                console.log("XHR Error: ", error);
-            });
+
+        // new API concept
+        // var ajax = new Ajax(null);
+        // ajax.method("GET");
+        // ajax.url("test.php?verified=false");
+        // ajax.cache(false);
+        // ajax.progress(function(e) { console.log("monitoring progress"); });
+        // ajax.run();
+
+        var ajax = new Ajax({
+            "method": "GET",
+            "url": "test.php?verified=false",
+            "cache": false,
+            "id": "get-posts"
+        });
+
+        ajax.then(check_status);
+        ajax.then(function(data) {
+            console.log("The Server Response: ", data);
+        });
+        ajax.catch(function(error) {
+            console.log("The XHR Error: ", error);
+        });
 
         // abort XHR request
         Ajax.cancel("get-posts", function(xhr) {
-            console.log("This xhr was aborted: ", xhr);
+            console.log("XHR req was canceled:", xhr);
         });
 
         // Ajax.cancel(); // abort all xhr requests
