@@ -1,6 +1,8 @@
 (function() {
     "use strict";
 
+    var xhr_pool = {};
+
     var ajax = (function() {
 
         // =============================== Helper Functions
@@ -43,6 +45,22 @@
 
         }
 
+        // // get HTTP errors list from: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+        // var e = document.querySelectorAll("dl");
+        // var http_errors = {};
+        // e.forEach(function(v) {
+        //     var elements = v.children;
+        //     var l = elements.length;
+        //     for (var i = 0; i < l; i += 2) {
+        //         var error_name_parts = elements[i].firstChild.firstChild.textContent.replace(/ /, ":").split(":"),
+        //             error_name_num = error_name_parts[0],
+        //             error_name_short_desc = error_name_parts[1],
+        //             error_desc = elements[i + 1].textContent;
+        //         http_errors[error_name_num] = [error_name_short_desc, error_desc];
+        //     }
+        // });
+        // JSON.stringify(http_errors).replace(/'/g, "\\'");
+
         // =============================== Ajax Class
 
         var Ajax = class__({
@@ -69,13 +87,20 @@
                     cache = options.cache, // default: true for GET requests
                     async = ((options.async === undefined) ? true : options.async), // default: true
                     content_type = options.contentType, // default: application/x-www-form-urlencoded;charset=UTF-8, empty for file uploads
-                    process_data = options.processData; // default: true for strings and objects containing key:value pairs
+                    process_data = options.processData, // default: true for strings and objects containing key:value pairs
+                    id = options.id || null; // is uses wants to track request to abort
 
-                // return a new promise
+                // make new xhr request
+                var xhr = new XMLHttpRequest();
+
+                // add xhr to pool
+                if (id) xhr_pool[id] = xhr;
+
+                // set the xhr stage to pending (init xhr)
+                xhr.stage = "pending"; // http://stackoverflow.com/questions/21485545/is-there-a-way-to-tell-if-an-es6-promise-is-fulfilled-rejected-resolved
+
+                // wrap XHR in a Promise
                 return new Promise(function(resolve, reject) {
-
-                    // make new xhr request
-                    var xhr = new XMLHttpRequest();
 
                     // add timestamp to prevent caching
                     // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#Bypassing_the_cache
@@ -133,15 +158,44 @@
                     // else...data is of the following types and those do not get processed.
                     // (new Int8Array(), new Blob(), new FormData(), document, null)
 
+                    // -------------------------
+
                     // listen to request state
-                    xhr.addEventListener('readystatechange', function(e) {
-                        if (xhr.readyState === 4 && xhr.status === 200) resolve(xhr.responseText);
-                        else if (xhr.status !== 200) reject(xhr.statusText); // http://www.html5rocks.com/en/tutorials/es6/promises/#toc-error-handling
+                    // http://stackoverflow.com/questions/14946291/can-one-replace-xhr-onreadystatechange-with-xhr-onload-for-ajax-calls
+                    // http://stackoverflow.com/questions/9181090/is-onload-equal-to-readystate-4-in-xmlhttprequest
+
+                    // xhr.addEventListener("progress", function(e) {
+                    //     if (e.lengthComputable) {
+                    //         var percent = e.loaded / e.total;
+                    //     } else {
+                    //         // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest
+                    //         // Unable to compute progress information since the total size is unknown
+                    //     }
+                    // });
+
+                    // listen for request completion
+                    // http://stackoverflow.com/questions/6783053/xmlhttprequest-is-always-calling-load-event-listener-even-when-response-has-e/21025981#21025981
+                    xhr.addEventListener("load", function(e) { // once finished resolve promise
+                        this.stage = this.stage + ";fulfilled;resolved";
+                        resolve(xhr);
                     }, false);
+
+                    // **Note: user must handle HTTP request error response on their own.
+                    // this is really only invoked for network-level errors.
+                    xhr.addEventListener("error", function(e) { // reject on network errors
+                        this.stage = this.stage + ";fulfilled;rejected";
+                        // check internet connection here https://davidwalsh.name/detecting-online
+                        reject(xhr); // http://www.html5rocks.com/en/tutorials/es6/promises/#toc-error-handling
+                    }, false);
+
+                    // xhr.addEventListener("abort", xhr_abort_fn);
+
+                    // -------------------------
 
                     // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send
                     // possible data types: null, new Int8Array(), new Blob(), document, 'string', & new FormData()
                     xhr.send(data);
+
                 });
 
             },
@@ -159,6 +213,28 @@
 
     })();
 
+    // function to abort the xhr
+    function abort_xhr(xhr, id) {
+        if (!xhr) return; // // return if no xhr request with the provided id exists
+        xhr.abort(); // abort xhr
+        xhr.stage = xhr.stage + ";aborted"; // update the stage
+        delete xhr_pool[id]; // remove xhr from pool
+        return xhr; // return the xhr
+    }
+
+    // http://stackoverflow.com/questions/32497035/abort-ajax-request-in-a-promise
+    // add cancel (abort) method to promise
+    ajax.cancel = function(id, fn) {
+        if (!arguments.length) { // no length cancel all
+            // loop through all xhrs and abort
+            for (var xhr_name in xhr_pool) abort_xhr(xhr_pool[xhr_name], xhr_name);
+            return;
+        }
+        // single xhr abort...
+        var xhr = abort_xhr(xhr_pool[id], id);
+        if (fn) fn.call(xhr, xhr); // if fn provided invoke it
+    };
+
     // add to global scope for ease of use
     window.Ajax = ajax;
 
@@ -174,6 +250,34 @@ document.onreadystatechange = function() {
     if (document.readyState == "complete") {
 
         console.log("document ready!");
+
+        // custom function to check status of request
+        function check_status(xhr) {
+            if ((xhr.status >= 200 && xhr.status < 300) && xhr.readyState === 4) return xhr; // no HTTP error
+            else throw new Error(xhr);
+        }
+
+        // ----------------------------------------------- ajax get w/ 404 error
+        Ajax({
+                "method": "GET",
+                "url": "test.php?verified=false",
+                "cache": false,
+                "id": "get-posts"
+            })
+            .then(check_status)
+            .then(function(data) {
+                console.log("Server Response: ", data);
+            })
+            .catch(function(error) {
+                console.log("XHR Error: ", error);
+            });
+
+        // abort XHR request
+        Ajax.cancel("get-posts", function(xhr) {
+            console.log("This xhr was aborted: ", xhr);
+        });
+
+        // Ajax.cancel(); // abort all xhr requests
 
         // ----------------------------------------------- multiple file upload
 
@@ -200,12 +304,13 @@ document.onreadystatechange = function() {
             }
 
             // upload files to server
-            var xhr = Ajax({
+            Ajax({
                     "method": "POST",
                     "url": "test.php?files=true",
                     "data": form_data,
                     "files": true
                 })
+                .then(check_status)
                 .then(function(data) {
                     console.log("Server Response: ", data);
                     form.reset(); // reset form
@@ -218,12 +323,13 @@ document.onreadystatechange = function() {
 
         // ----------------------------------------------- regular text data post
 
-        var xhr = new Ajax({
+        new Ajax({
                 "method": "POST",
                 "url": "test.php",
                 // "data": { "msg": "Hello World!!", "name": "Selena Gomez" } // data in an object
                 "data": "msg=Hello World!&name=Selena Gomez" // string data
             })
+            .then(check_status)
             .then(function(data) {
                 console.log("Server Response: ", data);
             })
@@ -233,11 +339,12 @@ document.onreadystatechange = function() {
 
         // ----------------------------------------------- ajax get
 
-        var xhr = new Ajax({
+        Ajax({
                 "method": "GET",
                 "url": "test.php?verified=false",
                 "cache": false
             })
+            .then(check_status)
             .then(function(data) {
                 console.log("Server Response: ", data);
             })
