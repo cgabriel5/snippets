@@ -88,7 +88,9 @@
                     async = ((options.async === undefined) ? true : options.async), // default: true
                     content_type = options.contentType, // default: application/x-www-form-urlencoded;charset=UTF-8, empty for file uploads
                     process_data = options.processData, // default: true for strings and objects containing key:value pairs
-                    id = options.id || null; // is uses wants to track request to abort
+                    id = options.id || null, // is uses wants to track request to abort
+                    //
+                    credentials = options.credentials || false;
 
                 // make new xhr request
                 var xhr = new XMLHttpRequest();
@@ -142,6 +144,22 @@
 
                     // if files are being uploaded let the browser set the content type and form boundary
                     if (!files) xhr.setRequestHeader('Content-Type', (content_type || "application/x-www-form-urlencoded;charset=UTF-8"));
+
+                    // if CORS is needed...
+                    // https://www.html5rocks.com/en/tutorials/cors/
+                    // https://developers.google.com/web/updates/2015/03/introduction-to-fetch#sending_credentials_with_a_fetch_request
+                    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Requests_with_credentials
+                    // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
+                    // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
+                    xhr.withCredentials = credentials;
+
+                    // fetch resources
+                    // https://davidwalsh.name/fetch
+                    // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+                    // https://developer.mozilla.org/en-US/docs/Web/API/Response
+                    // https://developer.mozilla.org/en-US/docs/Web/API/Request
+                    // https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
+                    // https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials
 
                     // process data if data is either a string or [object Object] and process_data is not set to false
                     if (process_data !== false && (typeof data === "string" || Object.prototype.toString.call(data) === "[object Object]")) {
