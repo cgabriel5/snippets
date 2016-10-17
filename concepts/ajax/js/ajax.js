@@ -95,6 +95,15 @@
                 // make new xhr request
                 var xhr = new XMLHttpRequest();
 
+                // listen to when request starts and ends
+                // http://stackoverflow.com/questions/6233927/microsecond-timing-in-javascript
+                xhr.addEventListener("loadstart", function(e) {
+                    console.log("loadstart", window.performance.now());
+                });
+                xhr.addEventListener("loadend", function(e) {
+                    console.log("loadend", window.performance.now());
+                });
+
                 // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState
                 // 0   UNSENT  Client has been created. open() not called yet.
                 // 1   OPENED  open() has been called.
