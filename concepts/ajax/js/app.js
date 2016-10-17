@@ -38,10 +38,13 @@ document.onreadystatechange = function() {
             console.log("The XHR Error: ", error);
         });
 
-        // abort XHR request
-        Ajax.cancel("get-posts", function(xhr) {
-            console.log("XHR req was canceled:", xhr);
-        });
+        setTimeout(function() {
+            console.log("canceled");
+            // abort XHR request
+            Ajax.cancel("get-posts", function(xhr) {
+                console.log("XHR req was canceled:", xhr);
+            });
+        }, 3000);
 
         // Ajax.cancel(); // abort all xhr requests
 
@@ -89,34 +92,34 @@ document.onreadystatechange = function() {
 
         // ----------------------------------------------- regular text data post
 
-        new Ajax({
-                "method": "POST",
-                "url": "test.php",
-                // "data": { "msg": "Hello World!!", "name": "Selena Gomez" } // data in an object
-                "data": "msg=Hello World!&name=Selena Gomez" // string data
-            })
-            .then(check_status)
-            .then(function(data) {
-                console.log("Server Response: ", data);
-            })
-            .catch(function(error) {
-                console.log("XHR Error: ", error);
-            });
+        // new Ajax({
+        //         "method": "POST",
+        //         "url": "test.php",
+        //         // "data": { "msg": "Hello World!!", "name": "Selena Gomez" } // data in an object
+        //         "data": "msg=Hello World!&name=Selena Gomez" // string data
+        //     })
+        //     .then(check_status)
+        //     .then(function(data) {
+        //         console.log("Server Response: ", data);
+        //     })
+        //     .catch(function(error) {
+        //         console.log("XHR Error: ", error);
+        //     });
 
-        // ----------------------------------------------- ajax get
+        // // ----------------------------------------------- ajax get
 
-        Ajax({
-                "method": "GET",
-                "url": "test.php?verified=false",
-                "cache": false
-            })
-            .then(check_status)
-            .then(function(data) {
-                console.log("Server Response: ", data);
-            })
-            .catch(function(error) {
-                console.log("XHR Error: ", error);
-            });
+        // Ajax({
+        //         "method": "GET",
+        //         "url": "test.php?verified=false",
+        //         "cache": false
+        //     })
+        //     .then(check_status)
+        //     .then(function(data) {
+        //         console.log("Server Response: ", data);
+        //     })
+        //     .catch(function(error) {
+        //         console.log("XHR Error: ", error);
+        //     });
 
     }
 

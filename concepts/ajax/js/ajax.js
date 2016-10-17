@@ -93,11 +93,31 @@
                 // make new xhr request
                 var xhr = new XMLHttpRequest();
 
+                // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState
+                // 0   UNSENT  Client has been created. open() not called yet.
+                // 1   OPENED  open() has been called.
+                // 2   HEADERS_RECEIVED    send() has been called, and headers and status are available.
+                // 3   LOADING Downloading; responseText holds partial data.
+                // 4   DONE    The operation is complete.
+
+                // xhr.readyState === 0 here
+                // set the xhr stage to unsent (init xhr)
+                xhr.stage = "unsent"; // http://stackoverflow.com/questions/21485545/is-there-a-way-to-tell-if-an-es6-promise-is-fulfilled-rejected-resolved
+
+                // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/onreadystatechange
+                // readystatechange wont fire when canceled with abort() method
+                xhr.addEventListener("readystatechange", function(e) {
+                    var stages = {
+                        "1": ";opened",
+                        "2": ";headers-received",
+                        "3": ";loading",
+                        "4": ";finished"
+                    };
+                    xhr.stage = xhr.stage + stages[xhr.readyState];
+                });
+
                 // add xhr to pool
                 if (id) xhr_pool[id] = xhr;
-
-                // set the xhr stage to pending (init xhr)
-                xhr.stage = "pending"; // http://stackoverflow.com/questions/21485545/is-there-a-way-to-tell-if-an-es6-promise-is-fulfilled-rejected-resolved
 
                 // wrap XHR in a Promise
                 return new Promise(function(resolve, reject) {
@@ -217,7 +237,10 @@
     function abort_xhr(xhr, id) {
         if (!xhr) return; // // return if no xhr request with the provided id exists
         xhr.abort(); // abort xhr
-        xhr.stage = xhr.stage + ";aborted"; // update the stage
+        // append abortion stage.
+        // aborted-tried:  request fulfilled and could not abort but aborting was tried.
+        // aborted-worked: request successfully aborted
+        xhr.stage = xhr.stage + (-~xhr.stage.indexOf(";fulfilled") ? ";aborted-tried" : ";aborted-worked"); // update the stage
         delete xhr_pool[id]; // remove xhr from pool
         return xhr; // return the xhr
     }
