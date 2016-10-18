@@ -15,6 +15,7 @@ A lightweight JavaScript XHR wrapper.
 [Example Usage Concept](#example-usage-concept)  
 * [GET](#example-get)  
 * [POST](#example-post)  
+* [Form Upload](#example-form-upload)  
 * [File Upload](#example-file-upload)  
 
 [TODO](#todo)  
@@ -56,35 +57,46 @@ var ajax = new Ajax({
     // {String: REQUIRED} 
     // The resource URL.
     "url": "test.php?verified=false", 
+    "url": "test.php",
 
     // {String: REQUIRED} 
     // The call method type.
-    "method": "GET|POST|PUT|DELETE",
+    "method": "GET|POST|PUT|DELETE|HEAD|OPTIONS",
 
-    // {Boolean: REQUIRED, DEFAULT: true} 
+    // {Boolean: OPTIONAL, DEFAULT: true}
+    // Flag indicates whether files are being uploaded to let browser 
+    // determine the correct contentType + determine boundaries
     // Set to true when uploading files.
     "files": false|true,
 
-    // {Boolean: REQUIRED, DEFAULT: true} 
+    // {Boolean: OPTIONAL, DEFAULT: true}
     // Flag indicating whether call needs to be cached.
     "cache": false|true,
 
-    // {Boolean: REQUIRED, DEFAULT: true} 
+    // {Boolean: OPTIONAL, DEFAULT: true}
     // Flag indicating whether call needs to be async or sync.
     "async": false|true,
 
     // {String: OPTIONAL} 
-    // The content type.
+    // The content type. Left blank for file uploads to let browser 
+    // determine correct contentType + boundaries
     "contentType": "application/x-www-form-urlencoded;charset=UTF-8", // default
 
     // {Boolean: OPTIONAL, DEFAULT: true} 
     // Flag indicating whether data needs to be parsed.
+    // Setting flag to true will process String or Object and properly 
+    // encodes with encodeURIComponent
+    // Anything but Strings and Object do not get processed. (i.e. FormData)
     "processData": false|true,
 
     // {String|Object|FormData: OPTIONAL}
-    "data": "tom nancy",
-    "data": {"name": "tom nancy"},
-    "data": new FormData(),
+    "data": "tom nancy", // String => gets processed by default
+    "data": {"name": "tom nancy"}, // Object => gets processed by default
+    "data": new FormData(), // FormData
+
+    // {Boolean: OPTIONAL, DEFAULT: true}
+    // Flag indicating whether CORS needs to be used
+    "credentials": false|true,
 
     // {String: OPTIONAL} 
     // ID is used to reference call if needed to cancel. 
@@ -124,7 +136,7 @@ function check_status(xhr) {
 ### Example Usage Concept
 
 <a name="example-get"></a>
-**GET Example** &mdash; Example showing a GET Ajax call.
+**GET** &mdash; Example showing a GET Ajax call.
 
 ```js
 var ajax = new Ajax({
@@ -143,7 +155,7 @@ ajax.catch(function(error) {
 ```
 
 <a name="example-post"></a>
-**POST Example** &mdash; Example showing a POST Ajax call.
+**POST** &mdash; Example showing a POST Ajax call.
 
 ```js
 var ajax = new Ajax({
@@ -161,8 +173,30 @@ var ajax = new Ajax({
     });
 ```
 
+<a name="example-form-upload"></a>
+**Form Upload** &mdash; Example shows how to upload an HTML form to `PHP` script.
+```js
+// get form element from DOM
+var form = document.getElementById("form");
+
+// upload files to server
+var ajax = new Ajax({
+            "method": "POST",
+            "url": "formsubmit.php",
+            "data": new FormData(form)
+        })
+        .then(check_status)
+        .then(function(data) {
+            console.log("Server Response: ", data);
+            form.reset(); // reset form
+        })
+        .catch(function(error) {
+            console.log("XHR Error: ", error);
+        });
+```
+
 <a name="example-file-upload"></a>
-**File Upload Example** &mdash; Example shows how to upload multiple files to `PHP` script.
+**File Upload** &mdash; Example shows how to upload multiple files to `PHP` script.
 
 ```html
 <form id="form" enctype="multipart/form-data">
