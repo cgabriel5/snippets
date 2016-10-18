@@ -39,8 +39,6 @@ A lightweight JavaScript XHR wrapper.
 ### Access Library
 
 ```js
-var Ajax = Ajax;
-// or
 var Ajax = window.Ajax;
 ```
 
