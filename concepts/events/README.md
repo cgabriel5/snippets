@@ -2,6 +2,24 @@
 
 A lightweight JavaScript library for handling events.
 
+##### Table of Contents
+
+[What It Does](#what-it-does)  
+[Add To Project](#add-to-project)  
+[Access Library](#access-library)  
+[API Method Table](#api-method-table)  
+[Handlers](#handlers)  
+[Delegation](#delegation)  
+[Listen To Event](#listen-to-event)  
+[Stop Listening To Event](#stop-listening-to-event)  
+[Disable Event](#disable-event)  
+[Enable Event](#enable-event)  
+[Update Event](#update-event)  
+[Example Usage Concept](#example-usage-concept)  
+[TODO](#todo)  
+[License](#license)  
+
+<a name="what-it-does"></a>
 ### What It Does
 
 * Listens/Removes events
@@ -9,12 +27,14 @@ A lightweight JavaScript library for handling events.
 * Updatable events
 * Limit handler function execution
 
+<a name="add-to-project"></a>
 ### Add To Project
 
 ```html
 <script src="my_js_directory_path/eventr.js"></script>
 ```
 
+<a name="access-library"></a>
 ### Access Library
 
 ```js
@@ -23,6 +43,7 @@ var eventr = eventrjs;
 var eventr = window.eventrjs;
 ```
 
+<a name="api-method-table"></a>
 ### API Method Table
 
 Method | Function
@@ -35,6 +56,7 @@ Method | Function
 **enable** | Enables a disabled event
 **update** | Updates an event (i.e. change fire count)
 
+<a name="handlers"></a>
 ### Handlers
 
 **event.handlers** &mdash; Stores event handlers. Event handlers must be stored before listening to any events.
@@ -63,6 +85,7 @@ e.eventrAnchor | The element which the event is attached to
 e.eventrDelegate | Only provided when delegation filters are used. If present same as `e.eventrAnchor` otherwise `null`
 e.eventrCurrentTarget | The element that started the event
 
+<a name="delegation"></a>
 ### Delegation
 
 **event.filters** `event-delegation` &mdash; Stores delegation filters if delegation is needed.
@@ -93,7 +116,8 @@ eventr.filters({
 });
 ```
 
-### Listen To An Event
+<a name="listen-to-event"></a>
+### Listen To Event
 
 **eventr.events.add** &mdash;  `syntax` Listens to an added event.
 
@@ -127,7 +151,8 @@ eventr.events.add({
 });
 ```
 
-### Stop Listening To An Event
+<a href="stop-listening-to-event"></a>
+### Stop Listening To Event
 
 **eventr.events.remove** &mdash;  `syntax` Remove an event from eventrjs.
 
@@ -143,7 +168,8 @@ eventr.events.remove({
 });
 ```
 
-### Disable An Event
+<a href="disable-event"></a>
+### Disable Event
 
 **eventr.events.disable** &mdash;  `syntax` Disables an event until enabled.
 
@@ -152,7 +178,8 @@ eventr.events.remove({
 eventr.events.disable(String: eventID);
 ```
 
-### Enable An Event
+<a href="enable-event"></a>
+### Enable Event
 
 **eventr.events.enable** &mdash;  `syntax` Enables a disabled event.
 
@@ -161,7 +188,8 @@ eventr.events.disable(String: eventID);
 eventr.events.enable(String: eventID);
 ```
 
-### Update An Event
+<a name="update-event"></a>
+### Update Event
 
 **eventr.events.update** &mdash;  `syntax` Updates an event (i.e. change fire count).
 
@@ -179,6 +207,7 @@ eventrjs.events.update({
 });
 ```
 
+<a name="example-usage-concept"></a>
 ### Example Usage Concept
 
 
@@ -241,11 +270,13 @@ setTimeout(function() {
 }, 10000);
 ```
 
+<a name="todo"></a>
 ### TODO
 
 - [ ] Add more functionality to update() method (allow for updatable handlers, filters)
 - [ ] Add throttle/debounce capability
 
+<a name="license"></a>
 ## License
 
 This project uses the [MIT License](https://github.com/cgabriel5/snippets/blob/master/concepts/events/LICENSE.txt).
