@@ -4,7 +4,7 @@
  * @param  {Boolean} to_lowercase  [Flag indicating whether to return lowercase HEX.]
  * @return {String}                [The HEX color equivalent.]
  */
-rgb2hex = function(rgb, to_lowercase) {
+var rgb2hex = function(rgb, to_lowercase) {
 
     //parse the rgb
     var parts = rgb.replace(/rgba?|\(|\)|;/g, "").split(","),
