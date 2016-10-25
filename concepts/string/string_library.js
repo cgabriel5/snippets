@@ -28,6 +28,17 @@ var str = String.prototype,
 
 var middleware = {
 
+    /**
+     * @description [Runs checks on the provided method to see if it is valid and
+     *               checks that the provided paramaters follow the signature of
+     *               of the provided child method.]
+     * @param  {String} parent_method [The parent method being used.]
+     * @param  {String} child_method  [The child method being used.]
+     * @param  {ArgumentsObject} args  [The user passed in arguments/paramaters.]
+     * @param  {Object} _             [A reference to the string object.]
+     * @param  {Array} child_methods  [The list of child methods the parent method has.]
+     * @return {String}               [The final string after running the child method.]
+     */
     "scan": function(parent_method, child_method, args, _, child_methods) {
 
         // skip checks when using ! or @ symbols
@@ -51,6 +62,14 @@ var middleware = {
 
     },
 
+    /**
+     * @description [Checks to see if the provided child method is indeed valid. If not an
+     *               error is thrown.]
+     * @param  {String} parent_method [The parent method being used.]
+     * @param  {String} child_method  [The child method being used.]
+     * @param  {Array} child_methods  [The list of child methods the parent method has.]
+     * @return {Null|Error}           [If method does not pass checks an Error is thrown.]
+     */
     "method_check": function(parent_method, child_method, child_methods) {
 
         // child_method must be provided; cannot be empty
@@ -63,7 +82,14 @@ var middleware = {
 
     },
 
-    // checks that the provided arguments are of specified types
+    /**
+     * @description [Checks to see if provided arguments are of the proper child method
+     *               signature type.]
+     * @param  {ArgumentsObject} args [The user passed in arguments/paramaters.]
+     * @param  {Array} child_methods  [The list of child methods the parent method has.]
+     * @return {Null|Error}           [If a parameter does not follow the child method
+     *                                 signature an Error is thrown.]
+     */
     "argument_type_check": function(args, child_methods) {
 
         var child_method = args[0].toLowerCase();
@@ -149,6 +175,14 @@ var middleware = {
 
     },
 
+    /**
+     * @description [Runs the child method on the provided string.]
+     * @param  {String} parent_method [The parent method being used.]
+     * @param  {String} child_method  [The child method being used.]
+     * @param  {Object} _             [A reference to the string object.]
+     * @param  {ArgumentsObject} args [The user passed in arguments/paramaters.]
+     * @return {String}               [The final string after running the child method.]
+     */
     "execute": function(parent_method, child_method, _, args) {
 
         // finally, run function
