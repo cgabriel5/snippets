@@ -1247,8 +1247,8 @@ win.methods_js = {
             //     return [string, '0'];
             // }
         },
-        'words': function(string, seperator) {
-            return string.trim().split(seperator || (/[\s\xa0]+/));
+        'words': function(string, args) {
+            return string.trim().split(args[1] || (/[\s\xa0]+/));
         }
     },
     'chomp': {
