@@ -42,7 +42,7 @@ win.methods_js = {
     },
     'convert': {
         'num::range': function(string) {
-            // console.log('rangeed')
+
             var parts = string.split('::'),
                 start = +parts[0],
                 end = +parts[1],
@@ -92,7 +92,7 @@ win.methods_js = {
                     var number_part = final_oct.join('').str_replace('!left', '0', ''),
                         sign = (((number_part === '' && dec !== '0') || is_neg) ? '-' : ''),
                         seperator = (dec === '0' ? '' : '.');
-                    // console.log(1, sign, 2, number_part, 3, seperator, 4, (dec === '0' ? '' : dec))
+
                     var final_num = sign.str_build('!join', (number_part === '' ? '0' : number_part), seperator, (dec === '0' ? '' : dec));
                     return ((final_num === '' || final_num === '-0') ? '0' : final_num);
                 }
@@ -142,7 +142,7 @@ win.methods_js = {
                     var number_part = num.str_replace('!left', '0', ''),
                         sign = (((number_part === '' && dec !== '0') || is_neg) ? '-' : ''),
                         seperator = (dec === '0' ? '' : '.');
-                    // console.log(1, sign, 2, number_part, 3, seperator, 4, (dec === '0' ? '' : dec))
+
                     var final_num = sign.str_build('!join', (number_part === '' ? '0' : number_part), seperator, (dec === '0' ? '' : dec));
                     return ((final_num === '' || final_num === '-0') ? '0' : final_num);
                 }
@@ -196,7 +196,7 @@ win.methods_js = {
                     var number_part = final_hex.join('').str_replace('!left', '0', ''),
                         sign = (((number_part === '' && dec !== '0') || is_neg) ? '-' : ''),
                         seperator = (dec === '0' ? '' : '.');
-                    // console.log(1, sign, 2, number_part, 3, seperator, 4, (dec === '0' ? '' : dec))
+
                     var final_num = sign.str_build('!join', (number_part === '' ? '0' : number_part), seperator, (dec === '0' ? '' : dec));
                     return ((final_num === '' || final_num === '-0') ? '0' : final_num);
                 }
@@ -281,7 +281,7 @@ win.methods_js = {
                     var number_part = num.str_replace('!left', '0', ''),
                         sign = (((number_part === '' && dec !== '0') || is_neg) ? '-' : ''),
                         seperator = (dec === '0' ? '' : '.');
-                    // console.log(1, sign, 2, number_part, 3, seperator, 4, (dec === '0' ? '' : dec))
+
                     var final_num = sign.str_build('!join', (number_part === '' ? '0' : number_part), seperator, (dec === '0' ? '' : dec));
                     return ((final_num === '' || final_num === '-0') ? '0' : final_num);
                 }
@@ -311,7 +311,7 @@ win.methods_js = {
                     final_oct = [];
                 for (var i = 0, l = groups.length; i < l; i++) {
                     // https://www.youtube.com/watch?v=9jho2TkH6AU
-                    // console.log( groups[i] , octal_equivalents[ groups[i] ])
+
                     final_oct.push(octal_equivalents[groups[i]]);
                 }
                 if (!is_number) { // the decimal
@@ -323,7 +323,7 @@ win.methods_js = {
                     var number_part = final_oct.join('').str_replace('!left', '0', ''),
                         sign = (((number_part === '' && dec !== '0') || is_neg) ? '-' : ''),
                         seperator = (dec === '0' ? '' : '.');
-                    // console.log(1, sign, 2, number_part, 3, seperator, 4, (dec === '0' ? '' : dec))
+
                     var final_num = sign.str_build('!join', (number_part === '' ? '0' : number_part), seperator, (dec === '0' ? '' : dec));
                     return ((final_num === '' || final_num === '-0') ? '0' : final_num);
                 }
@@ -340,7 +340,7 @@ win.methods_js = {
                 number = parts[0],
                 decimal = parts[1],
                 is_negative = parts[2];
-            // console.log(number, decimal)
+
             var f = function(num, is_number, dec, is_neg) {
                 if (is_number) {
                     num = num.split('');
@@ -368,7 +368,7 @@ win.methods_js = {
                     num = (final_number + '').str_chomp('!left', '0.');
                     // num = (final_number+'').str_split('!num')[1];
                 }
-                // console.log('inside mane', num)
+
                 if (!is_number) { // the decimal
                     var decimal_part = num;
                     return (decimal_part.str_replace('!all', {
@@ -378,7 +378,7 @@ win.methods_js = {
                     var number_part = num.str_replace('!left', '0', ''),
                         sign = (((number_part === '' && dec !== '0') || is_neg) ? '-' : ''),
                         seperator = (dec === '0' ? '' : '.');
-                    // console.log(1, sign, 2, number_part, 3, seperator, 4, (dec === '0' ? '' : dec))
+
                     var final_num = sign.str_build('!join', (number_part === '' ? '0' : number_part), seperator, (dec === '0' ? '' : dec));
                     return ((final_num === '' || final_num === '-0') ? '0' : final_num);
                 }
@@ -433,7 +433,7 @@ win.methods_js = {
                     var number_part = final_hex.join('').str_replace('!left', '0', ''),
                         sign = (((number_part === '' && dec !== '0') || is_neg) ? '-' : ''),
                         seperator = (dec === '0' ? '' : '.');
-                    // console.log(1, sign, 2, number_part, 3, seperator, 4, (dec === '0' ? '' : dec))
+
                     var final_num = sign.str_build('!join', (number_part === '' ? '0' : number_part), seperator, (dec === '0' ? '' : dec));
                     return ((final_num === '' || final_num === '-0') ? '0' : final_num);
                 }
@@ -446,11 +446,10 @@ win.methods_js = {
             return string.str_convert('!hex::bin', error_limit).str_convert('!bin::oct', error_limit);
         },
         'hex::dec': function(string, args) {
-            // console.log(222222, string);
+
             var error_limit = args[1];
             // convert to binary then from binary to dec
-            // console.log('>>1111>', string.str_convert('!hex::bin', error_limit))
-            // console.log('>>2222>', string.str_convert('!bin::dec', error_limit))
+
             return string.str_convert('!hex::bin', error_limit).str_convert('!bin::dec', error_limit);
         },
         // str.str_(\w+)_2_(\w+) = function\(
@@ -491,27 +490,25 @@ win.methods_js = {
             return 'rgba('.str_build('!join', (r.str_convert('!hex::dec') || '0'), ',', (g.str_convert('!hex::dec') || '0'), ',', (b.str_convert('!hex::dec') || '0'), ',', ~~((a.str_convert('!hex::dec') * 1) / 255), ')');
         },
         'rgb::hex': function(string, args) {
-            // console.log('>>>>>>>>>>>>>11', string, args);
+
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
             if (type.str_is('!in', 'String')) {
                 // parse the string into rgb parts
                 var rgb = string.str_parse('!rgb');
-                // console.log(rgb);
+
                 if (!rgb) return NaN; // could not parse the supplied rgb string
             } else if (type.str_is('!in', 'Array')) {
                 var rgb = string;
             }
-            // console.log('>>>>>>>>>22', rgb);
-            // console.log(rgb, rgb[0])
+
             var r = rgb[0].str_convert('!dec::hex'),
                 g = rgb[1].str_convert('!dec::hex'),
                 b = rgb[2].str_convert('!dec::hex');
             if (r && r.length === 1) r = '0' + r;
             if (g && g.length === 1) g = '0' + g;
             if (b && b.length === 1) b = '0' + b;
-            // console.log( (string.str_dec_2_hex(r) || '00'), (string.str_dec_2_hex(g) || '00'), (string.str_dec_2_hex(b) || '00') );
-            // console.log('>>>>>>>>>>>' , (r || '00') , (g || '00') , (b || '00') );
+
             return ((args[1] /*add_hash*/ ) ? '#' : '').str_build('!join', (r || '00'), (g || '00'), (b || '00')); //.replace(/\./g, ''); BUG HERE
         },
         // take the rgb value e.g. 221 and divide by 16 => (221/16)
@@ -521,9 +518,9 @@ win.methods_js = {
         // for example, 221 - ((221/16) * 16)
         // then use the remainder to find the second value in the list
         'hex::rgb': function(string) {
-            // console.log('111', string);
+
             string = string.str_chomp('!left', '#');
-            // console.log('222', string);
+
             // hex string must be either 3 or 6 chars in length
             if (!string.str_length('!exact', 6)) {
                 // must be 3 then
@@ -532,10 +529,10 @@ win.methods_js = {
             // format the string if length is 3
             if (string.str_length('!exact', 3)) string = string.str_convert('!hex::six');
             // chop into groups of 2
-            // console.log('>>>>>>>>111', string);
+
             var groups = string.str_split('!chunk', 2);
             // var groups = string.toString().str_split('!chunk', 2);
-            // console.log('>>>', groups);
+
             return ('rgba('.str_build('!join', groups[0].str_convert('!hex::dec'), ',', groups[1].str_convert('!hex::dec'), ',', groups[2].str_convert('!hex::dec'), ',1)'));
         },
         // // http://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
@@ -642,8 +639,7 @@ win.methods_js = {
             }
             // hue must be multiplied by 360 => The hue is the proportion of the distance around the edge of the hexagon which passes through the projected point, originally measured on the range [0, 1] but now typically measured in degrees [0°, 360°].
             // Saturation and Luminance are measured in percentages so simply multiply by 100
-            // console.log(h, s, l);
-            // console.log(string.str_build('!join', 'hsl(', (h*360), ',', (s*100), '%,', (l*100), '%)') );
+
             return 'hsl('.str_build('!join', (h * 360), ',', (s * 100), '%,', (l * 100), '%)');
         },
         /**
@@ -660,7 +656,7 @@ win.methods_js = {
         'hsl::rgb': function(string) {
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
-            // console.log(type, '>>>>>>>>>>>>>>>>>>______________', string)
+
             if (type.str_is('!in', 'String')) {
                 // parse the string into rgb parts
                 var hsl = string.str_parse('!hsl');
@@ -671,7 +667,7 @@ win.methods_js = {
             var h = (+hsl[0]) / 360,
                 s = (+hsl[1]) / 100,
                 l = (+hsl[2]) / 100;
-            // console.log(h, s, l);
+
             var r, g, b;
             if (s == 0) {
                 r = g = b = l; // achromatic
@@ -742,8 +738,7 @@ win.methods_js = {
             }
             // hue must be multiplied by 360 => The hue is the proportion of the distance around the edge of the hexagon which passes through the projected point, originally measured on the range [0, 1] but now typically measured in degrees [0°, 360°].
             // Saturation and Luminance are measured in percentages so simply multiply by 100
-            // console.log(h, s, v);
-            // console.log(string.str_build('!join', 'hsv(', (h*360), ',', (s*100), '%,', (v*100), '%)') );
+
             return 'hsv('.str_build('!join', (h * 360), ',', (s * 100), '%,', (v * 100), '%)');
         },
         /**
@@ -760,7 +755,7 @@ win.methods_js = {
         'hsv::rgb': function(string) {
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
-            // console.log(type)
+
             if (type.str_is('!in', 'String')) {
                 // parse the string into rgb parts
                 var hsv = string.str_parse('!hsv');
@@ -771,7 +766,7 @@ win.methods_js = {
             var h = (+hsv[0]) / 360,
                 s = (+hsv[1]) / 100,
                 v = (+hsv[2]) / 100;
-            // console.log(h, s, v);
+
             var r, g, b;
             var i = Math.floor(h * 6);
             var f = h * 6 - i;
@@ -802,62 +797,59 @@ win.methods_js = {
             // return [r * 255, g * 255, b * 255];
         },
         'hex::lighten': function(string, args) {
-            // console.log('>>>>>>>>>>>>>>>>////lighten');
+
             var to_rgb = args[2] || false,
                 percent_amount = (args[1] || 0);
             // turn into rgb
             // if (!to_rgb) string = string.str_convert('!hex::rgb');
             string = string.str_convert('!hex::rgb');
-            // console.log('>>>>>>>>>>>22222222', string)
+
             // turn rgb into hsl
             string = string.str_convert('!rgb::hsl');
-            // console.log('>>>>>>>>>>>233333333', string)
+
             // parse the hsl
-            // console.log('>>>>>>>>>>>22', string)
+
             string = string.str_parse('!hsl');
             // turn back to rgb
             var new_percent = (string[2] * 1 + percent_amount);
-            // console.log('44444', string[2], string, percent_amount, new_percent);
-            // console.log(string[0], ',', string[1], '%,', (new_percent > 100 ? 100 : new_percent), '%)')
-            // console.log('hsl('.str_build('!join', string[0], ',', string[1], '%,', (new_percent > 100 ? 100 : new_percent), '%)'))
+
             string = 'hsl('.str_build('!join', string[0], ',', string[1], '%,', (new_percent > 100 ? 100 : new_percent), '%)').str_convert('!hsl::rgb');
             // if (to_rgb) return string;
             // finally turn back to hex
             return (to_rgb ? '#' : '') + string.str_convert('!rgb::hex');
         },
         'hex::darken': function(string, args) {
-            // console.log('>>>>>>>>>>>>>>>>////');
+
             var to_rgb = args[2],
                 percent_amount = (args[1] || 0);
-            // console.log('here mane');
-            // console.log(111, string);
+
             // turn into rgb
             // if (!to_rgb) string = string.str_convert('!hex::rgb'); // console.log(222, string);
             string = string.str_convert('!hex::rgb'); // console.log(222, string);
-            // console.log('hex::rgb', string);
+
             // turn rgb into hsl
             string = string.str_convert('!rgb::hsl'); // console.log(333, string);
-            // console.log('rgb::hsl', string);
+
             // parse the hsl
             string = string.str_parse('!hsl'); // console.log(444, string);
-            // console.log('hsl::parse', string);
+
             // turn back to rgb
-            // console.log('>>>', string[2]*1, percent_amount);
+
             var new_percent = (string[2] * 1 - percent_amount);
-            // console.log('new_percent', new_percent)
+
             string = 'hsl('.str_build('!join', string[0], ',', string[1], '%,', (new_percent < 0 ? 0 : new_percent), '%)').str_convert('!hsl::rgb'); // console.log(555, string);
-            // console.log('new_percent', new_percent, string, to_rgb)
+
             // if (to_rgb) return string;
             // finally turn back to hex
-            // console.log(666, string.str_rgb_2_hex(string));
+
             return (to_rgb ? '#' : '') + string.str_convert('!rgb::hex');
         },
         'rgb::lighten': function(string, args) {
-            // console.log('>>>', string);
+
             return string.str_convert('!rgb::hex').str_convert('!hex::lighten', args[1] /*percent_amount*/ ).str_convert('!hex::rgb');
         },
         'rgb::darken': function(string, args) {
-            // console.log('>>>', string, window.dtype(string));
+
             return string.str_convert('!rgb::hex').str_convert('!hex::darken', args[1] /*percent_amount*/ ).str_convert('!hex::rgb');
         },
         // https://en.wikipedia.org/wiki/HWB_color_model
@@ -1032,8 +1024,7 @@ win.methods_js = {
     },
     'count': {
         '/': function(string, args) { // needle) {
-            console.log('>>>', arguments)
-                // console.log('inside mnae')
+
             return string.split(args[1]).length - 1;
         }
     },
@@ -1259,7 +1250,7 @@ win.methods_js = {
             return (dtype(prefix, 'string') && string.indexOf(prefix) === 0) ? string.slice(prefix.length) : (dtype(prefix, 'number') ? string.slice(Math.abs(prefix)) : string);
         },
         'right': function(string, args) { //suffix) {
-            // console.log('here', string, suffix)
+
             // if the prefix is a number we just chomp back those x chars
             // else if string we remove that prefix fromt the string
             var suffix = args[1];
@@ -1365,7 +1356,7 @@ win.methods_js = {
         'between': function(string, args) { // string, left, right, recurs_string) {
             var left = args[1],
                 right = args[2];
-            // console.log('here mane');
+
             if (typeof left === 'string' && typeof right === 'string') {
                 var string = args[3] || string;
                 // get the left position
@@ -1393,7 +1384,7 @@ win.methods_js = {
         },
         'left': function(string, args) { // , n) {
             var n = args[1];
-            // console.log('left', string, n)
+
             return (n > 0) ? string.substr(0, n) : string.str_grab('!left', -n);
         },
         'right': function(string, args) { // n) {
@@ -1403,7 +1394,7 @@ win.methods_js = {
     },
     'index': {
         'left': function(string, args) { // needle, all_indices) {
-            // console.log('fsd')
+
             if (!args[2]) return string.indexOf(args[1]);
             var indices = [],
                 i = -1;
@@ -1526,7 +1517,7 @@ win.methods_js = {
             // return (string.str_is('!numeric') /*&& string * 1 % 1 !== 0*/) ? true : false;
         },
         'domain': function(string) {
-            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', string);
+
             // a legal domain cannot contain `~!@#$%^&*()_+=[]{}|\;:'",.<>/?
             // cannot start or end with a hyphen/dash but it can contain inner hyphens/dashes
             return (string && string.str_grab('!left', 1) !== '-' && string.str_grab('!right', 1) !== '-' && !string.str_is('!special_string', ['-'])) ? true : false;
@@ -1545,14 +1536,14 @@ outside the Latin alphabet.
             if (string.length <= 4 || (/\s\xa0/g).test(string) || (/\.\.+/g).test(string) || string.str_is('!sewith', ['.'])) return false;
             // must have a valid tld and tld must be the at the end of the string
             var tld = string.substring(string.lastIndexOf('.'), string.length);
-            // console.log('the tld mane', tld)
+
             // check if the tld is indeed valid
             if (win.suffix_list[tld.charAt(1).toLowerCase()].indexOf(tld) === -1) return false; // invalid tld
             // split the string at the @
             var parts = string.split('@'),
                 username = parts[0],
                 servername = parts[1].split('.');
-            // console.log(parts, username.length)
+
             // there must only be two parts, else there are more than one '@'
             // and each part cannot be empty
             if (!username.length || !servername.length || parts.length !== 2) return false;
@@ -1624,12 +1615,12 @@ outside the Latin alphabet.
                     if (ip6.str_grab('!right', 1) === ':' && ip6.str_grab('!right', 2) !== '::') ip6 = ip6.str_chomp('!right', ':');
                     var ip4 = string.substring(last_colon_index + 1, string.length);
                     // check that the ip4 is in valid format
-                    // console.log('---->', ip4);
+
                     if (!ip4.str_is('!ip')) return false; //'invalid ip4';
                 }
                 // now we check the ip6
                 // check for :: compression
-                // console.log('>>>', ip6)
+
                 var compression_count = ip6.str_count('/', '!::');
                 if (compression_count > 1) return false; //too much compression
                 // if compression exists we check for length, there should be only 8
@@ -1660,22 +1651,22 @@ outside the Latin alphabet.
                     if (l !== 8) return false;
                 }
                 // now we check that each part has valid chars
-                // console.log('>>>', parts, l)
+
                 for (var i = 0; i < l; i++) {
                     // check if they are a-f0-9 only
-                    // console.log(4444, parts[i])
+
                     if (parts[i].length >= 5 || (/[^a-f0-9]+/gi).test(parts[i])) {
                         return false; // illegal char found
                     }
                 }
                 // everything has passed mane
-                // console.log('43534534')
+
                 return true;
             } else {
                 // v4
                 // split into parts
                 string = string.split('.');
-                // console.log('33333>>>', string.length, string)
+
                 if (string.length !== 4) return false; // need to have 4 parts
                 // check if they are all numbers
                 if (!string.join('').str_is('!numeric')) return false; // all parts need to be numbers
@@ -1785,7 +1776,7 @@ outside the Latin alphabet.
                 //e = b.shift();
                 i = a[l];
                 e = b[l];
-                // console.log('>>>', i, e)
+
                 type1 = dtype(i);
                 type2 = dtype(e);
                 if (type1 === type2) {
@@ -1880,7 +1871,7 @@ outside the Latin alphabet.
             // screen the forst part ==> data:image/png;base64
             // split the first part
             first = first.split(/:|;/);
-            // console.log(222, parts, first, second);
+
             // must start with data:
             if (first[0] !== 'data') return false;
             // second part must be a legit mime type
@@ -1977,8 +1968,7 @@ outside the Latin alphabet.
             return Array((args[1] || 0) + 1).join(args[2] || ' ') + string;
         },
         'right': function(string, args) { //times, character) {
-            // console.log
-            // console.log('PADDING MANE', string, args)
+
             // var times = args[1], character = args[2];
             // var string = this;
             //http://stackoverflow.com/questions/1877475/repeat-character-n-times
@@ -2006,33 +1996,31 @@ outside the Latin alphabet.
         },
         'rgb': function(string, args) { // type) {
             var type = args[1];
-            // console.log('sdfsd')
+
             // must start with rgb and end with a )
             if (!string.str_is('!swith', ['rgb', 'hsl', 'hsv', 'hwb']) || !string.str_is('!ewith', [')', ');'])) return 11;
             // split by the comma
             // rgba(0, 1, 1, 1)
             // length must be 3 or 4
             var parts = string.split(',');
-            // console.log('>>', parts)
-            // console.log('>>>>>>>>>>', parts.length.toString().str_length('!range', 3, 4) )
-            // console.log('>>>>>>>>>>', parts, parts.length )
+
             if (!parts.length.val('!range', 3, 4)) return 22;
             // go through each part
             // set the search term into the map
             // var r_map = {};
             // r_map[ (((!type) ? 'rgba?' : type) + '\\(|\\s') ] = '';
-            // console.log('>>>>>>>>>>>>>>>>>>111', (((!type) ? 'rgba?' : type) + '\\(|\\s'));
+
             // var _1 = parts[0].trim().str_replace('!all', r_map),
             var _1 = parts[0].trim().replace(new RegExp((((!type) ? 'rgba?' : type) + '\\(|\\s')), ''),
                 _2 = parts[1].trim().replace(/([\%|\s]+)?$/, ''),
                 _3 = parts[2].trim().replace(/([\%|\s]+)?\);?$/, ''),
                 _4 = (parts[3] || '').trim().replace(/([\s]+)?\);?$/, '');
-            // console.log('>?>?>?>?>?>?>?>?>?', _1, _2, _3, _4);
+
             var one = _1.str_is('!numeric');
             var two = _2.str_is('!numeric');
             var three = _3.str_is('!numeric');
             var four = (parts[3]) ? _4.str_is('!numeric') : true;
-            // console.log(_1, two)
+
             if (
                 (!one || !(+_1).val('!range', 0, 255)) || (!two || !(+_2).val('!range', 0, 255)) || (!three || !(+_3).val('!range', 0, 255)) || (!four || !(+_4).val('!range', 0, 255))) return 33;
             return [_1, _2, _3, (_4 || '1')];
@@ -2178,9 +2166,9 @@ outside the Latin alphabet.
                         var args = arguments,
                             ip_s_index, ff;
                         ip_match = args[0];
-                        // console.log('is it an ip mane', ip_match)
+
                         if (ip_match.length > 3 && S.is_ip(ip_match)) {
-                            // console.log(33333, ip_match)
+
                             ip = ip_match;
                             ip_s_index = args[args.length - 2];
                             ff = S.first_found(ip_match, ['://', '@']);
@@ -2190,7 +2178,7 @@ outside the Latin alphabet.
                                 ip_s_index = ip_s_index + ff.length;
                             }
                             ip_array.push(ip, ip_s_index, ip_regex_array[j][0]);
-                            // console.log(1111122222, ip_array)
+
                         }
                         return ip;
                     });
@@ -2352,16 +2340,16 @@ outside the Latin alphabet.
                         valid_subdomains = [],
                         invalid_sub;
                     // remove the first item if it is www from the array outside the loop
-                    // console.log('....................', url_parts);
+
                     if (url_parts[0] === 'www') url_parts.shift();
                     O.update({
                         'domain': null,
                         'subdomains': null
                     });
                     // get the domain which is the last item in the array
-                    // console.log('length mane111', url_parts);
+
                     var domain = url_parts.pop();
-                    // console.log('length mane', url_parts, domain);
+
                     // if no url_parts length at this point we might have somethin like 'http://www.google'
                     // where no tld was given
                     // if (!url_parts.length) {
@@ -2384,7 +2372,7 @@ outside the Latin alphabet.
                         // loop through the url parts and check for any invalidities
                         for (var j = 0, ll = url_parts.length; j < ll; j++) {
                             var current_subdomain = url_parts[j];
-                            // console.log('-----------------', current_subdomain, '------', url_parts);
+
                             if (current_subdomain.str_is('!domain')) valid_subdomains.push(current_subdomain);
                             else {
                                 invalid_sub = true;
@@ -2513,7 +2501,7 @@ outside the Latin alphabet.
         // this is the default and can either be a map or a single needle
         'all': function(string, args) { //, needle_replacement) {
             var needle_map = args[1];
-            // console.log(needle_map)
+
             // var replacement_map = {};
             // // if the provided input is a string and replacement...
             // // we turn it into a replacement_map
@@ -2528,12 +2516,12 @@ outside the Latin alphabet.
             return string.replace(new RegExp(
                 // we make sure to escape special characters
                 Object.keys(needle_map).map(function(character) {
-                    // console.log('////////////', character, 555,
+
                     // (specialChars.indexOf(character) !== -1) ? '\\' + character : character);
                     return (specialChars.indexOf(character) !== -1) ? '\\' + character : character;
                 }).join('|') //join all the needles with a pipe => /needle1|needle2/
                 , 'g'), function(key) {
-                // console.log('the key', key);
+
                 return needle_map[key];
             });
         },
@@ -2545,7 +2533,7 @@ outside the Latin alphabet.
         'right': function(string, args) { // needle, replacement) {
             var needle = args[1],
                 replacement = args[2];
-            // console.log('9090', string, needle, replacement)
+
             return string.replace(new RegExp('(' + needle + ')+$', 'g'), (replacement || ''));
         }
     },
@@ -2565,7 +2553,7 @@ outside the Latin alphabet.
             return string.replace(/[^a-z\d\s\xa0]+/gi, '').replace(/\s+/g, ' ');
         },
         'tags': function(string, args) { /*tag_type::args[1]*/
-            // console.log('tag_type', tag_type, args);
+
             var tag_type = args[1];
             return (tag_type) ? string.replace(new RegExp('<(/)?(' + tag_type + ')>', 'gi'), '') : string.replace(/\<(\/)?[a-z]+\>/gi, '');
             // return (tag_type) ? string.replace(new RegExp('<\(/\)?' + tag_type + '>', 'gi'), '') : string.replace(/\<(\/)?[a-z]+\>/gi, '');
@@ -2594,7 +2582,7 @@ outside the Latin alphabet.
     },
     'truncate': {
         'by_chars': function(string, args) { // args[1]::char_count, args[2]::ending
-            // console.log('>>', args);
+
             var substr = string.substr(0, args[1]),
                 ending = args[2] || '...';
             var next_char = string[args[1]];
@@ -2636,11 +2624,11 @@ outside the Latin alphabet.
             return (string <= args[1]) ? true : false;
         },
         'range': function(string, args) {
-            // console.log('>>>>>>>>>>>>', args, string, window.dtype(string), string.prototype)
+
             return (string.val('min', args[1]) && string.val('max', args[2])) ? true : false;
         },
         'exact': function(string, args) {
-            // console.log('exact()', string, args, string === args[1], window.dtype(string), window.dtype(args[1]))
+
             return (string === args[1]) ? true : false;
         },
         'list': function(string, args) {
