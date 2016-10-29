@@ -304,6 +304,9 @@ test.replace(/\s|\n/g, "*"); // "This*is*some*text*!"
 // checks if string is really a string
 "string".str_is("string"); // true
 
+// checks if string includes any special characters
+"#hashtag".str_is("special_string", ["#"], false); // false
+"#hashtag".str_is("special_string", [], false); // true
 
 "array": null, // ????
 "arguments": null, // ???
@@ -315,7 +318,6 @@ test.replace(/\s|\n/g, "*"); // "This*is*some*text*!"
 "rgb": null, // ????? need to look back on the colors*****
 "ip": null, // ???
 "leap_yr": null, // ???
-"special_string": "1?,array;2?,boolean;", // ????
 "nan": null, // ???
 "null": null, // ???
 "number": null, // ???
