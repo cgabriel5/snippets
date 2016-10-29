@@ -1700,11 +1700,11 @@ outside the Latin alphabet.
         'lower': function(string) {
             return string.replace(/[a-z]/g, '') === '';
         },
-        'special_string': function(string, args) { // allowed, no_numbers) {
+        'special_string': function(string, args) { // exclude_characters, check_for_numbers) {
             var special_chars = ('`~!@#$%^&*()-_=+[]{}\\|;:\'\",.<>/? ' + ((args[2]) ? '0123456789' : '')).split('');
-            allowed = args[1] || [];
-            for (var i = 0, l = allowed.length; i < l; i++) {
-                var remove_index = special_chars.indexOf(allowed[i]);
+            var exclude_characters = args[1] || [];
+            for (var i = 0, l = exclude_characters.length; i < l; i++) {
+                var remove_index = special_chars.indexOf(exclude_characters[i]);
                 if (remove_index > -1) special_chars.splice(remove_index, 1);
             }
             // now check if the string has any special chars
