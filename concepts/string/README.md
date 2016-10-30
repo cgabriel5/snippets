@@ -27,7 +27,7 @@ Expands the String.prototype with needed string functionality.
 // chomps "some" from the left of string
 "something.jpg".str_chomp("left", "some"); // "thing.jpg"
 // if provided substring is not found at the left string
-// is left untouch
+// is left untouched
 "something.jpg".str_chomp("left", "somE"); // "something.jpg"
 // chomps the first 3 chars from the left of string
 "something.jpg".str_chomp("left", 3); //"ething.jpg"
@@ -35,7 +35,7 @@ Expands the String.prototype with needed string functionality.
 // chomps "jpg" from the right of string
 "something.jpg".str_chomp("right", "jpg"); // "something."
 // if provided substring is not found at the right string
-// is right untouch
+// is right untouched
 "something.jpg".str_chomp("right", "JPG"); // "something.jpg"
 // chomps the first 3 chars from the right of string
 "something.jpg".str_chomp("right", 3); // "something."
@@ -168,7 +168,7 @@ test.replace(/\s|\n/g, "*"); // "This*is*some*text*!"
 "yesWeCan".str_convert("::under"); //"yes_we_can"
 ```
 
-**String.str_count** &mdash; Count the occurances of a substring. 
+**String.str_count** &mdash; Count the occurrences of a substring. 
 
 ```js
 "1 2 3 4 5 1 2 1".str_count("/", "1"); // 3
@@ -443,7 +443,7 @@ test.replace(/\s|\n/g, "*"); // "This*is*some*text*!"
 "   This    is       some           text.   ".str_trim("inner"); // "   This is some text.   "
 ```
 
-**String.str_truncate** &mdash; Trucates string by `characters` or by `words`.
+**String.str_truncate** &mdash; Truncates string by `characters` or by `words`.
 
 ```js
 // example string
