@@ -1,7 +1,9 @@
-// "use strict"; // FF error with use strict on ==> SyntaxError: in strict mode code, functions may be declared only at top level or immediately within another function
+"use strict";
+// FF error with use strict on ==> SyntaxError: in strict mode code, functions may be declared only at top level or immediately within another function
+
 var win = window;
-win.methods_js = {
-    // args here are the substrings passed in
+
+window.methods_js = {
     "build": {
         // insert the provided substring at the provided index
         "insert": function(string, args) {
@@ -1094,7 +1096,7 @@ win.methods_js = {
          **/
         "base64": function(input, args) { // use_native) {
             // use the native base64 encode; supported only in IE 10+ and moder browsers (chrome, ff...)
-            if (args[1]) return win.atob(input);
+            if (args[1]) return window.atob(input);
             var output = "",
                 chr1, chr2, chr3, enc1, enc2, enc3, enc4, i = 0,
                 _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
@@ -1164,7 +1166,7 @@ win.methods_js = {
          **/
         "base64": function(string, args) { // use_native) {
             // use the native base64 encode; supported only in IE 10+ and moder browsers (chrome, ff...)
-            if (args[1]) return win.btoa(string);
+            if (args[1]) return window.btoa(string);
             var output = "",
                 chr1, chr2, chr3, enc1, enc2, enc3, enc4, i = 0,
                 _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
@@ -1538,7 +1540,7 @@ outside the Latin alphabet.
             var tld = string.substring(string.lastIndexOf("."), string.length);
 
             // check if the tld is indeed valid
-            if (win.suffix_list[tld.charAt(1).toLowerCase()].indexOf(tld) === -1) return false; // invalid tld
+            if (window.suffix_list[tld.charAt(1).toLowerCase()].indexOf(tld) === -1) return false; // invalid tld
             // split the string at the @
             var parts = string.split("@"),
                 username = parts[0],
@@ -1683,7 +1685,7 @@ outside the Latin alphabet.
         },
         // http://semplicewebsites.com/removing-accents-javascript
         "latin": function(string) {
-            var latin_map = win.latin_map;
+            var latin_map = window.latin_map;
             for (var i = 0, l = string.length; i < l; i++) {
                 if (latin_map[string[i]]) return true;
             }
@@ -1859,7 +1861,7 @@ outside the Latin alphabet.
         },
         "mimetype": function(string, args) { // ext, media_type) {
             // var string = this;
-            var m = win.mimetypes[args[1].str_ensure("!left", ".")];
+            var m = window.mimetypes[args[1].str_ensure("!left", ".")];
             return (m && m.indexOf(args[2]) > -1) ? true : false;
         },
         "base64_url": function(string) {
@@ -1875,8 +1877,8 @@ outside the Latin alphabet.
             // must start with data:
             if (first[0] !== "data") return false;
             // second part must be a legit mime type
-            var mimes = win.mimetypes,
-                l = Object.keys(win.mimetypes).length,
+            var mimes = window.mimetypes,
+                l = Object.keys(window.mimetypes).length,
                 counter = 0;
             for (var key in mimes) {
                 counter++;
@@ -2041,7 +2043,7 @@ outside the Latin alphabet.
                 return val;
             };
             // get the tld list from the global scope
-            var tlds_array = win.suffix_list,
+            var tlds_array = window.suffix_list,
                 S = this;
             // #1 Split the string by the illegal chars
             var illegal = "`\"<> ".split(""),
@@ -2539,7 +2541,7 @@ outside the Latin alphabet.
     },
     "strip": {
         "accents": function(string) {
-            var latin_map = win.latin_map,
+            var latin_map = window.latin_map,
                 new_string = [];
             for (var i = 0, l = string.length; i < l; i++) {
                 var lookup = latin_map[string[i]];
