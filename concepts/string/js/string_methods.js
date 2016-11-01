@@ -824,20 +824,20 @@ win.methods_js = {
                 percent_amount = (args[1] || 0);
 
             // turn into rgb
-            // if (!to_rgb) string = string.str_convert("!hex::rgb"); // console.log(222, string);
-            string = string.str_convert("!hex::rgb"); // console.log(222, string);
+            // if (!to_rgb) string = string.str_convert("!hex::rgb");
+            string = string.str_convert("!hex::rgb");
 
             // turn rgb into hsl
-            string = string.str_convert("!rgb::hsl"); // console.log(333, string);
+            string = string.str_convert("!rgb::hsl");
 
             // parse the hsl
-            string = string.str_parse("!hsl"); // console.log(444, string);
+            string = string.str_parse("!hsl");
 
             // turn back to rgb
 
             var new_percent = (string[2] * 1 - percent_amount);
 
-            string = "hsl(".str_build("!join", string[0], ",", string[1], "%,", (new_percent < 0 ? 0 : new_percent), "%)").str_convert("!hsl::rgb"); // console.log(555, string);
+            string = "hsl(".str_build("!join", string[0], ",", string[1], "%,", (new_percent < 0 ? 0 : new_percent), "%)").str_convert("!hsl::rgb");
 
             // if (to_rgb) return string;
             // finally turn back to hex
