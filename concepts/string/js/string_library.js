@@ -437,6 +437,7 @@ str.str_repeat = function str_repeat(child_method) { // , time) {
 
 str.str_replace = function str_replace(child_method) { // needle_map, direction) { //, needle_replacement) {
     return middleware["scan"]("replace", child_method, arguments, this, {
+        "raw": "1,object",
         "all": "1,object",
         "left": "1::2,string",
         "right": "1::2,string"

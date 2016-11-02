@@ -29,25 +29,41 @@ window.methods_js = {
             }
             return parts.join("");
         },
-        // at the provided substrings to the start of the current string
-        "prepend": function(string, args) {
-            for (var i = 1, l = args.length; i < l; i++) string = args[i] + string;
-            return string;
+        /**
+         * @description [Prepend provided substrings to current string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1::Infinity {String|Number} [The N amount of strings|numbers to prepend.]
+         * @return {String}        [The prepended to string.]
+         */
+        "prepend": function(args) {
+            var substrings = [],
+                i = args.length--;
+            while (i > 0) {
+                substrings.push(args[i]);
+                i--;
+            }
+            return substrings.join("").str_build("!join", this);
         },
-        // wrap the current string with the provided left and/or right substrings
-        "wrap": function(string, args) {
-            // wraps the string with a left and/or right string
-            return (args[1] || "") + string + (args[2] || "");
+        /**
+         * @description [Wraps string with the provided left and right stirngs|numbers.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1::Infinity {String|Number} [The string|number to wrap left side with.]
+         *  @2::Infinity {String|Number} [The string|number to wrap right side with.]
+         * @return {String}        [The wrapped string.]
+         */
+        "wrap": function(args) {
+            return (args[1] || "").str_build("!join", this, (args[2] || ""))
         }
     },
 
     "clear": {
-        "html": function(string) {
-            // a = string.str_trim_left(a);
-            // a = string.str_trim_right(a);
-            return string.trim().replace(/\>[\s\xa0]+\</g, "><").replace(/[\s\xa0]+\>/g, ">") // <div id="main"  > => <div id="mane">
-                .replace(/\<[\s\xa0]+/g, "<") // <     div id="main"> => <div id="mane">
-                .replace(/\<\/[\s\xa0]+/g, "</"); // dfsdfsd</   div>" => dfsdfsd</div>"
+        "html": function() {
+            return this.trim().str_replace("!raw", {
+                "0": ["><", /\>[\s\xa0]+\</g, "g"],
+                "1": [">", /[\s\xa0]+\>/g, "g"], // <div id="main"  > => <div id="mane">
+                "2": ["<", /\<[\s\xa0]+/g, "g"], // <     div id="main"> => <div id="mane">
+                "3": ["</", /\<\/[\s\xa0]+/g, "g"] // dfsdfsd</   div>" => dfsdfsd</div>"
+            });
         },
         "space": function(string) {
             // http://stringjs.com
@@ -2562,6 +2578,15 @@ outside the Latin alphabet.
         }
     },
     "replace": {
+        "raw": function(args) {
+            var replacement_map = args[1];
+            var l = Object.keys(replacement_map).length;
+            var string = this;
+            for (var i = 0; i < l; i++) {
+                string = string.replace(new RegExp(replacement_map[i][1], replacement_map[i][2]), replacement_map[i][0]);
+            }
+            return string;
+        },
         // this is the default and can either be a map or a single needle
         "all": function(string, args) { //, needle_replacement) {
             var needle_map = args[1];

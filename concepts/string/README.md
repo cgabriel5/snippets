@@ -7,7 +7,6 @@ Expands the String.prototype with needed string functionality.
 **String.str_build** &mdash; `insert`, `join`, `prepend`, `wrap` a string.
 
 ```js
-
 // inserts provided string|number at provided index
 "Hello ".str_build("insert", "World!", 6); // Hello World!
 
