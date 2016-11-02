@@ -5,16 +5,29 @@ var win = window;
 
 window.methods_js = {
     "build": {
-        // insert the provided substring at the provided index
-        "insert": function(string, args) {
-            var substr = args[1],
-                index = args[2];
-            return (string.substr(0, index) + substr + string.substr(index));
+        /**
+         * @description [Inserts provided string|number at provided index.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String|Number} [The provided string|number to insert.]
+         *  @2 {Number} [The provided insertion index.]
+         * @return {String}      [The string with the inserted substring.]
+         */
+        "insert": function(args) {
+            return this.substr(0, args[2]).str_build("!join", args[1], this.substr(args[2]));
         },
-        // join the provided substrings with the current string
-        "join": function(string, args) {
-            for (var i = 1, l = args.length; i < l; i++) string += args[i];
-            return string;
+        /**
+         * @description [Joins provided substrings with current string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1::Infinity {String|Number} [The N amount of strings to join.]
+         * @return {String}        [The joined string.]
+         */
+        "join": function(args) {
+            // create an array to store substrings and join later
+            var parts = [this];
+            for (var i = 1, l = args.length; i < l; i++) {
+                parts.push(args[i]);
+            }
+            return parts.join("");
         },
         // at the provided substrings to the start of the current string
         "prepend": function(string, args) {
@@ -43,14 +56,17 @@ window.methods_js = {
         }
     },
     "convert": {
-        "num::range": function(string) {
-
-            var parts = string.split("::"),
+        /**
+         * @description [Expands provided range.]
+         * @return {String} [The expanded range.]
+         */
+        "num::range": function() {
+            var parts = this.split("::"),
                 start = +parts[0],
                 end = +parts[1],
-                range = "";
-            for (var i = start, l = end + 1; i < l; i++) range = range + i + ",";
-            return range.str_chomp("!right", ",");
+                numbers = [];
+            for (var i = start, l = end + 1; i < l; i++) numbers.push(i+",");
+            return numbers.join("").str_chomp("!right", ",");
         },
         // *binary:2
         // octal:8
@@ -1245,17 +1261,32 @@ window.methods_js = {
         }
     },
     "chomp": {
-        "left": function(string, args) { //prefix) {
+        /**
+         * @description [Removes prefix from provided string. If a number is provided the number
+         *               amount of characters will be removed.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String|Number} [The provided string or amount of characters to remove.]
+         * @return {String}        [The string with the prefix or x amount of characters removed.]
+         */
+        "left": function(args) {
             // if the prefix is a number we just chomp back those x chars
-            // else if string we remove that prefix fromt the string
-            var prefix = args[1];
+            // else if string remove that prefix from string
+            var string = this,
+                prefix = args[1];
             return (dtype(prefix, "string") && string.indexOf(prefix) === 0) ? string.slice(prefix.length) : (dtype(prefix, "number") ? string.slice(Math.abs(prefix)) : string);
         },
-        "right": function(string, args) { //suffix) {
-
-            // if the prefix is a number we just chomp back those x chars
-            // else if string we remove that prefix fromt the string
-            var suffix = args[1];
+        /**
+         * @description [Removes suffix from provided string. If a number is provided the number
+         *               amount of characters will be removed.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String|Number} [The provided string or amount of characters to remove.]
+         * @return {String}        [The string with the suffix or x amount of characters removed.]
+         */
+        "right": function(args) {
+            // if the suffix is a number we just chomp back those x chars
+            // else if string remove that suffix from string
+            var string = this,
+                suffix = args[1];
             return (dtype(suffix, "string") && string.str_grab("!right", suffix.length) === suffix) ? string.str_grab("!between", 0, string.length - suffix.length) : (dtype(suffix, "number") ? string.substr(0, string.length - Math.abs(suffix)) : string);
         }
     },
@@ -1355,10 +1386,18 @@ window.methods_js = {
         }
     },
     "grab": {
-        "between": function(string, args) { // string, left, right, recurs_string) {
-            var left = args[1],
+        /**
+         * @description [Grabs anything from string that is between the provided left and right substrings.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The left starting point of what to grab.]
+         *  @2 {String} [The right ending point of what to grab.]
+         *  @3 {String} [Used internally, will cause function to act in a recursive manner.]
+         * @return {String}        [The string of grabbed characters.]
+         */
+        "between": function(args) {
+            var string = this,
+                left = args[1],
                 right = args[2];
-
             if (typeof left === "string" && typeof right === "string") {
                 var string = args[3] || string;
                 // get the left position
@@ -1384,14 +1423,25 @@ window.methods_js = {
                 return string.substring(start, ((end === -1 || !end /*get to the end of the string*/ ) ? string.length : end))
             }
         },
-        "left": function(string, args) { // , n) {
+        /**
+         * @description [Grabs the N amount of characters of string from the left.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The N amount of characters to grab from string.]
+         * @return {String}        [The string of grabbed characters.]
+         */
+        "left": function(args) {
             var n = args[1];
-
-            return (n > 0) ? string.substr(0, n) : string.str_grab("!left", -n);
+            return (n > 0) ? this.substr(0, n) : this.str_grab("!left", -n);
         },
-        "right": function(string, args) { // n) {
+        /**
+         * @description [Grabs the N amount of characters of string from the right.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The N amount of characters to grab from string.]
+         * @return {String}        [The string of grabbed characters.]
+         */
+        "right": function(args) {
             var n = args[1];
-            return (n > 0) ? string.slice(-n) : string.str_grab("!right", -n);
+            return (n > 0) ? this.slice(-n) : this.str_grab("!right", -n);
         }
     },
     "index": {
@@ -1414,14 +1464,26 @@ window.methods_js = {
         }
     },
     "is": {
-        "in": function(string, args) {
-            return (string.indexOf(args[1]) === -1) ? false : true;
+        /**
+         * @description [Checks whether provided string is found in current string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The needle.]
+         * @return {Boolean}        [True means found, else false.]
+         */
+        "in": function(args) {
+            return (-~this.indexOf(args[1])) ? true : false;
         },
-        "ewith": function(string, args) {
-            var list = args[1];
+        /**
+         * @description [Checks if string ends with of any of the strings in the provided array of strings.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Array} [The array of strings the string can end with.]
+         * @return {Boolean}        [True means string ends with a string in the provided array. Else false.]
+         */
+        "ewith": function(args) {
+            var ending_strings_array = args[1];
             // loop through each suffix and check if the string ends with it
-            for (var i = 0, l = list.length; i < l; i++) {
-                if (string.str_grab("!right", list[i].length) === list[i]) return true;
+            for (var i = 0, l = ending_strings_array.length; i < l; i++) {
+                if (this.str_grab("!right", ending_strings_array[i].length) === ending_strings_array[i]) return true;
             }
             return false;
         },

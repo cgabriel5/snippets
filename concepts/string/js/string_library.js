@@ -186,7 +186,8 @@ var middleware = {
     "execute": function(parent_method, child_method, _, args) {
 
         // finally, run function
-        return methods[parent_method][child_method.replace(/^[@|!]/, "").toLowerCase()]((dtype(_, "string") ? _.toString() : _), args);
+        // return methods[parent_method][child_method.replace(/^[@|!]/, "").toLowerCase()]((dtype(_, "string") ? _.toString() : _), args);
+        return methods[parent_method][child_method.replace(/^[@|!]/, "").toLowerCase()].call((dtype(_, "string") ? _.toString() : _), args);
 
     }
 
