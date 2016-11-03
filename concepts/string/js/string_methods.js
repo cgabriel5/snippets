@@ -1,7 +1,4 @@
 "use strict";
-// FF error with use strict on ==> SyntaxError: in strict mode code, functions may be declared only at top level or immediately within another function
-
-var win = window;
 
 window.methods_js = {
     "build": {
@@ -10,7 +7,7 @@ window.methods_js = {
          * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
          *  @1 {String|Number} [The provided string|number to insert.]
          *  @2 {Number} [The provided insertion index.]
-         * @return {String}      [The string with the inserted substring.]
+         * @return {String} [The string with the inserted substring.]
          */
         "insert": function(args) {
             return this.substr(0, args[2]).str_build("!join", args[1], this.substr(args[2]));
@@ -19,7 +16,7 @@ window.methods_js = {
          * @description [Joins provided substrings with current string.]
          * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
          *  @1::Infinity {String|Number} [The N amount of strings to join.]
-         * @return {String}        [The joined string.]
+         * @return {String} [The joined string.]
          */
         "join": function(args) {
             // create an array to store substrings and join later
@@ -33,7 +30,7 @@ window.methods_js = {
          * @description [Prepend provided substrings to current string.]
          * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
          *  @1::Infinity {String|Number} [The N amount of strings|numbers to prepend.]
-         * @return {String}        [The prepended to string.]
+         * @return {String} [The prepended to string.]
          */
         "prepend": function(args) {
             var substrings = [],
@@ -49,7 +46,7 @@ window.methods_js = {
          * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
          *  @1::Infinity {String|Number} [The string|number to wrap left side with.]
          *  @2::Infinity {String|Number} [The string|number to wrap right side with.]
-         * @return {String}        [The wrapped string.]
+         * @return {String} [The wrapped string.]
          */
         "wrap": function(args) {
             return (args[1] || "").str_build("!join", this, (args[2] || ""))
@@ -57,6 +54,10 @@ window.methods_js = {
     },
 
     "clear": {
+        /**
+         * @description [Removes extra space in HTML string.]
+         * @return {String} [The cleaned out HTML string.]
+         */
         "html": function() {
             return this.trim().str_replace("!raw", {
                 "0": ["><", /\>[\s\xa0]+\</g, "g"],
@@ -65,10 +66,14 @@ window.methods_js = {
                 "3": ["</", /\<\/[\s\xa0]+/g, "g"] // dfsdfsd</   div>" => dfsdfsd</div>"
             });
         },
-        "space": function(string) {
+        /**
+         * @description [Removes extra space in a regular string.]
+         * @return {String} [The cleaned out string.]
+         */
+        "space": function() {
             // http://stringjs.com
             // http://www.javascripter.net/faq/regularexpressionsyntax.htm
-            return string.replace(/[\s\xa0]+/g, " ").trim(); //.replace(/^\s+|\s+$/g, "")
+            return this.replace(/[\s\xa0]+/g, " ").trim();
         }
     },
     "convert": {
@@ -81,16 +86,16 @@ window.methods_js = {
                 start = +parts[0],
                 end = +parts[1],
                 numbers = [];
-            for (var i = start, l = end + 1; i < l; i++) numbers.push(i+",");
+            for (var i = start, l = end + 1; i < l; i++) numbers.push(i + ",");
             return numbers.join("").str_chomp("!right", ",");
         },
-        // *binary:2
-        // octal:8
-        // *decimal:10
-        // hexadecimal:16
-        "bin::oct": function(string) {
+        /**
+         * @description [Converts provided binary string to an octal string.]
+         * @return {String} [The octal number in string format.]
+         */
+        "bin::oct": function() {
             // given "number" must be a string.. just make sure
-            string += "";
+            var string = this + "";
             // must only contain 1 and 0s and/or a single dot
             if (!string.str_is("!binary")) return NaN;
             // get the number pars
@@ -133,9 +138,13 @@ window.methods_js = {
             };
             return number = f(number, "!left", true, decimal = f(decimal, "!right", false) /*the decimal*/ , is_negative);
         },
-        "bin::dec": function(string) {
+        /**
+         * @description [Converts provided binary string to a decimal string.]
+         * @return {String} [The decimal number in string format.]
+         */
+        "bin::dec": function() {
             // given "number" must be a string.. just make sure
-            string += "";
+            var string = this + "";
             // must only contain 1 and 0s and/or a single dot
             if (!string.str_is("!binary")) return NaN;
             // get the number parts
@@ -183,9 +192,13 @@ window.methods_js = {
             };
             return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
-        "bin::hex": function(string) {
+        /**
+         * @description [Converts provided binary string to a hexadecimal string.]
+         * @return {String} [The hexadecimal number in string format.]
+         */
+        "bin::hex": function() {
             // given "number" must be a string.. just make sure
-            string += "";
+            var string = this + "";
             // must only contain 1 and 0s and/or a single dot
             if (!string.str_is("!binary")) return NaN;
             // get the number pars
@@ -237,11 +250,18 @@ window.methods_js = {
             };
             return number = f(number, "!left", true, decimal = f(decimal, "!right", false) /*the decimal*/ , is_negative);
         },
-        "dec::bin": function(string, args) {
+        /**
+         * @description [Converts provided decimal string to a binary string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of decimals to use. (15 is the default decimal)]
+         *  @2 {Number} [The base of conversion to use. (2 (binary is of base 2) is the default)]
+         * @return {String} [The binary number in string format.]
+         */
+        "dec::bin": function(args) {
             var error_limit = args[1],
                 base_of = args[2] || 2;
             // given "number" must be a string.. just make sure
-            string += "";
+            var string = this + "";
             // must only contain 1 and 0s and/or a single dot
             if (!string.str_is("!digit")) return NaN;
             // get the number pars
@@ -322,15 +342,31 @@ window.methods_js = {
             };
             return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
-        "dec::oct": function(string, args) {
-            return string.str_convert("!dec::bin", args[1] /*error_limit*/ , 8);
+        /**
+         * @description [Converts provided decimal string to an octal string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of decimals to use. (15 is the default decimal)]
+         * @return {String} [The octal number in string format.]
+         */
+        "dec::oct": function(args) {
+            return this.str_convert("!dec::bin", args[1] /*error_limit*/ , 8);
         },
-        "dec::hex": function(string, args) {
-            return string.str_convert("!dec::bin", args[1] /*error_limit*/ , 16);
+        /**
+         * @description [Converts provided decimal string to a hexadecimal string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of decimals to use. (15 is the default decimal)]
+         * @return {String} [The hexadecimal number in string format.]
+         */
+        "dec::hex": function(args) {
+            return this.str_convert("!dec::bin", args[1] /*error_limit*/ , 16);
         },
-        "oct::bin": function(string) {
+        /**
+         * @description [Converts provided octal string to a binary string.]
+         * @return {String} [The binary number in string format.]
+         */
+        "oct::bin": function() {
             // given "number" must be a string.. just make sure
-            string += "";
+            var string = this + "";
             // must only contain numbers 0-7 and/or a single dot
             if (!string.str_is("!octal")) return NaN;
             // get the number pars
@@ -364,9 +400,13 @@ window.methods_js = {
             };
             return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
-        "oct::dec": function(string) {
+        /**
+         * @description [Converts provided octal string to a decimal string.]
+         * @return {String} [The decimal number in string format.]
+         */
+        "oct::dec": function() {
             // given "number" must be a string.. just make sure
-            string += "";
+            var string = this + "";
             // must only contain numbers 0-7 and/or a single dot
             if (!string.str_is("!octal")) return NaN;
             // get the number pars
@@ -419,14 +459,24 @@ window.methods_js = {
             };
             return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
-        "oct::hex": function(string, args) {
+        /**
+         * @description [Converts provided octal string to a hexadecimal string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of decimals to use. (15 is the default decimal)]
+         * @return {String} [The hexadecimal number in string format.]
+         */
+        "oct::hex": function(args) {
             var error_limit = args[1];
             // turn to binary then from binary to hex
-            return string.str_convert("!oct::bin", error_limit).str_convert("!bin::hex", error_limit);
+            return this.str_convert("!oct::bin", error_limit).str_convert("!bin::hex", error_limit);
         },
-        "hex::bin": function(string) {
+        /**
+         * @description [Converts provided hexadecimal string to a binary string.]
+         * @return {String} [The binary number in string format.]
+         */
+        "hex::bin": function() {
             // given "number" must be a string.. just make sure
-            string += "";
+            var string = this + "";
             // must only contain 1 and 0s and/or a single dot
             if (!string.str_is("!hex")) return NaN;
             // get the number pars
@@ -474,25 +524,50 @@ window.methods_js = {
             };
             return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
-        "hex::oct": function(string, args) {
+        /**
+         * @description [Converts provided hexadecimal string to a octal string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of decimals to use. (15 is the default decimal)]
+         * @return {String} [The octal number in string format.]
+         */
+        "hex::oct": function(args) {
             var error_limit = args[1];
             // convert to binary then from binary to octal
-            return string.str_convert("!hex::bin", error_limit).str_convert("!bin::oct", error_limit);
+            return this.str_convert("!hex::bin", error_limit).str_convert("!bin::oct", error_limit);
         },
-        "hex::dec": function(string, args) {
-
+        /**
+         * @description [Converts provided hexadecimal string to a decimal string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of decimals to use. (15 is the default decimal)]
+         * @return {String} [The decimal number in string format.]
+         */
+        "hex::dec": function(args) {
             var error_limit = args[1];
             // convert to binary then from binary to dec
-
-            return string.str_convert("!hex::bin", error_limit).str_convert("!bin::dec", error_limit);
+            return this.str_convert("!hex::bin", error_limit).str_convert("!bin::dec", error_limit);
         },
-        // str.str_(\w+)_2_(\w+) = function\(
-        "hex::six": function(string) {
-            return "#".str_build("!join", string[1], string[1], string[2], string[2], string[3], string[3]);
+        /**
+         * @description [Converts 3 character hexadecimal color code into a 6 character color code.]
+         * @return {String} [The expanded hexadecimal color code.]
+         */
+        "hex::six": function() {
+            var string = this.str_chomp("!left", "#"),
+                char1 = string[0],
+                char2 = string[1],
+                char3 = string[2];
+            return "#".str_build("!join", char1, char1, char2, char2, char3, char3);
         },
-        // http://rland.me.uk/cross-browser-alpha-transparent-background-10-2011/
-        // http://beijingyoung.com/articles/rgba-argb-converter/
-        "rgba::argb": function(string, args) {
+        /**
+         * @description [Converts provided rgba to argb color code.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Boolean} [Flag indicating whether to return color code with hash symbol.]
+         * @return {String} [The argb color code.]
+         *
+         * @sources http://rland.me.uk/cross-browser-alpha-transparent-background-10-2011/
+         * @sources http://beijingyoung.com/articles/rgba-argb-converter/
+         */
+        "rgba::argb": function(args) {
+            var string = this;
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
             if (type.str_is("!in", "String")) {
@@ -509,7 +584,12 @@ window.methods_js = {
             // the alpha must be multiplied by 255 then converte to hex
             return (((args[1] /*add_hash*/ ) ? "#" : "") + (("" + (~~(a * 255))).str_convert("!dec::hex")) + ((r.str_convert("!dec::hex") || "00") + (g.str_convert("!dec::hex") || "00") + (b.str_convert("!dec::hex") || "00"))).replace(/\./g, "");
         },
-        "argb::rgba": function(string) {
+        /**
+         * @description [Converts provided argb to rgba color code.]
+         * @return {String} [The rgba color code.]
+         */
+        "argb::rgba": function() {
+            var string = this;
             // check that the strig supplied is in the #AARRGGBB format
             if (!string.str_is("!hexcolor8")) return false;
             // remove the #
@@ -523,26 +603,29 @@ window.methods_js = {
             // the alpha must be multiplied by 255 then converte to hex
             return "rgba(".str_build("!join", (r.str_convert("!hex::dec") || "0"), ",", (g.str_convert("!hex::dec") || "0"), ",", (b.str_convert("!hex::dec") || "0"), ",", ~~((a.str_convert("!hex::dec") * 1) / 255), ")");
         },
-        "rgb::hex": function(string, args) {
-
+        /**
+         * @description [Converts provided rgba to hex color code.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Boolean} [Flag indicating whether to return color code with hash symbol.]
+         * @return {String} [The hex color code.]
+         */
+        "rgb::hex": function(args) {
+            var string = this;
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
             if (type.str_is("!in", "String")) {
                 // parse the string into rgb parts
                 var rgb = string.str_parse("!rgb");
-
                 if (!rgb) return NaN; // could not parse the supplied rgb string
             } else if (type.str_is("!in", "Array")) {
                 var rgb = string;
             }
-
             var r = rgb[0].str_convert("!dec::hex"),
                 g = rgb[1].str_convert("!dec::hex"),
                 b = rgb[2].str_convert("!dec::hex");
             if (r && r.length === 1) r = "0" + r;
             if (g && g.length === 1) g = "0" + g;
             if (b && b.length === 1) b = "0" + b;
-
             return ((args[1] /*add_hash*/ ) ? "#" : "").str_build("!join", (r || "00"), (g || "00"), (b || "00")); //.replace(/\./g, ""); BUG HERE
         },
         // take the rgb value e.g. 221 and divide by 16 => (221/16)
@@ -551,10 +634,13 @@ window.methods_js = {
         // to get th second value we take find the remainder
         // for example, 221 - ((221/16) * 16)
         // then use the remainder to find the second value in the list
+        /**
+         * @description [Converts provided hex to rgb color code.]
+         * @return {String} [The rgb color code.]
+         */
         "hex::rgb": function(string) {
-
+            var string = this;
             string = string.str_chomp("!left", "#");
-
             // hex string must be either 3 or 6 chars in length
             if (!string.str_length("!exact", 6)) {
                 // must be 3 then
@@ -563,10 +649,8 @@ window.methods_js = {
             // format the string if length is 3
             if (string.str_length("!exact", 3)) string = string.str_convert("!hex::six");
             // chop into groups of 2
-
             var groups = string.str_split("!chunk", 2);
             // var groups = string.toString().str_split("!chunk", 2);
-
             return ("rgba(".str_build("!join", groups[0].str_convert("!hex::dec"), ",", groups[1].str_convert("!hex::dec"), ",", groups[2].str_convert("!hex::dec"), ",1)"));
         },
         // // http://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
@@ -636,7 +720,12 @@ window.methods_js = {
          * @param   Number  b       The blue color value
          * @return  Array           The HSL representation
          */
-        "rgb::hsl": function(string) {
+        /**
+         * @description [Converts provided rgb to hsl color code.]
+         * @return {String} [The hsl color code.]
+         */
+        "rgb::hsl": function() {
+            var string = this;
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
             if (type.str_is("!in", "String")) {
@@ -687,7 +776,12 @@ window.methods_js = {
          * @param   Number  l       The lightness
          * @return  Array           The RGB representation
          */
-        "hsl::rgb": function(string) {
+        /**
+         * @description [Converts provided hsl to rgb color code.]
+         * @return {String} [The rgb color code.]
+         */
+        "hsl::rgb": function() {
+            var string = this;
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
 
@@ -735,7 +829,12 @@ window.methods_js = {
          * @param   Number  b       The blue color value
          * @return  Array           The HSV representation
          */
-        "rgb::hsv": function(string) {
+        /**
+         * @description [Converts provided rgb to hsv color code.]
+         * @return {String} [The hsv color code.]
+         */
+        "rgb::hsv": function() {
+            var string = this;
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
             if (type.str_is("!in", "String")) {
@@ -786,7 +885,12 @@ window.methods_js = {
          * @param   Number  v       The value
          * @return  Array           The RGB representation
          */
-        "hsv::rgb": function(string) {
+        /**
+         * @description [Converts provided hsv to rgb color code.]
+         * @return {String} [The rgb color code.]
+         */
+        "hsv::rgb": function() {
+            var string = this;
             // check wether a string or an array is supplied
             var type = Object.prototype.toString.call(string);
 
@@ -830,88 +934,114 @@ window.methods_js = {
             return "rgba(".str_build("!join", ~~(r * 255), ",", ~~(g * 255), ",", ~~(b * 255), ",1)");
             // return [r * 255, g * 255, b * 255];
         },
-        "hex::lighten": function(string, args) {
-
+        /**
+         * @description [Lightens provided hexadecimal color code.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The percentage amount of which to lighten by.]
+         * @return {String} [The lightened hex color code.]
+         */
+        "hex::lighten": function(args) {
+            var string = this;
             var to_rgb = args[2] || false,
                 percent_amount = (args[1] || 0);
             // turn into rgb
             // if (!to_rgb) string = string.str_convert("!hex::rgb");
             string = string.str_convert("!hex::rgb");
-
             // turn rgb into hsl
             string = string.str_convert("!rgb::hsl");
-
             // parse the hsl
-
             string = string.str_parse("!hsl");
             // turn back to rgb
             var new_percent = (string[2] * 1 + percent_amount);
-
             string = "hsl(".str_build("!join", string[0], ",", string[1], "%,", (new_percent > 100 ? 100 : new_percent), "%)").str_convert("!hsl::rgb");
             // if (to_rgb) return string;
             // finally turn back to hex
             return (to_rgb ? "#" : "") + string.str_convert("!rgb::hex");
         },
-        "hex::darken": function(string, args) {
-
+        /**
+         * @description [Darkens provided hexadecimal color code.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The percentage amount of which to darken by.]
+         * @return {String} [The darkened hex color code.]
+         */
+        "hex::darken": function(args) {
+            var string = this;
             var to_rgb = args[2],
                 percent_amount = (args[1] || 0);
-
             // turn into rgb
             // if (!to_rgb) string = string.str_convert("!hex::rgb");
             string = string.str_convert("!hex::rgb");
-
             // turn rgb into hsl
             string = string.str_convert("!rgb::hsl");
-
             // parse the hsl
             string = string.str_parse("!hsl");
-
             // turn back to rgb
-
             var new_percent = (string[2] * 1 - percent_amount);
-
             string = "hsl(".str_build("!join", string[0], ",", string[1], "%,", (new_percent < 0 ? 0 : new_percent), "%)").str_convert("!hsl::rgb");
-
             // if (to_rgb) return string;
             // finally turn back to hex
-
             return (to_rgb ? "#" : "") + string.str_convert("!rgb::hex");
         },
-        "rgb::lighten": function(string, args) {
-
-            return string.str_convert("!rgb::hex").str_convert("!hex::lighten", args[1] /*percent_amount*/ ).str_convert("!hex::rgb");
+        /**
+         * @description [Lightens provided rgb color code.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The percentage amount of which to lighten by.]
+         * @return {String} [The lightened rgb color code.]
+         */
+        "rgb::lighten": function(args) {
+            return this.str_convert("!rgb::hex").str_convert("!hex::lighten", args[1] /*percent_amount*/ ).str_convert("!hex::rgb");
         },
-        "rgb::darken": function(string, args) {
-
-            return string.str_convert("!rgb::hex").str_convert("!hex::darken", args[1] /*percent_amount*/ ).str_convert("!hex::rgb");
+        /**
+         * @description [Darkens provided rgb color code.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The percentage amount of which to darken by.]
+         * @return {String} [The darkened rgb color code.]
+         */
+        "rgb::darken": function(args) {
+            return this.str_convert("!rgb::hex").str_convert("!hex::darken", args[1] /*percent_amount*/ ).str_convert("!hex::rgb");
         },
-        // https://en.wikipedia.org/wiki/HWB_color_model
-        // http://fettblog.eu/hwb-colors/
-        "hsv::hwb": function(string) {
+        /**
+         * @description [Converts provided hsv to hwb color code.]
+         * @return {String} [The hwb color code.]
+         * @source https://en.wikipedia.org/wiki/HWB_color_model
+         * @source http://fettblog.eu/hwb-colors/
+         */
+        "hsv::hwb": function() {
             // parse to get the parts
-            var parts = string.str_parse("!hsv");
+            var parts = this.str_parse("!hsv");
             var h = parts[0],
                 s = parts[1] / 100,
                 v = parts[2] / 100;
             return [h, Math.abs((1 - s) * v) * 100, Math.abs(1 - v) * 100];
         },
-        "rgb::hwb": function(string) {
+        /**
+         * @description [Converts provided rgb to hwb color code.]
+         * @return {String} [The hwb color code.]
+         */
+        "rgb::hwb": function() {
             // convert to hsv
-            string = string.str_convert("!rgb::hsv");
+            var string = this.str_convert("!rgb::hsv");
             // then convert to hwm from hsv
             return string.str_convert("!hsv::hwb");
         },
-        "hwb::hsv": function(string) {
+        /**
+         * @description [Converts provided hwb to hsv color code.]
+         * @return {String} [The hsv color code.]
+         */
+        "hwb::hsv": function() {
             // parse to get the parts
-            var parts = string.str_parse("!hwb");
+            var parts = this.str_parse("!hwb");
             var h = parts[0],
                 w = parts[1] / 100,
                 b = parts[2] / 100;
             return [h, Math.abs(1 - ((w) / (1 - b))) * 100, Math.abs(1 - b) * 100];
         },
-        "::camel": function(string) {
-            // var string = this;
+        /**
+         * @description [Camelizes provided string.]
+         * @return {String} [The camelized string.]
+         */
+        "::camel": function() {
+            var string = this;
             var new_string = "",
                 seperators = ["_", "-"];
             for (var i = 0, l = string.length; i < l; i++) {
@@ -926,26 +1056,41 @@ window.methods_js = {
             }
             return new_string;
         },
-        "::cap": function(string) {
+        /**
+         * @description [Capitalizes provided string.]
+         * @return {String} [The capitalized string.]
+         */
+        "::cap": function() {
             // upperCase the first char
-            return string.charAt(0).toUpperCase() + string.slice(1);
+            return this.charAt(0).toUpperCase() + this.slice(1);
         },
-        "::decap": function(string) {
+        /**
+         * @description [Decapitalizes provided string.]
+         * @return {String} [The decapitalized string.]
+         */
+        "::decap": function() {
             // lowerCase the first char
-            return string.charAt(0).toLowerCase() + string.slice(1);
+            return this.charAt(0).toLowerCase() + this.slice(1);
         },
-        "::class": function(string) {
-            // var string = this;
+        /**
+         * @description [Classify provided string.]
+         * @return {String} [The classified string.]
+         */
+        "::class": function() {
             // split at anyting but text chars...basically punctuation
-            var parts = string.split(/[\`\~\!\@\#\$\%\^\&\*\(\)\_\-\+\=\[\]\{\}\\\|\;\:\'\"\,\.\<\>\/\?|\s\xa0]+/),
+            var parts = this.split(/[\`\~\!\@\#\$\%\^\&\*\(\)\_\-\+\=\[\]\{\}\\\|\;\:\'\"\,\.\<\>\/\?|\s\xa0]+/),
                 new_string = [];
             for (var i = 0, l = parts.length; i < l; i++) {
                 new_string.push(parts[i].str_convert("!::cap"));
             }
             return new_string.join("");
         },
-        "::dash": function(string) {
-            // var string = this;
+        /**
+         * @description [Dasherize provided string.]
+         * @return {String} [The dasherized string.]
+         */
+        "::dash": function() {
+            var string = this;
             var new_string = "";
             for (var i = 0, l = string.length; i < l; i++) {
                 // if the current char is a _ or -
@@ -958,11 +1103,22 @@ window.methods_js = {
             }
             return new_string;
         },
-        "::num": function(string, args) {
-            return parseInt(string, (args[1] || 10));
+        /**
+         * @description [Converts string to a number.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The base to convert to. (The default it set to return a decimal, therefore
+         *               10 is the default base.)]
+         * @return {Number} [The number converted from a string.]
+         */
+        "::num": function(args) {
+            return parseInt(this, (args[1] || 10));
         },
-        "::swap": function(string) {
-            // var string = this;
+        /**
+         * @description [Swaps letter casing on provided string.]
+         * @return {String} [The letter cased swapped string.]
+         */
+        "::swap": function() {
+            var string = this;
             var new_string_parts = [],
                 c;
             for (var i = 0, l = string.length; i < l; i++) {
@@ -972,13 +1128,19 @@ window.methods_js = {
             }
             return new_string_parts.join("");
         },
-        "::slug": function(string) {
-            // var string = this;
-            // return string.toLowerCase.replace
-            return string.str_strip("!accents").toLowerCase().trim().replace(/[\s\xa0]+/g, "-");
+        /**
+         * @description [Slugifies provided string.]
+         * @return {String} [The slugified string.]
+         */
+        "::slug": function() {
+            return this.str_strip("!accents").toLowerCase().trim().replace(/[\s\xa0]+/g, "-");
         },
-        "::title": function(string) {
-            //var string = this;
+        /**
+         * @description [Titlelizes the provided string.]
+         * @return {String} [The titlelized string.]
+         */
+        "::title": function() {
+            var string = this;
             var new_string = [];
             string = string.split(" ");
             for (var i = 0, l = string.length; i < l; i++) {
@@ -986,8 +1148,12 @@ window.methods_js = {
             }
             return new_string.join(" ");
         },
-        "::under": function(string) {
-                // var string = this;
+        /**
+         * @description [Underscores provided string.]
+         * @return {String} [The underscored string.]
+         */
+        "::under": function() {
+                var string = this;
                 var new_string = "";
                 for (var i = 0, l = string.length; i < l; i++) {
                     // if the current char is a _ or -
@@ -1057,13 +1223,22 @@ window.methods_js = {
             //3F83A3
     },
     "count": {
-        "/": function(string, args) { // needle) {
-
-            return string.split(args[1]).length - 1;
+        /**
+         * @description [Counts the occurances of a substring in a string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The needle to count in the string.]
+         * @return {Number} [The number of occurances in the string]
+         */
+        "/": function(args) {
+            return this.split(args[1]).length - 1;
         }
     },
     "decode": {
-        "html": function(string) {
+        /**
+         * @description [Decodes the provided encoded HTML string.]
+         * @return {String} [The decoded HTML string.]
+         */
+        "html": function() {
             var entities = {
                 "&lt;": "<",
                 "&gt;": ">",
@@ -1071,14 +1246,17 @@ window.methods_js = {
                 "&#39;": "'",
                 "&amp;": "&"
             };
-            return string.replace(/&lt;|&gt;|&quot;|&#39;|&amp;/g, function(entity) {
+            return this.replace(/&lt;|&gt;|&quot;|&#39;|&amp;/g, function(entity) {
                 return entities[entity];
             });
         },
-        "json": function(string) {
-            var string = this;
+        /**
+         * @description [Decodes the provided JSON encoded string.]
+         * @return {String} [The decoded JSON string.]
+         */
+        "json": function() {
             try {
-                return JSON.parse(string);
+                return JSON.parse(this);
             } catch (e) {
                 return ("json " + e);
             }
