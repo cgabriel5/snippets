@@ -1235,7 +1235,7 @@ window.methods_js = {
     },
     "decode": {
         /**
-         * @description [Decodes the provided encoded HTML string.]
+         * @description [Decodes provided encoded HTML string.]
          * @return {String} [The decoded HTML string.]
          */
         "html": function() {
@@ -1251,7 +1251,7 @@ window.methods_js = {
             });
         },
         /**
-         * @description [Decodes the provided JSON encoded string.]
+         * @description [Decodes provided JSON encoded string.]
          * @return {String} [The decoded JSON string.]
          */
         "json": function() {
@@ -1270,25 +1270,28 @@ window.methods_js = {
          *  http://stackoverflow.com/questions/246801/how-can-you-encode-a-string-to-base64-in-javascript
          *
          **/
-        "utf8": function(utftext) {
-            var string = this;
+        /**
+         * @description [Decodes provided UTF8 encoded string.]
+         * @return {String} [The decoded UTF8 string.]
+         */
+        "utf8": function() {
             var string = "",
                 i = 0,
                 c = 0,
                 c1 = 0,
                 c2 = 0;
-            while (i < utftext.length) {
-                c = utftext.charCodeAt(i);
+            while (i < this.length) {
+                c = this.charCodeAt(i);
                 if (c < 128) {
                     string += String.fromCharCode(c);
                     i++;
                 } else if ((c > 191) && (c < 224)) {
-                    c1 = utftext.charCodeAt(i + 1);
+                    c1 = this.charCodeAt(i + 1);
                     string += String.fromCharCode(((c & 31) << 6) | (c1 & 63));
                     i += 2;
                 } else {
-                    c1 = utftext.charCodeAt(i + 1);
-                    c2 = utftext.charCodeAt(i + 2);
+                    c1 = this.charCodeAt(i + 1);
+                    c2 = this.charCodeAt(i + 2);
                     string += String.fromCharCode(((c & 15) << 12) | ((c1 & 63) << 6) | (c2 & 63));
                     i += 3;
                 }
@@ -1304,18 +1307,25 @@ window.methods_js = {
          *  http://stackoverflow.com/questions/246801/how-can-you-encode-a-string-to-base64-in-javascript
          *
          **/
-        "base64": function(input, args) { // use_native) {
+        /**
+         * @description [Decodes provided base64 encoded string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Boolean} [Flag indicating whether to use browser native method.]
+         * @return {String} [The decoded base64 string.]
+         */
+        "base64": function(args) {
+            var string = this;
             // use the native base64 encode; supported only in IE 10+ and moder browsers (chrome, ff...)
-            if (args[1]) return window.atob(input);
+            if (args[1]) return window.atob(string);
             var output = "",
                 chr1, chr2, chr3, enc1, enc2, enc3, enc4, i = 0,
                 _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-            input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-            while (i < input.length) {
-                enc1 = _keyStr.indexOf(input.charAt(i++));
-                enc2 = _keyStr.indexOf(input.charAt(i++));
-                enc3 = _keyStr.indexOf(input.charAt(i++));
-                enc4 = _keyStr.indexOf(input.charAt(i++));
+            string = string.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+            while (i < string.length) {
+                enc1 = _keyStr.indexOf(string.charAt(i++));
+                enc2 = _keyStr.indexOf(string.charAt(i++));
+                enc3 = _keyStr.indexOf(string.charAt(i++));
+                enc4 = _keyStr.indexOf(string.charAt(i++));
                 chr1 = (enc1 << 2) | (enc2 >> 4);
                 chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
                 chr3 = ((enc3 & 3) << 6) | enc4;
@@ -1331,9 +1341,29 @@ window.methods_js = {
         }
     },
     "encode": {
-        "json": function(string) {
+        /**
+         * @description [Encodes provided string.]
+         * @return {String} [The HTML encoded string.]
+         */
+        "html": function() {
+            var entities = {
+                "<": "lt",
+                ">": "gt",
+                "\"": "quot",
+                "'": "#39",
+                "&": "amp"
+            };
+            return this.replace(/[<>"'&]/g, function(entity) {
+                return "&" + entities[entity] + ";";
+            });
+        },
+        /**
+         * @description [Encodes provided string.]
+         * @return {String} [The JSON encoded string.]
+         */
+        "json": function() {
             try {
-                return JSON.stringify(string);
+                return JSON.stringify(this);
             } catch (e) {
                 return ("json " + e);
             }
@@ -1347,10 +1377,15 @@ window.methods_js = {
          *  http://stackoverflow.com/questions/246801/how-can-you-encode-a-string-to-base64-in-javascript
          *
          **/
-        "utf8": function(string) {
+        /**
+         * @description [Encodes provided string.]
+         * @return {String} [The UTF8 encoded string.]
+         */
+        "utf8": function() {
             //string = string.replace(/\r\n/g,"\n"); // comment out to allow for safe binary encodings/decodings
-            var utftext = "";
-            for (var n = 0; n < string.length; n++) {
+            var utftext = "",
+                string = this;
+            for (var n = 0, l = string.length; n < l; n++) {
                 var c = string.charCodeAt(n);
                 if (c < 128) {
                     utftext += String.fromCharCode(c);
@@ -1374,6 +1409,10 @@ window.methods_js = {
          *  http://stackoverflow.com/questions/246801/how-can-you-encode-a-string-to-base64-in-javascript
          *
          **/
+        /**
+         * @description [Encodes provided string.]
+         * @return {String} [The base64 encoded string.]
+         */
         "base64": function(string, args) { // use_native) {
             // use the native base64 encode; supported only in IE 10+ and moder browsers (chrome, ff...)
             if (args[1]) return window.btoa(string);
@@ -1397,22 +1436,15 @@ window.methods_js = {
                 output = output + _keyStr.charAt(enc1) + _keyStr.charAt(enc2) + _keyStr.charAt(enc3) + _keyStr.charAt(enc4);
             }
             return output;
-        },
-        "html": function(string) {
-            var entities = {
-                "<": "lt",
-                ">": "gt",
-                "\"": "quot",
-                "'": "#39",
-                "&": "amp"
-            };
-            return string.replace(/[<>"'&]/g, function(entity) {
-                return "&" + entities[entity] + ";";
-            });
         }
     },
     "reverse": {
-        "/": function(string) {
+        /**
+         * @description [Reverses provided string.]
+         * @return {String} [The reversed string.]
+         */
+        "/": function() {
+            var string = this;
             var new_string = "";
             for (var i = 0, l = string.length; i < l; i++) {
                 new_string = string[i] + new_string;
@@ -1425,20 +1457,39 @@ window.methods_js = {
         }
     },
     "split": {
-        "chars": function(string) {
-            return string.split("");
+        /**
+         * @description [Splits string by the its characters.]
+         * @return {Array} [An array contaning the string characters.]
+         */
+        "chars": function() {
+            return this.split("");
         },
-        "chunk": function(string, args) { // chunk_size) {
-            // splits string into the specified chunk size
-            return string.match(new RegExp(("." + ".?".str_repeat("!text", Math.abs(args[1]) - 1)), "g"));
+        /**
+         * @description [Splits string by chunking it.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The size to chunk by.]
+         * @return {Array} [An array containing string chunks.]
+         */
+        "chunk": function(args) { // chunk_size) {
+            return this.match(new RegExp(("." + ".?".str_repeat("!text", Math.abs(args[1]) - 1)), "g"));
         },
-        "lines": function(string) {
-            return string.split(/\r\n|\n\r|\r|\n/);
+        /**
+         * @description [Splits string its lines.]
+         * @return {Array} [An array contaning the string parts.]
+         */
+        "lines": function() {
+            return this.split(/\r\n|\n\r|\r|\n/);
         },
-        "num": function(string, args) { //fill_in) { //internal method ???
+        /**
+         * @description [Splits string number into its parts (number and decimal).]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Boolean} [Flag indicating whether to fill in...???NEEDS FIXING::CONFUSING::NECESSARY?]
+         * @return {Array} [An array containing string chunks.]
+         */
+        "num": function(args) {
             // if (string.str_is("!decimal") && string.str_is("!numeric")) {
-            if (string.str_is("!numeric")) {
-                var parts = string.split("."),
+            if (this.str_is("!numeric")) {
+                var parts = this.split("."),
                     fill_in = args[1];
                 // check if negative
                 return [(parts[0].str_chomp("!left", "-") || (fill_in ? "0" : "0")), (parts[1] || (fill_in ? "0" : "0")), (parts[0].charAt(0) === "-") ? true : false];
@@ -1450,8 +1501,14 @@ window.methods_js = {
             //     return [string, "0"];
             // }
         },
-        "words": function(string, args) {
-            return string.trim().split(args[1] || (/[\s\xa0]+/));
+        /**
+         * @description [Splits string by its words.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The provided amount of whitespace to split by. Defaults to max amount.]
+         * @return {Array} [An array containing string parts.]
+         */
+        "words": function(args) {
+            return this.trim().split(args[1] || (/[\s\xa0]+/));
         }
     },
     "chomp": {
@@ -1485,38 +1542,70 @@ window.methods_js = {
         }
     },
     "ff": {
-        "/": function(string, args) { //list) {
+        /**
+         * @description [Provided a list of strings, functions returns the first match in list.
+         *               Hence, returns the first found string in provided string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Array} [The array of needles to too for in string.]
+         * @return {String|Null}        [The found needle of null if nothing is found.]
+         */
+        "/": function(args) {
             var list = args[1];
             for (var i = 0, l = list.length; i < l; i++) {
-                if (string.indexOf(list[i]) !== -1) return list[i];
+                if (this.indexOf(list[i]) !== -1) return list[i];
             }
             return null;
         }
     },
     "ensure": {
-        "left": function(string, args) {
-            var prefix = args[1];
+        /**
+         * @description [Ensures string has provided prefix.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The prefix the string should have.]
+         * @return {String}        [The string with ensured prefix.]
+         */
+        "left": function(args) {
+            var string = this,
+                prefix = args[1];
             return (string.str_grab("!left", prefix.length) === prefix) ? string : prefix + string;
         },
-        "right": function(string, args) {
-            var suffix = args[1];
+        /**
+         * @description [Ensures string has provided suffix.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The prefix the string should have.]
+         * @return {String}        [The string with ensured suffix.]
+         */
+        "right": function(args) {
+            var string = this,
+                suffix = args[1];
             return (string.str_grab("!right", suffix.length) === suffix) ? string : string + suffix;
         }
     },
     "format": {
-        // allow string formating either way => {0:"anthony"} or {"name":"anthony"}
-        "string": function(string, args) {
+        /**
+         * @description [Formats provided string with the provided map.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Object} [The object containing the string replacements.]
+         * @return {String}        [The formated string.]
+         * @note: allow string formating either way => {0:"anthony"} or {"name":"anthony"}
+         */
+        "string": function(args) {
             var format_map = args[1];
-            return string.replace(/{(\d+)}/g, function(match, index) {
+            return this.replace(/{(\d+)}/g, function(match, index) {
                 return format_map[index];
             });
         },
-        "number": function(string, args) {
-            // var decimals = ,
-            // decimal_seperator = args[2],
-            // order_seperator = args[3];
-            // var string = this;
-            var deci = "00",
+        /**
+         * @description [Formats number string into a money format.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Object} [The amount of decimals to include. (default = 2)]
+         *  @2 {Object} [The decimal seperator. (default = .)]
+         *  @3 {Object} [The order separater. (default = ,)]
+         * @return {String}        [The formated string.]
+         */
+        "number": function(args) {
+            var string = this,
+                deci = "00",
                 check = string.indexOf(".");
             decimals = Math.abs(args[1]) || 2;
             if (check !== -1) {
@@ -1550,8 +1639,13 @@ window.methods_js = {
         }
     },
     "freq": {
-        "letters": function(string) {
-            var hz_map = {};
+        /**
+         * @description [Finds the frequency of the letters in provided string.]
+         * @return {Object}        [Object containing the letters' frequencies.]
+         */
+        "letters": function() {
+            var string = this,
+                hz_map = {};
             for (var i = 0, l = string.length; i < l; i++) {
                 if (!hz_map[string[i]]) {
                     // this is the first of its type
@@ -1562,11 +1656,14 @@ window.methods_js = {
             }
             return hz_map;
         },
-        // edge case "this is pretty cool mane haha. like it really is mane haha".str_freq("!words");
-        // remove punctuation?
+        /**
+         * @description [Finds the frequency of the words in provided string.]
+         * @return {Object}        [Object containing the words' frequencies.]
+         * @bug: edge case "this is pretty cool mane haha. like it really is mane haha".str_freq("!words"); (remove punctuation?)
+         */
         "words": function(string) {
-            // var string = this;
-            var hz_map = {};
+            var string = this,
+                hz_map = {};
             string = string.split(" ");
             for (var i = 0, l = string.length; i < l; i++) {
                 if (!hz_map[string[i]]) {
@@ -1639,22 +1736,35 @@ window.methods_js = {
         }
     },
     "index": {
-        "left": function(string, args) { // needle, all_indices) {
-
-            if (!args[2]) return string.indexOf(args[1]);
+        /**
+         * @description [Find the index of the provided needle in the provided string starting
+         *               from the left.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Boolean} [Flag indicating whether to return all indices of the needle.]
+         * @return {Number|Array}        [The string of grabbed characters.]
+         */
+        "left": function(args) {
+            if (!args[2]) return this.indexOf(args[1]);
             var indices = [],
                 i = -1;
             // http://stackoverflow.com/questions/10710345/finding-all-indexes-of-a-specified-character-within-a-string
-            while ((i = string.indexOf(args[1], i + 1)) >= 0) {
+            while ((i = this.indexOf(args[1], i + 1)) >= 0) {
                 indices.push(i);
             }
             // if the indices array is empty here, it was not found within the string
             return indices;
         },
-        "right": function(string, args) { // needle, all_indices) {
-            if (!args[2]) return string.lastIndexOf(args[1]); // - string.length; --> get the actual position from the right?
+        /**
+         * @description [Find the index of the provided needle in the provided string starting
+         *               from the right.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Boolean} [Flag indicating whether to return all indices of the needle.]
+         * @return {Number|Array}        [The string of grabbed characters.]
+         */
+        "right": function(args) {
+            if (!args[2]) return this.lastIndexOf(args[1]); // - this.length; --> get the actual position from the right?
             // find them all from the left then simply reverse the array
-            return string.str_index("!left", args[1], true).reverse();
+            return this.str_index("!left", args[1], true).reverse();
         }
     },
     "is": {
@@ -1826,8 +1936,9 @@ outside the Latin alphabet.
             return (!(/[^0-1\.-]/g).test(string) && (/^(-)?([0-1]+)?(\.[0-1]+)?$/).test(string) && string !== "-") ? true : false;
             // return (!(/[^0-1\.]/g).test(string) && string.str_count("/", ".") < 2) ? true : false;
         },
-        "digit": function(string) {
+        "digit": function() {
             // only have 0-9 and/ or a radix(dot)
+            var string = this;
             return (!(/[^0-9\.-]/g).test(string) && (/^(-)?([0-9]+)?(\.[0-9]+)?$/).test(string) && string !== "-") ? true : false;
         },
         "octal": function(string) {
@@ -1988,8 +2099,8 @@ outside the Latin alphabet.
             // var string = this;
             return !((/[^0-9 ]/).test(string));
         },
-        "numeric": function(string) {
-            // var string = this;
+        "numeric": function() {
+            var string = this;
             return (dtype(string, "string") && (string.str_is("!binary") || string.str_is("!digit") || string.str_is("!octal") || string.str_is("!hex")) && string !== "Infinity") ? true : false;
         },
         "upper": function(string) {
