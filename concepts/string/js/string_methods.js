@@ -49,7 +49,7 @@ window.methods_js = {
          * @return {String} [The wrapped string.]
          */
         "wrap": function(args) {
-            return (args[1] || "").str_build("!join", this, (args[2] || ""))
+            return (args[1] || "").str_build("!join", this, (args[2] || ""));
         }
     },
 
@@ -60,10 +60,10 @@ window.methods_js = {
          */
         "html": function() {
             return this.trim().str_replace("!raw", {
-                "0": ["><", /\>[\s\xa0]+\</g, "g"],
-                "1": [">", /[\s\xa0]+\>/g, "g"], // <div id="main"  > => <div id="mane">
-                "2": ["<", /\<[\s\xa0]+/g, "g"], // <     div id="main"> => <div id="mane">
-                "3": ["</", /\<\/[\s\xa0]+/g, "g"] // dfsdfsd</   div>" => dfsdfsd</div>"
+                "0": ["><", /\>[\s\xa0]+\</, "g"],
+                "1": [">", /[\s\xa0]+\>/, "g"], // <div id="main"  > => <div id="mane">
+                "2": ["<", /\<[\s\xa0]+/, "g"], // <     div id="main"> => <div id="mane">
+                "3": ["</", /\<\/[\s\xa0]+/, "g"] // dfsdfsd</   div>" => dfsdfsd</div>"
             });
         },
         /**
@@ -290,7 +290,7 @@ window.methods_js = {
                     else {
                         // loop through and replace A-F
                         var hex_list = "0123456789ABCDEF",
-                            hex_array = []
+                            hex_array = [];
                         for (var i = 0, l = octal_array.length; i < l; i++) {
                             hex_array.push(hex_list.charAt(octal_array[i]));
                         }
@@ -317,7 +317,7 @@ window.methods_js = {
                         // http://stackoverflow.com/questions/20650954/how-to-convert-decimal-fractions-to-hexadecimal-fractions
                         // loop through and replace A-F
                         var hex_list = "0123456789ABCDEF";
-                        var hex_array = []
+                        var hex_array = [];
                         for (var i = 0, l = dec_list.length; i < l; i++) {
                             hex_array.push(hex_list.charAt(dec_list[i]));
                         }
@@ -369,7 +369,7 @@ window.methods_js = {
             var string = this + "";
             // must only contain numbers 0-7 and/or a single dot
             if (!string.str_is("!octal")) return NaN;
-            // get the number pars
+            // get the number parts
             var parts = string.str_split("!num", true),
                 number = parts[0],
                 decimal = parts[1],
@@ -1791,57 +1791,95 @@ window.methods_js = {
             }
             return false;
         },
-        "sewith": function(string, args) {
-            /*allow emoty needle???*/
-            var needle = args[1];
-            if (!needle) return false;
-            var starts = string.str_is("!swith", needle),
-                ends = string.str_is("!ewith", needle);
+        /**
+         * @description [Checks if string starts/ends with of any of the strings in the provided array of strings.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Array} [The array of strings the string can start/end with.]
+         * @return {Number|Boolean}        [flase means it does not start/end with.
+         *                                  1 = startswith, 2 = endswith]
+         */
+        "sewith": function(args) {
+            var starts = this.str_is("!swith", args[1]),
+                ends = this.str_is("!ewith", args[1]);
             if (starts) return 1; //return "^" + starts;
             if (ends) return 2; //return ends + "$";
             return false;
         },
-        "swith": function(string, args) {
+        /**
+         * @description [Checks if string starts with of any of the strings in the provided array of strings.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Array} [The array of strings the string can end with.]
+         * @return {Boolean}        [True means string starts with a string in the provided array. Else false.]
+         */
+        "swith": function(args) {
             var list = args[1];
             // loop through each prefix and check if the string starts with it
             for (var i = 0, l = list.length; i < l; i++) {
-                if (string.str_grab("!left", list[i].length) === list[i]) return true;
+                if (this.str_grab("!left", list[i].length) === list[i]) return true;
             }
             return false;
         },
-        "alpha": function(string) {
-            return (dtype(string, "string") && string.trim().replace(/[a-z]/gi, "") === "") ? true : false;
+        /**
+         * @description [Checks if string only contains letters (a-z).]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "alpha": function() {
+            return (dtype(this, "string") && this.trim().replace(/[a-z]/gi, "") === "") ? true : false;
         },
-        "alphanum": function(string) {
-            return (dtype(string, "string") && string.trim().replace(/[a-z0-9]/gi, "") === "") ? true : false;
+        /**
+         * @description [Checks if string only contains letters + numbers (a-z0-9).]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "alphanum": function() {
+            return (dtype(this, "string") && this.trim().replace(/[a-z0-9]/gi, "") === "") ? true : false;
         },
-        "array": function(object) {
-            return (dtype(object, "array")) ? true : false;
+        /**
+         * @description [Checks if object is an Array.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @non_string
+         */
+        "array": function() {
+            return (dtype(this, "array")) ? true : false;
         },
-        "arguments": function(object) {
-            return (dtype(object, "arguments")) ? true : false;
+        /**
+         * @description [Checks if object is an ArgumentsObject.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @non_string
+         */
+        "arguments": function() {
+            return (dtype(this, "arguments")) ? true : false;
         },
-        // http://stackoverflow.com/questions/7860392/determine-if-string-is-in-base64-using-javascript
-        "base64_string": function(string) {
+        /**
+         * @description [Checks if string is a base64 string.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @source http://stackoverflow.com/questions/7860392/determine-if-string-is-in-base64-using-javascript
+         */
+        "base64_string": function() {
             // can have padding; 1 or 2 == at the end of string
-            if (!string || string.str_count("/", "!=") > 2) return false;
+            if (!this || this.str_count("/", "!=") > 2) return false;
             // first remove the padding and check chars to be A-Za-z0-9+/
-            if ((/[^a-zA-Z0-9\+\/]/).test(string.str_replace("!right", "=", ""))) return false;
+            if ((/[^a-zA-Z0-9\+\/]/).test(this.str_replace("!right", "=", ""))) return false;
             return true;
         },
-        // valid formats
-        // https://en.wikipedia.org/wiki/Date_and_time_representation_by_country#Date
-        // it will account for leap years
-        "bday": function(date) {
-            var year = date[0],
-                month = date[1],
-                day = date[2];
-            // // var string = this;
+        /**
+         * @description [Checks if provided array has a valid year/month/day.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @source http://stackoverflow.com/questions/7860392/determine-if-string-is-in-base64-using-javascript
+         *
+         * @source: valid formats
+         * https://en.wikipedia.org/wiki/Date_and_time_representation_by_country#Date
+         * it will account for leap years
+         */
+        "bday": function() {
+            var string = this.split(/\-|;|\:|\s+|\.|,/);
+            var year = string[0],
+                month = string[1],
+                day = string[2];
             if (!year || !month || !day) return false;
             // check if all strings are numeric
             if (!year.str_is("!numeric") || !month.str_is("!numeric") || !day.str_is("!numeric")) return 1;
             // check the lengths
-            if ((year.str_to("!num") + "").length !== 4 || month.length > 2 || day.length > 2) return 2;
+            if ((year.str_convert("!::num") + "").length !== 4 || month.length > 2 || day.length > 2) return 2;
             // reset vars from string to numbers
             year = year * 1;
             month = month * 1;
@@ -1868,36 +1906,59 @@ window.methods_js = {
             var check = month_max_days[month - 1][1];
             // if the year is a leay year and the month is February
             // we add an extra day
-            if (month === 2 && year.str_is("!leap_yr")) check += 1;
+            if (month === 2 && (year + "").str_is("!leap_yr")) check += 1;
             // now we check the day is allowed
             if (day < 1 || day > check) return 4;
             // everything passed and we can
             return true;
         },
-        "boolean": function(object) {
-            return (dtype(object, "boolean")) ? true : false;
+        /**
+         * @description [Checks if object is a Boolean.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @non_string
+         */
+        "boolean": function() {
+            return (dtype(this, "boolean")) ? true : false;
         },
-        "date": function(object) {
-            return (dtype(object, "date")) ? true : false;
+        /**
+         * @description [Checks if object is a Date object.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @non_string
+         */
+        "date": function() {
+            return (dtype(this, "date")) ? true : false;
         },
-        "decimal": function(string) {
-            return (string.str_is("!numeric") && string.str_is("!in", ".")) ? true : false;
+        /**
+         * @description [Checks if string is a decimal integer.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "decimal": function() {
+            return (this.str_is("!numeric") && this.str_is("!in", ".")) ? true : false;
             // return (string.str_is("!numeric") /*&& string * 1 % 1 !== 0*/) ? true : false;
         },
-        "domain": function(string) {
-
+        /**
+         * @description [Checks if provided string is a domain name in format.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "domain": function() {
+            var string = this;
             // a legal domain cannot contain `~!@#$%^&*()_+=[]{}|\;:'",.<>/?
             // cannot start or end with a hyphen/dash but it can contain inner hyphens/dashes
             return (string && string.str_grab("!left", 1) !== "-" && string.str_grab("!right", 1) !== "-" && !string.str_is("!special_string", ["-"])) ? true : false;
         },
-        "email": function(string) {
+        /**
+         * @description [Checks if provided string is in email format.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "email": function() {
+            var string = this;
             /*
-Your email address can contain only letters,
-numbers, periods (.), hyphens (-),
-and underscores (_). It can't contain special
-characters, accented letters, or letters
-outside the Latin alphabet.
-*/
+                Your email address can contain only letters,
+                numbers, periods (.), hyphens (-),
+                and underscores (_). It can't contain special
+                characters, accented letters, or letters
+                outside the Latin alphabet.
+            */
             // string must be over 4 chars in length
             // http://stackoverflow.com/questions/2049502/what-characters-are-allowed-in-email-address
             // cannot have spaces...consecutive periods or start/end with a period
@@ -1927,38 +1988,77 @@ outside the Latin alphabet.
             // everything else looks good
             return true;
         },
-        "empty": function(string) {
+        /**
+         * @description [Checks if provided string is empty.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "empty": function() {
             // should it account for spaces???? "   ";false vs "";true
-            return (string === undefined || string === null || string.replace(/[\s\xa0]+/g, "") === "") ? true : false;
+            return (this === undefined || this === null || this.replace(/[\s\xa0]+/g, "") === "") ? true : false;
         },
-        "binary": function(string) {
+        /**
+         * @description [Checks if provided string is in binary format.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "binary": function() {
             // only have 0-1 and/ or a radix(dot)
-            return (!(/[^0-1\.-]/g).test(string) && (/^(-)?([0-1]+)?(\.[0-1]+)?$/).test(string) && string !== "-") ? true : false;
+            return (!(/[^0-1\.-]/g).test(this) && (/^(-)?([0-1]+)?(\.[0-1]+)?$/).test(this) && this !== "-") ? true : false;
             // return (!(/[^0-1\.]/g).test(string) && string.str_count("/", ".") < 2) ? true : false;
         },
+        /**
+         * @description [Checks if provided string is a decimal number.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
         "digit": function() {
             // only have 0-9 and/ or a radix(dot)
             var string = this;
             return (!(/[^0-9\.-]/g).test(string) && (/^(-)?([0-9]+)?(\.[0-9]+)?$/).test(string) && string !== "-") ? true : false;
         },
-        "octal": function(string) {
+        /**
+         * @description [Checks if provided string is an octal number.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "octal": function() {
+            var string = this;
             // only have 0-7 and/ or a radix(dot)
             return (!(/[^0-7\.-]/g).test(string) && (/^(-)?([0-7]+)?(\.[0-7]+)?$/).test(string) && string !== "-") ? true : false;
         },
-        "hex": function(string) {
+        /**
+         * @description [Checks if provided string is in hex format.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "hex": function() {
+            var string = this;
             // only have 0-9 and/ or a radix(dot)
             return (!(/[^a-f0-9\.x-]/gi).test(string) && (/^(-)?((0x)?(#)?[0-9a-f]+)?(\.[0-9a-f]+)?$/i).test(string) && string !== "-") ? true : false;
         },
-        "hexcolor": function(string) {
+        /**
+         * @description [Checks if provided string is a hex color.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "hexcolor": function() {
+            var string = this;
             return ((/^(#)?([a-f0-9]{3,6})$/i).test(string) && (string.str_chomp("!left", "#").str_length("!exact", 3) || string.str_chomp("!left", "#").str_length("!exact", 6))) ? true : false;
             // return ((/^#?([a-f0-9]{3}|[a-f0-9]{6})$/gi).test(string)) ? true : false;
         },
-        "hexcolor8": function(string) {
-            return ((/^(#)?([a-f0-9]{8})$/i).test(string)) ? true : false;
+        /**
+         * @description [Checks if provided string is a hex color with an alpha channel.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "hexcolor8": function() {
+            return ((/^(#)?([a-f0-9]{8})$/i).test(this)) ? true : false;
         },
-        "rgb": function(string) {
-            return ((typeof string.str_parse("!rgb")) === "boolean") ? false : true;
+        /**
+         * @description [Checks if provided string is an rgb color.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "rgb": function() {
+            return ((typeof this.str_parse("!rgb")) === "boolean") ? false : true;
         },
+        /**
+         * @description [Checks if provided string is in a valid ip address format.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
         "ip": function(string) {
             // replace any illegal chars
             string = string.str_chomp("!left", "://");
@@ -2050,91 +2150,157 @@ outside the Latin alphabet.
                 return true;
             }
         },
-        // http://semplicewebsites.com/removing-accents-javascript
-        "latin": function(string) {
-            var latin_map = window.latin_map;
+        /**
+         * @description [Checks if provided string contains latin characters.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @source http://semplicewebsites.com/removing-accents-javascript
+         */
+        "latin": function() {
+            var latin_map = window.latin_map,
+                string = this;
             for (var i = 0, l = string.length; i < l; i++) {
                 if (latin_map[string[i]]) return true;
             }
             return false;
         },
-        // http://www.timeanddate.com/date/leapyear.html
-        "leap_yr": function(string) {
-            // mus be divisible by 4
-            if (((string * 1) % 4)) return false;
+        /**
+         * @description [Checks if the provided year is a leap year.]
+         * @return {Boolean} [True = is leap year, otherwise false.]
+         * @info http://www.timeanddate.com/date/leapyear.html
+         */
+        "leap_yr": function() {
+            // must be divisible by 4
+            if (((this * 1) % 4)) return false;
             // if the number is a century number(%100) it must be divisible by %400
-            if (!((string * 1) % 100) && ((string * 1) % 400)) return false;
+            if (!((this * 1) % 100) && ((this * 1) % 400)) return false;
             return true;
         },
-        "lower": function(string) {
-            return string.replace(/[a-z]/g, "") === "";
+        /**
+         * @description [Checks if provided string characters are all lowercased.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "lower": function() {
+            return this.replace(/[a-z]/g, "") === "";
         },
-        "special_string": function(string, args) { // exclude_characters, check_for_numbers) {
+        /**
+         * @description [Checks if provided string contains special characters (symbols).]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Array} [The array of special characters to exclude from check.]
+         *  @2 {Boolean} [Flag indicating whether to include numbers in check.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "special_string": function(args) { // exclude_characters, check_for_numbers) {
             var special_chars = ("`~!@#$%^&*()-_=+[]{}\\|;:\'\",.<>/? " + ((args[2]) ? "0123456789" : "")).split("");
             var exclude_characters = args[1] || [];
             for (var i = 0, l = exclude_characters.length; i < l; i++) {
                 var remove_index = special_chars.indexOf(exclude_characters[i]);
                 if (remove_index > -1) special_chars.splice(remove_index, 1);
             }
+            var string = this;
             // now check if the string has any special chars
             for (var i = 0, l = special_chars.length; i < l; i++) {
-                if (string.indexOf(special_chars[i]) > -1) return true;
+                if (this.indexOf(special_chars[i]) > -1) return true;
             }
             return false;
         },
-        "nan": function(string) {
-            if (dtype(string, "number") && string + "" === "NaN") {
-                return true;
-            }
-            return false;
+        /**
+         * @description [Checks if provided object is Not-A-Number (NaN).]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "nan": function() {
+            return (dtype(this, "number") && this + "" === "NaN") ? true : false;
         },
-        "null": function(string) {
-            return string === null;
+        /**
+         * @description [Checks if provided object is null.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "null": function() {
+            return this === null;
         },
-        "number": function(string) {
+        /**
+         * @description [Checks if provided object is a number.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "number": function() {
+            var string = this;
             if (string + "" !== "Infinity" && dtype(string * 1, "number") && parseFloat(string) >= 0) return true;
             return false;
         },
-        "number_space": function(string) {
-            // var string = this;
-            return !((/[^0-9 ]/).test(string));
+        /**
+         * @description [Checks if provided string includes numbers and spaces.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "number_space": function() {
+            return !((/[^0-9 ]/).test(this));
         },
+        /**
+         * @description [Checks if provided string is either a binary, decimal(digit),
+         *               octal, or hexadecimal number.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
         "numeric": function() {
             var string = this;
             return (dtype(string, "string") && (string.str_is("!binary") || string.str_is("!digit") || string.str_is("!octal") || string.str_is("!hex")) && string !== "Infinity") ? true : false;
         },
-        "upper": function(string) {
-            // var string = this;
-            return string.replace(/[A-Z]/g, "") === "";
+        /**
+         * @description [Checks if provided string characters are all uppercased.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "upper": function() {
+            return this.replace(/[A-Z]/g, "") === "";
         },
-        "url": function(string) {
-            // var string = this;
-            var test = string.str_parse("!url");
+        /**
+         * @description [Checks if provided string is in a URL format.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "url": function() {
+            var test = this.str_parse("!url");
             return (test.length === 1 && test[0].valid === true) ? true : false;
         },
-        "falsy": function(string) {
-            // var string = this;
-            return (["", false, null, undefined, 0].indexOf(string) >= 0 || dtype(string, "number") && (a + "" === "NaN")) ? true : false;
+        /**
+         * @description [Checks if provided object is falsy, or anything that can be considered false.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "falsy": function() {
+            return (["", false, null, undefined, 0].indexOf(this) >= 0 || dtype(this, "number") && (a + "" === "NaN")) ? true : false;
         },
-        "finite": function(string) {
-            // var string = this;
+        /**
+         * @description [Checks if provided number is finite.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "finite": function() {
             //if (Number.isFinite) return Number.isFinite(a);
             return isFinite(string);
         },
-        "infinity": function(string) {
-            // var string = this;
-            return !isFinite(string);
+        /**
+         * @description [Checks if provided number is not finite, or infinty.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "infinity": function() {
+            return !isFinite(this);
         },
-        "function": function(string) {
-            // var string = this;
-            return (dtype(string, "function")) ? true : false;
+        /**
+         * @description [Checks if provided object is a function.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "function": function() {
+            return (dtype(this, "function")) ? true : false;
         },
-        "plain_object": function(string) {
-            // var string = this;
-            return (dtype(string, "object")) ? true : false;
+        /**
+         * @description [Checks if provided is a plain object ({}).]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "plain_object": function() {
+            return (dtype(this, "object")) ? true : false;
         },
-        "equal": function(string, args) {
-            // var string = this;
+        /**
+         * @description [Checks to see if 2 objects are idential in content.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Any} [The object to which compare with.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "equal": function(args) {
+            var string = this;
             var i, e, a = string,
                 l = a.length,
                 b = args[1],
@@ -2189,50 +2355,98 @@ outside the Latin alphabet.
             }
             return true;
         },
-        "same_type": function(string, args) { // comparison_object) {
-            return dtype(string, dtype(args[1]));
+        /**
+         * @description [Checks to see if 2 objects are idential in type.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Any} [The object to which compare with.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "same_type": function(args) { // comparison_object) {
+            return dtype(this, dtype(args[1]));
         },
-        "element": function(string) {
+        /**
+         * @description [Checks to see if provided object is an HTMLElement.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "element": function() {
+            var string = this;
             return (string && string.nodeType === 1 && dtype(string, "htmldivelement")) ? true : false;
         },
-        "string": function(string) {
-            return (dtype(string, "string")) ? true : false;
+        /**
+         * @description [Checks if provided object is a string.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "string": function() {
+            return (dtype(this, "string")) ? true : false;
         },
-        "regex": function(string) {
-            return (dtype(string, "regexp")) ? true : false;
+        /**
+         * @description [Checks if provided object is RegExp object.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "regex": function() {
+            return (dtype(this, "regexp")) ? true : false;
         },
-        "undefined": function(string) {
-            return string === undefined;
+        /**
+         * @description [Checks to see if provided object is undefined.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "undefined": function() {
+            return this === undefined;
         },
-        "window": function(string) {
-            // var string = this;
-            return (dtype(string, "global")) ? true : false;
+        /**
+         * @description [Checks to see if provided object is the window.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Any} [The object to which compare with.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "window": function() {
+            return (dtype(this, "window")) ? true : false;
         },
-        // http://stackoverflow.com/questions/9780632/how-do-i-determine-if-a-color-is-closer-to-white-or-black
-        // http://stackoverflow.com/questions/12043187/how-to-check-if-hex-color-is-too-black
-        // <= 127 ==> black
-        // >= 128 ==> white
-        // https://en.wikipedia.org/wiki/HSL_and_HSV#Lightness
-        "color_white": function(string) {
-            var rgb = string;
+        /**
+         * @description [Checks if an rgb color is more white than black.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @source http://stackoverflow.com/questions/9780632/how-do-i-determine-if-a-color-is-closer-to-white-or-black
+         * @source http://stackoverflow.com/questions/12043187/how-to-check-if-hex-color-is-too-black
+         * @source https://en.wikipedia.org/wiki/HSL_and_HSV#Lightness
+         * @example black === (lessthan or equal 127)
+         * @exmaple white === (greaterthan or equal to 128)
+         */
+        "color_white": function() {
+            var rgb = this;
             return (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) < 127 ? false : true;
         },
-        "color_black": function(string) {
-            var rgb = string;
-            return !(rgb.str_is("!color_white"));
+        /**
+         * @description [Checks if an rgb color is more black than white.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "color_black": function() {
+            return !(this.str_is("!color_white"));
         },
-        //http://stackoverflow.com/questions/16476501/validate-if-a-value-is-a-whole-number
-        "whole_number": function(string) {
-            // var string = this;
-            return (string.str_is("!numeric") && (string * 1) % 1 === 0) ? true : false;
+        /**
+         * @description [Checks if provided string is a whole number.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         * @source http://stackoverflow.com/questions/16476501/validate-if-a-value-is-a-whole-number
+         */
+        "whole_number": function() {
+            return (this.str_is("!numeric") && (this * 1) % 1 === 0) ? true : false;
         },
-        "mimetype": function(string, args) { // ext, media_type) {
-            // var string = this;
+        /**
+         * @description [Checks to see if the provided mimetype and file extension are a valid match.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The provided file extension.]
+         *  @2 {String} [The provided mimetype to check against.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "mimetype": function(args) {
             var m = window.mimetypes[args[1].str_ensure("!left", ".")];
             return (m && m.indexOf(args[2]) > -1) ? true : false;
         },
-        "base64_url": function(string) {
-            // var string = this;
+        /**
+         * @description [Checks to see if the provided string is a base64 URL.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "base64_url": function() {
+            var string = this;
             // split at ,
             var parts = string.split(","),
                 first = parts[0],
@@ -2263,37 +2477,67 @@ outside the Latin alphabet.
         }
     },
     "length": {
-        "min": function(string, args) {
-            return (string.length >= args[1]) ? true : false;
+        /**
+         * @description [Checks if string length is greater than or equal to the provided length.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The provided length to check against.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "min": function(args) {
+            return (this.length >= args[1]) ? true : false;
         },
-        "max": function(string, args) {
-            return (string.length <= args[1]) ? true : false;
+        /**
+         * @description [Checks if string length is less than or equal to the provided length.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The provided length to check against.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "max": function(args) {
+            return (this.length <= args[1]) ? true : false;
         },
-        "range": function(string, args) {
-            return (string.str_length("!min", args[1]) && string.str_length("!max", args[2])) ? true : false;
+        "range": function(args) {
+            return (this.str_length("!min", args[1]) && this.str_length("!max", args[2])) ? true : false;
         },
-        "exact": function(string, args) {
-            return (string.length === args[1]) ? true : false;
+        /**
+         * @description [Checks if string length is exactly the provided length.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The provided length to check against.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "exact": function(args) {
+            return (this.length === args[1]) ? true : false;
         }
     },
     "letter": {
-        "next": function(string) {
-            // var string = this;
+        /**
+         * @description [Using the provided letter, function returns the next letter in the alphabet.]
+         * @return {String}        [The next letter in alphabet.]
+         */
+        "next": function() {
             // get the next letter in the alphabet
-            var point = string.codePointAt(0);
+            var point = this.codePointAt(0);
             if (point === 90) point = 64; // reset to letter A if letter Z provided
             else if (point === 122) point = 96; // reset to letter a if letter z provided
             return String.fromCodePoint(point + 1);
         },
-        "prev": function(string) {
-            // get the next letter in the alphabet
-            var point = string.codePointAt(0);
+        /**
+         * @description [Using the provided letter, function returns the previous letter in the alphabet.]
+         * @return {String}        [The previous letter in alphabet.]
+         */
+        "prev": function() {
+            // get the previous letter in the alphabet
+            var point = this.codePointAt(0);
             if (point === 65) point = 91; // reset to letter A if letter Z provided
             else if (point === 97) point = 123; // reset to letter a if letter z provided
             return String.fromCodePoint(point - 1);
         }
     },
     "distance": {
+        /**
+         * @description [Uses levenshteins distance algorithm to determine the distance between 2 strings.]
+         * @return {String}        [The string to compare current string with.]
+         * @sourcr https://en.wikipedia.org/wiki/Levenshtein_distance
+         */
         "leven": function(string1, args) {
             var string2 = args[1];
             // degenerate cases
@@ -2324,48 +2568,91 @@ outside the Latin alphabet.
         }
     },
     "pad": {
-        "both": function(string, args) { //times, character) {
-            // var times = args[1], character = args[2];
-            //http://stackoverflow.com/questions/1877475/repeat-character-n-times
+        /**
+         * @description [Pads the left and right of the provided string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of characters to bad by.]
+         *  @2 {String} [The character to pad with. (default = space character)]
+         * @return {String}        [The padded string.]
+         */
+        "both": function(args) {
+            // http://stackoverflow.com/questions/1877475/repeat-character-n-times
             var padding = Array((args[1] || 0) + 1).join(args[2] || " ");
-            return padding + string + padding;
+            return padding + this + padding;
         },
-        "left": function(string, args) { //times, character) {
-            // var times = args[1], character = args[2];
-            // var string = this;
+        /**
+         * @description [Pads the left of the provided string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of characters to bad by.]
+         *  @2 {String} [The character to pad with. (default = space character)]
+         * @return {String}        [The padded string.]
+         */
+        "left": function(args) { //times, character) {
             //http://stackoverflow.com/questions/1877475/repeat-character-n-times
-            return Array((args[1] || 0) + 1).join(args[2] || " ") + string;
+            return Array((args[1] || 0) + 1).join(args[2] || " ") + this;
         },
-        "right": function(string, args) { //times, character) {
-
-            // var times = args[1], character = args[2];
-            // var string = this;
+        /**
+         * @description [Pads the right of the provided string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of characters to bad by.]
+         *  @2 {String} [The character to pad with. (default = space character)]
+         * @return {String}        [The padded string.]
+         */
+        "right": function(args) {
             //http://stackoverflow.com/questions/1877475/repeat-character-n-times
-            return string + Array((args[1] || 0) + 1).join(args[2] || " ");
+            return this + Array((args[1] || 0) + 1).join(args[2] || " ");
         }
     },
     "parse": {
-        "numbers": function(string) {
-            return (string) ? string.match(/\d+/g) : [];
+        /**
+         * @description [Parses string to get all the numbers.]
+         * @return {Array}        [An array containing all the numbers found in the string.]
+         */
+        "numbers": function() {
+            return (this) ? this.match(/\d+/g) : [];
         },
-        "number": function(string, args) {
-            var numbers = string.str_parse("!numbers");
-            var num = (string && numbers) ? numbers[0] : null;
+        /**
+         * @description [Returns the first match of a number in the provided string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Boolean} [Flag indicating number should be cast to a number.]
+         * @return {String|Number}        [The found number as a string or a number.]
+         */
+        "number": function(args) {
+            var numbers = this.str_parse("!numbers");
+            var num = (this && numbers) ? numbers[0] : null;
             // if the second argument is provided we cast the string to number
             return (args[1]) ? +num : num;
         },
-        "hsv": function(string) {
-            return string.str_parse("!rgb", "hsva?");
+        /**
+         * @description [Parses HSV color code to return its components in an array.]
+         * @return {Array}        [The HSV color components.]
+         */
+        "hsv": function() {
+            return this.str_parse("!rgb", "hsva?");
         },
-        "hsl": function(string) {
-            return string.str_parse("!rgb", "hsla?");
+        /**
+         * @description [Parses HSL color code to return its components in an array.]
+         * @return {Array}        [The HSL color components.]
+         */
+        "hsl": function() {
+            return this.str_parse("!rgb", "hsla?");
         },
-        "hwb": function(string) {
-            return string.str_parse("!rgb", "hwba?");
+        /**
+         * @description [Parses HWB color code to return its components in an array.]
+         * @return {Array}        [The HWB color components.]
+         */
+        "hwb": function() {
+            return this.str_parse("!rgb", "hwba?");
         },
-        "rgb": function(string, args) { // type) {
+        /**
+         * @description [Parses rgb color code to return its components in an array.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The type of color code to filter. (rgb, hsl, hsv, hwb)]
+         * @return {Array}        [The rgb color components.]
+         */
+        "rgb": function(args) {
             var type = args[1];
-
+            var string = this;
             // must start with rgb and end with a )
             if (!string.str_is("!swith", ["rgb", "hsl", "hsv", "hwb"]) || !string.str_is("!ewith", [")", ");"])) return 11;
             // split by the comma
@@ -2373,7 +2660,7 @@ outside the Latin alphabet.
             // length must be 3 or 4
             var parts = string.split(",");
 
-            if (!parts.length.val("!range", 3, 4)) return 22;
+            if (!parts.length.num_val("!range", 3, 4)) return 22;
             // go through each part
             // set the search term into the map
             // var r_map = {};
@@ -2391,10 +2678,15 @@ outside the Latin alphabet.
             var four = (parts[3]) ? _4.str_is("!numeric") : true;
 
             if (
-                (!one || !(+_1).val("!range", 0, 255)) || (!two || !(+_2).val("!range", 0, 255)) || (!three || !(+_3).val("!range", 0, 255)) || (!four || !(+_4).val("!range", 0, 255))) return 33;
+                (!one || !(+_1).num_val("!range", 0, 255)) || (!two || !(+_2).num_val("!range", 0, 255)) || (!three || !(+_3).num_val("!range", 0, 255)) || (!four || !(+_4).num_val("!range", 0, 255))) return 33;
             return [_1, _2, _3, (_4 || "1")];
         },
-        "url": function(string) {
+        /**
+         * @description [Parses URL string to return its URL components.]
+         * @return {Object}        [The object containing the URL components.]
+         */
+        "url": function() {
+            var string = this;
             var update = function(update_map) {
                 var _ = this,
                     val;
@@ -2861,25 +3153,28 @@ outside the Latin alphabet.
         }
     },
     "repeat": {
-        "text": function(string, args) {
+        /**
+         * @description [Copies the provided text the provided amount of times.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The amount of times the string should be repeated.]
+         * @return {String}        [The string repeated N amount of times.]
+         */
+        "text": function(args) {
             // create an empty array then populate it with the provided string
-            return Array((args[1] || 0) + 1).join(string || " ");
+            return Array((args[1] || 0) + 1).join(this || " ");
         }
     },
     "replace": {
-        "raw": function(args) {
-            var replacement_map = args[1];
-            var l = Object.keys(replacement_map).length;
+        /**
+         * @description [This is the default and can either be a map or a single needle. This replace
+         *               method can only be passed string key and string value pairs.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Object} [Object map containing text and replacement strings.]
+         * @return {String}        [The string undergone replacement.]
+         */
+        "all": function(args) {
             var string = this;
-            for (var i = 0; i < l; i++) {
-                string = string.replace(new RegExp(replacement_map[i][1], replacement_map[i][2]), replacement_map[i][0]);
-            }
-            return string;
-        },
-        // this is the default and can either be a map or a single needle
-        "all": function(string, args) { //, needle_replacement) {
             var needle_map = args[1];
-
             // var replacement_map = {};
             // // if the provided input is a string and replacement...
             // // we turn it into a replacement_map
@@ -2903,22 +3198,52 @@ outside the Latin alphabet.
                 return needle_map[key];
             });
         },
-        "left": function(string, args) { // needle, replacement) {
-            var needle = args[1],
-                replacement = args[2];
-            return string.replace(new RegExp("^(" + needle + ")+", "g"), (replacement || ""));
+        /**
+         * @description [Uses provided map replacement object to replace any matches in provided string.
+         *               This replace method can be passed RegExp patterns.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Object} [Object map containing text and replacement RegExp strings.]
+         * @return {String}        [The string undergone replacement.]
+         */
+        "raw": function(args) {
+            var replacement_map = args[1];
+            var l = Object.keys(replacement_map).length;
+            var string = this;
+            for (var i = 0; i < l; i++) {
+                string = string.replace(new RegExp(replacement_map[i][1], replacement_map[i][2]), replacement_map[i][0]);
+            }
+            return string;
         },
-        "right": function(string, args) { // needle, replacement) {
-            var needle = args[1],
-                replacement = args[2];
-
-            return string.replace(new RegExp("(" + needle + ")+$", "g"), (replacement || ""));
+        /**
+         * @description [Replaces only from the left of the provided string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The needle string to find in provided string.]
+         *  @1 {String} [The string to use as the replacement.]
+         * @return {String}        [The string undergone replacement.]
+         */
+        "left": function(args) {
+            return this.replace(new RegExp("^(" + args[1] + ")+", "g"), (args[2] || ""));
+        },
+        /**
+         * @description [Replaces only from the right of the provided string.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The needle string to find in provided string.]
+         *  @1 {String} [The string to use as the replacement.]
+         * @return {String}        [The string undergone replacement.]
+         */
+        "right": function(args) {
+            return this.replace(new RegExp("(" + args[1] + ")+$", "g"), (args[2] || ""));
         }
     },
     "strip": {
-        "accents": function(string) {
+        /**
+         * @description [Strips provided string of all accents.]
+         * @return {String}        [The string with the accents removed.]
+         */
+        "accents": function() {
             var latin_map = window.latin_map,
-                new_string = [];
+                new_string = [],
+                string = this;
             for (var i = 0, l = string.length; i < l; i++) {
                 var lookup = latin_map[string[i]];
                 if (lookup) new_string.push(lookup);
@@ -2926,12 +3251,22 @@ outside the Latin alphabet.
             }
             return new_string.join("");
         },
-        "punctuation": function(string) {
+        /**
+         * @description [Removes all punctiation from the provided string.]
+         * @return {String}        [The string with punctuation removed.]
+         */
+        "punctuation": function() {
             // replace everything but letters and numbers
-            return string.replace(/[^a-z\d\s\xa0]+/gi, "").replace(/\s+/g, " ");
+            return this.replace(/[^a-z\d\s\xa0]+/gi, "").replace(/\s+/g, " ");
         },
-        "tags": function(string, args) { /*tag_type::args[1]*/
-
+        /**
+         * @description [Replaces all tags or only the provided tag type.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The tags to strip string of. (i.e. "b|a|div")]
+         * @return {String}        [The string with tags removed.]
+         */
+        "tags": function(args) {
+            var string = this;
             var tag_type = args[1];
             return (tag_type) ? string.replace(new RegExp("<(/)?(" + tag_type + ")>", "gi"), "") : string.replace(/\<(\/)?[a-z]+\>/gi, "");
             // return (tag_type) ? string.replace(new RegExp("<\(/\)?" + tag_type + ">", "gi"), "") : string.replace(/\<(\/)?[a-z]+\>/gi, "");
@@ -2939,11 +3274,13 @@ outside the Latin alphabet.
             // return string.replace(/<[\w|/]+>/g, "");
         }
     },
-    /*
-" this is so \n\n\n  coo  l    mane hahaha   ".replace(/\s|\n/g, "*");
-*/
     "trim": {
-        "inner": function(string) {
+        /**
+         * @description [Trims the inside of the string. Does not touch the left/right sides.]
+         * @return {String}        [The string with its inners trimmed.]
+         */
+        "inner": function() {
+            var string = this;
             var cleared = string.str_clear("!space");
             var left = string.match(/^\s+/) || [];
             if (left.length) cleared = left[0] + cleared;
@@ -2951,16 +3288,31 @@ outside the Latin alphabet.
             if (right.length) cleared = cleared + right[0];
             return cleared;
         },
-        "left": function(string) {
-            return string.replace(/^[\s\xa0]+/, "");
+        /**
+         * @description [Trims left side of provided string.]
+         * @return {String}        [The string with its left trimmed.]
+         */
+        "left": function() {
+            return this.replace(/^[\s\xa0]+/, "");
         },
-        "right": function(string) {
-            return string.replace(/[\s\xa0]+$/, "");
+        /**
+         * @description [Trims right side of provided string.]
+         * @return {String}        [The string with its right trimmed.]
+         */
+        "right": function() {
+            return this.replace(/[\s\xa0]+$/, "");
         }
     },
     "truncate": {
-        "by_chars": function(string, args) { // args[1]::char_count, args[2]::ending
-
+        /**
+         * @description [Truncates string based on the provided characters count.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The amount of characters to keep after truncating.]
+         *  @2 {String} [The ending. (ellipses are uses as the default)]
+         * @return {String}        [The truncated string.]
+         */
+        "by_chars": function(args) {
+            var string = this;
             var substr = string.substr(0, args[1]),
                 ending = args[2] || "...";
             var next_char = string[args[1]];
@@ -2979,7 +3331,15 @@ outside the Latin alphabet.
             }
             return ending;
         },
-        "by_words": function(string, args) { // args[1]::char_count, args[2]::ending
+        /**
+         * @description [Truncates string based on the provided word count.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {String} [The amount of words to keep after truncating.]
+         *  @2 {String} [The ending. (ellipses are uses as the default)]
+         * @return {String}        [The truncated string.]
+         */
+        "by_words": function(args) {
+            var string = this;
             var substr = string.str_clear("!space").split(" "),
                 ending = args[2] || "...",
                 new_string = [],
@@ -2995,22 +3355,52 @@ outside the Latin alphabet.
         }
     },
     "val": {
-        "min": function(string, args) {
-            return (string >= args[1]) ? true : false;
+        /**
+         * @description [Checks if number is bigger than or equal to the provided number.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The minimum the provided number should be.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "min": function(args) {
+            return (this >= args[1]) ? true : false;
         },
-        "max": function(string, args) {
-            return (string <= args[1]) ? true : false;
+        /**
+         * @description [Checks if number is less than or equal to the provided number.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The maximum the provided number should be.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "max": function(args) {
+            return (this <= args[1]) ? true : false;
         },
-        "range": function(string, args) {
+        /**
+         * @description [Checks if number is between the provided min and max numbers.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The minimum the provided number should be.]
+         *  @1 {Number} [The maximum the provided number should be.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "range": function(args) {
 
-            return (string.val("min", args[1]) && string.val("max", args[2])) ? true : false;
+            return (this.num_val("min", args[1]) && this.num_val("max", args[2])) ? true : false;
         },
-        "exact": function(string, args) {
-
-            return (string === args[1]) ? true : false;
+        /**
+         * @description [Checks if number matches the provided number.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Number} [The minimum the provided number should be.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "exact": function(args) {
+            return (this === args[1]) ? true : false;
         },
-        "list": function(string, args) {
-            return (args[1].indexOf(string) > -1) ? true : false;
+        /**
+         * @description [Checks if number matches any of the numbers in provided array.]
+         * @param  {ArgumentsObject} args [The argument object containing the provided parameters.]
+         *  @1 {Array} [The list of matches the provided number can match.]
+         * @return {Boolean}        [True = passed check, otherwise false.]
+         */
+        "list": function(args) {
+            return (args[1].indexOf(this) > -1) ? true : false;
         }
     }
 };

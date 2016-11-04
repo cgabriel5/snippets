@@ -485,7 +485,7 @@ str.str_truncate = function str_truncate(child_method) { // char_count, ending
     });
 };
 
-number.val = function val(child_method) {
+number.num_val = function num_val(child_method) {
     return middleware["scan"]("val", child_method, arguments, this, {
         'min': '1,number',
         'max': '1,number',
