@@ -60,10 +60,10 @@ window.methods_js = {
          */
         "html": function() {
             return this.trim().str_replace("!raw", {
-                "0": ["><", /\>[\s\xa0]+\</, "g"],
-                "1": [">", /[\s\xa0]+\>/, "g"], // <div id="main"  > => <div id="mane">
-                "2": ["<", /\<[\s\xa0]+/, "g"], // <     div id="main"> => <div id="mane">
-                "3": ["</", /\<\/[\s\xa0]+/, "g"] // dfsdfsd</   div>" => dfsdfsd</div>"
+                "0": ["><", /\>[\s\xa0]+</, "g"],
+                "1": [">", /[\s\xa0]+>/, "g"], // <div id="main"  > => <div id="mane">
+                "2": ["<", /<[\s\xa0]+/, "g"], // <     div id="main"> => <div id="mane">
+                "3": ["</", /<\/[\s\xa0]+/, "g"] // dfsdfsd</   div>" => dfsdfsd</div>"
             });
         },
         /**
@@ -136,7 +136,7 @@ window.methods_js = {
                     return ((final_num === "" || final_num === "-0") ? "0" : final_num);
                 }
             };
-            return number = f(number, "!left", true, decimal = f(decimal, "!right", false) /*the decimal*/ , is_negative);
+            return f(number, "!left", true, decimal = f(decimal, "!right", false) /*the decimal*/ , is_negative);
         },
         /**
          * @description [Converts provided binary string to a decimal string.]
@@ -190,7 +190,7 @@ window.methods_js = {
                     return ((final_num === "" || final_num === "-0") ? "0" : final_num);
                 }
             };
-            return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
+            return f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
         /**
          * @description [Converts provided binary string to a hexadecimal string.]
@@ -248,7 +248,7 @@ window.methods_js = {
                     return ((final_num === "" || final_num === "-0") ? "0" : final_num);
                 }
             };
-            return number = f(number, "!left", true, decimal = f(decimal, "!right", false) /*the decimal*/ , is_negative);
+            return f(number, "!left", true, decimal = f(decimal, "!right", false) /*the decimal*/ , is_negative);
         },
         /**
          * @description [Converts provided decimal string to a binary string.]
@@ -340,7 +340,7 @@ window.methods_js = {
                     return ((final_num === "" || final_num === "-0") ? "0" : final_num);
                 }
             };
-            return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
+            return f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
         /**
          * @description [Converts provided decimal string to an octal string.]
@@ -398,7 +398,7 @@ window.methods_js = {
                     return ((final_num === "" || final_num === "-0") ? "0" : final_num);
                 }
             };
-            return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
+            return f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
         /**
          * @description [Converts provided octal string to a decimal string.]
@@ -457,7 +457,7 @@ window.methods_js = {
                     return ((final_num === "" || final_num === "-0") ? "0" : final_num);
                 }
             };
-            return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
+            return f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
         /**
          * @description [Converts provided octal string to a hexadecimal string.]
@@ -522,7 +522,7 @@ window.methods_js = {
                     return ((final_num === "" || final_num === "-0") ? "0" : final_num);
                 }
             };
-            return number = f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
+            return f(number, true, decimal = f(decimal, false) /*the decimal*/ , is_negative);
         },
         /**
          * @description [Converts provided hexadecimal string to a octal string.]
@@ -800,14 +800,14 @@ window.methods_js = {
             if (s == 0) {
                 r = g = b = l; // achromatic
             } else {
-                function hue2rgb(p, q, t) {
+                var hue2rgb = function(p, q, t) {
                     if (t < 0) t += 1;
                     if (t > 1) t -= 1;
                     if (t < 1 / 6) return p + (q - p) * 6 * t;
                     if (t < 1 / 2) return q;
                     if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
                     return p;
-                }
+                };
                 var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
                 var p = 2 * l - q;
                 r = hue2rgb(p, q, h + 1 / 3);
@@ -852,7 +852,7 @@ window.methods_js = {
                 min = Math.min(r, g, b);
             var h, s, v = max;
             var d = max - min;
-            s = max == 0 ? 0 : d / max;
+            s = ((max === 0) ? 0 : d / max);
             if (max == min) {
                 h = 0; // achromatic
             } else {
