@@ -187,7 +187,7 @@ Window.prototype.isFiniteNumber = Window.prototype.isFiniteNumber || function(ob
  * @return {Boolean}            [True=number is a finite number.]
  */
 Window.prototype.isInfiniteNumber = Window.prototype.isInfiniteNumber || function(object) {
-    return !isFinite(object);
+    return (object === Infinity || object === -Infinity);
 };
 // ==============================================================================
 /**
