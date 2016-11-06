@@ -8,7 +8,7 @@
  */
 Window.prototype.type = Window.prototype.type || function(object, object_type) {
     var dtype = Object.prototype.toString.call(object).split(/ |\]/)[1].toLowerCase();
-    return (!object_type) ? dtype : (dtype === object_type.toLowerCase())
+    return (!object_type) ? dtype : (dtype === object_type.toLowerCase());
 };
 // ==============================================================================
 /**
@@ -191,14 +191,6 @@ Window.prototype.isInfiniteNumber = Window.prototype.isInfiniteNumber || functio
 };
 // ==============================================================================
 /**
- * @description [Checks if provided string is empty.]
- * @param  {Any}    object      [The string to check.]
- * @return {Boolean}            [True=string is empty.]
- */
-String.prototype.isEmpty = String.prototype.isEmpty || function(trim_string) {
-    return (((trim_string) ? this.trim() : this.toString()) === "") ? true : false;
-};
-/**
  * @description [Checks if string only contains alpha characters.]
  * @return {Boolean}            [True=passed check. Otherwise false.]
  */
@@ -213,8 +205,52 @@ String.prototype.isAlphaNum = String.prototype.isAlphaNum || function() {
     return (this.replace(/[a-z0-9]/gi, "") === "") ? true : false;
 };
 // ==============================================================================
-// JavaScript .includes method extender
-
+/**
+ * @description [Checks if provided string is empty.]
+ * @param  {String}  trim_string [Flag indicating whether to trim string before check.]
+ * @return {Boolean}             [True=string is empty.]
+ */
+String.prototype.isEmpty = String.prototype.isEmpty || function(trim_string) {
+    return (((trim_string) ? this.trim() : this.toString()) === "") ? true : false;
+};
+/**
+ * @description [Checks if provided array is empty.]
+ * @return {Boolean}            [True=array is empty.]
+ */
+Array.prototype.isEmpty = Array.prototype.isEmpty || function() {
+    return (!this.length) ? true : false;
+};
+/**
+ * @description [Checks if provided object is empty.]
+ * @return {Boolean}            [True=object is empty.]
+ */
+Object.prototype.isEmpty = Object.prototype.isEmpty || function() {
+    return (!this.size()) ? true : false;
+};
+// ==============================================================================
+/**
+ * @description [Checks the number of key pairs and returns count.]
+ * @return {Number}            [The number of key pairs.]
+ */
+Object.prototype.size = Object.prototype.size || function() {
+    var object = this,
+        i = 0;
+    for (var key in object)
+        if (object.hasOwnProperty(key)) i++;
+    return i;
+};
+/**
+ * @description [Checks the number of key pairs and returns count.]
+ * @return {Number}            [The number of key pairs.]
+ */
+Object.prototype.keys = Object.prototype.keys || function() {
+    var object = this,
+        keys = [];
+    for (var key in object)
+        if (object.hasOwnProperty(key)) keys.push(key);
+    return keys;
+};
+// ==============================================================================
 /**
  * @description [Extends String.prototype to add .includes method. Method checks
  *               if provided substring is contained in the string where the method
@@ -229,7 +265,6 @@ String.prototype.isAlphaNum = String.prototype.isAlphaNum || function() {
 String.prototype.includes = String.prototype.includes || function(substring, start_index) {
     return (-~this.indexOf(substring, ((start_index >= 0) ? start_index : (this.length + start_index)) || 0)) ? true : false;
 };
-
 /**
  * @description [Extends Array.prototype to add .includes method. Method checks
  *               if provided item is contained in the array where the method
@@ -244,7 +279,6 @@ String.prototype.includes = String.prototype.includes || function(substring, sta
 Array.prototype.includes = Array.prototype.includes || function(substring, start_index) {
     return (-~this.indexOf(substring, ((start_index >= 0) ? start_index : (this.length + start_index)) || 0)) ? true : false;
 };
-
 /**
  * @description [Extends Object.prototype to add .includes method. Method checks
  *               if provided object contains the provided key.]
@@ -259,7 +293,6 @@ Object.prototype.includes = Object.prototype.includes || function(key_name) {
     return false;
 };
 // ==============================================================================
-// JavaScript .startsWith method extender
 /**
  * @description [Checks if string starts with provided substring.]
  * @param  {String} substring   [The string to check against.]
