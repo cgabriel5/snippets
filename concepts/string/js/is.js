@@ -195,24 +195,52 @@ Window.prototype.isInfiniteNumber = Window.prototype.isInfiniteNumber || functio
  * @return {Boolean}            [True=passed check. Otherwise false.]
  */
 String.prototype.isAlpha = String.prototype.isAlpha || function() {
-    return (this.replace(/[a-z]/gi, "") === "") ? true : false;
+    return (this.replace(/[a-z]/gi, "") === "");
 };
 /**
  * @description [Checks if string only contains letters + numbers (a-z0-9).]
  * @return {Boolean}            [True=passed check. Otherwise false.]
  */
 String.prototype.isAlphaNum = String.prototype.isAlphaNum || function() {
-    return (this.replace(/[a-z0-9]/gi, "") === "") ? true : false;
+    return (this.replace(/[a-z0-9]/gi, "") === "");
 };
-// ==============================================================================
 /**
- * @description [Checks if provided string is empty.]
- * @param  {String}  trim_string [Flag indicating whether to trim string before check.]
- * @return {Boolean}             [True=string is empty.]
+ * @description [Checks if string only contains uppercased letters.]
+ * @return {Boolean}            [True=passed check. Otherwise false.]
  */
-String.prototype.isEmpty = String.prototype.isEmpty || function(trim_string) {
-    return (((trim_string) ? this.trim() : this.toString()) === "") ? true : false;
+String.prototype.isUpper = String.prototype.isUpper || function() {
+    return this.replace(/[A-Z]/g, "") === "";
 };
+/**
+ * @description [Checks if string only contains lowercased letters.]
+ * @return {Boolean}            [True=passed check. Otherwise false.]
+ */
+String.prototype.isLower = String.prototype.isLower || function() {
+    return this.replace(/[a-z]/g, "") === "";
+};
+/**
+ * @description [Checks if string only contains numbers.]
+ * @return {Boolean}            [True=passed check. Otherwise false.]
+ */
+String.prototype.isOnlyNumbers = String.prototype.isOnlyNumbers || function() {
+    return !this.isEmpty() && !(/[^0-9]/).test(this);
+};
+/**
+ * @description [Checks if string only contains numbers and spaces.]
+ * @return {Boolean}            [True=passed check. Otherwise false.]
+ */
+String.prototype.isNumberSpace = String.prototype.isNumberSpace || function() {
+        return (/\s/).test(this) && this.replace(/\s/g, "").isOnlyNumbers();
+    },
+    // ==============================================================================
+    /**
+     * @description [Checks if provided string is empty.]
+     * @param  {String}  trim_string [Flag indicating whether to trim string before check.]
+     * @return {Boolean}             [True=string is empty.]
+     */
+    String.prototype.isEmpty = String.prototype.isEmpty || function(trim_string) {
+        return (((trim_string) ? this.trim() : this.toString()) === "") ? true : false;
+    };
 /**
  * @description [Checks if provided array is empty.]
  * @return {Boolean}            [True=array is empty.]
@@ -315,4 +343,14 @@ String.prototype.endsWith = String.prototype.endsWith || function(substring, sta
     var string = (!start_index) ? this : this.substr(0, start_index);
     // get characters from the back and check against substring
     return (string.substr(string.length - substring.length) === substring) ? true : false;
+};
+// ==============================================================================
+/**
+ * @description [Checks if number is a leap year.]
+ * @return {Boolean}            [True=passed check. Otherwise false.]
+ * @info http://www.timeanddate.com/date/leapyear.html
+ */
+Number.prototype.isLeapYear = Number.prototype.isLeapYear || function() {
+    // logic: must be divisible by 4 && if the number is a century number(%100) it must be divisible by %400
+    return ((((this * 1) % 4)) || (!((this * 1) % 100) && ((this * 1) % 400))) ? false : true;
 };
