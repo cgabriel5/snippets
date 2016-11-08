@@ -3365,7 +3365,7 @@
              * @return {Boolean}        [True = passed check, otherwise false.]
              */
             "list": function(args) {
-                return (args[1].indexOf(this) > -1) ? true : false;
+                return Boolean(-~args[1].indexOf(this));
             }
         }
     };
