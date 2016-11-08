@@ -3337,7 +3337,7 @@
              * @return {Boolean}        [True = passed check, otherwise false.]
              */
             "max": function(args) {
-                return (this <= args[1]) ? true : false;
+                return (this <= args[1]);
             },
             /**
              * @description [Checks if number is between the provided min and max numbers.]
