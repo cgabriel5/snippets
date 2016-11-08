@@ -3356,7 +3356,7 @@
              * @return {Boolean}        [True = passed check, otherwise false.]
              */
             "exact": function(args) {
-                return (this === args[1]) ? true : false;
+                return (this === args[1]);
             },
             /**
              * @description [Checks if number matches any of the numbers in provided array.]
