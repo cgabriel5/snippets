@@ -3347,7 +3347,7 @@
              * @return {Boolean}        [True = passed check, otherwise false.]
              */
             "range": function(args) {
-                return (this.num_val("min", args[1]) && this.num_val("max", args[2])) ? true : false;
+                return (this.num_val("min", args[1]) && this.num_val("max", args[2]));
             },
             /**
              * @description [Checks if number matches the provided number.]
