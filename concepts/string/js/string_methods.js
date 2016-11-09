@@ -3328,7 +3328,7 @@
              * @return {Boolean}        [True = passed check, otherwise false.]
              */
             "min": function(args) {
-                return (this >= args[1]) ? true : false;
+                return (this >= args[1]);
             },
             /**
              * @description [Checks if number is less than or equal to the provided number.]
