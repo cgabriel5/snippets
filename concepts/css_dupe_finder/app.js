@@ -102,24 +102,44 @@ document.onreadystatechange = function() {
         //     // var str = string.substring(0, item[0]).trim().split("}");
         //     console.log(string.substring(item[0], item[1]+1));
         // });
-        console.log(brace_indices.length)
+
+        // console.log(brace_indices.length)
+
+        var css_rules = [];
+
         for (var i = 0, l = brace_indices.length; i < l; i++) {
+
             var point = brace_indices[i];
-            // console.log(point);
             var str = string.substring(0, point[0]);
             var last_index = str.lastIndexOf("}");
             var selector;
-            // console.log(">>>", last_index);
             if (-~last_index) {
                 selector = str.substring(last_index + 2, str.length);
             } else {
                 selector = str.substring(0, str.length);
-                // selector = "";
-                // console.log('inside mane');
             }
-            // console.log(str,1,  last_index, 1, selector);
-            console.log([selector.trim(), string.substring(point[0] + 2, point[1]).trim()]);
+
+            // this is only for the simple CSS declarations
+            if (!brace_indices[i][2]) {
+                var declarations = string.substring(point[0] + 2, point[1]).trim().replace(/;$/, "").split(";");
+                var declarations_array = [];
+                for (var j = 0, ll = declarations.length; j < ll; j++) {
+                    var parts = declarations[j].split(":");
+                    var property = parts[0].trim();
+                    var value = parts[1].trim();
+                    // console.log(parts, property, value);
+                    declarations_array.push([property, value]);
+                }
+
+                css_rules.push([selector.trim(), declarations_array]);
+            } else {
+                // complex CSS declaration logic
+                css_rules.push([]);
+                console.log(i, string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""));
+            }
         }
+
+        console.log(css_rules)
 
     }
 
