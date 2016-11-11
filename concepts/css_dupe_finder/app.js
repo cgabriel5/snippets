@@ -4,56 +4,41 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
-    function find_comment_indices(string, position) {
-        var str = (comment_indice_counter % 2 === 0) ? "/*" : "*/";
-        var index = string.indexOf(str, position);
+    function find_comment_indices(string, position, comment_indices, comment_indice_counter) {
+        comment_indices = comment_indices || [];
+        comment_indice_counter = comment_indice_counter || 0;
+
+        var str = (comment_indice_counter % 2 === 0) ? "/*" : "*/",
+            index = string.indexOf(str, position);
+
         if (-~index) {
             comment_indices.push(index);
             comment_indice_counter++;
             // recall function
-            find_comment_indices(string, index + 2);
+            find_comment_indices(string, index + 2, comment_indices, comment_indice_counter);
         }
+
+        return comment_indices;
     }
 
-    // all resources have loaded (document + subresources)
-    if (document.readyState === "complete") {
-
-        var textarea = document.getElementsByTagName("textarea")[0];
-
-        var string = textarea.value;
-
-        var comment_indices = [];
-        var comment_indice_counter = 0;
-        find_comment_indices(string, 0);
-
-        // console.log(comment_indices.length, comment_indices);
-        // for (var i = 0, l = ((comment_indices.length)); i < l; i+=2) {
+    function remove_comments(string, comment_indices) {
+        // loop over comment index points
         for (var i = comment_indices.length - 1; i > 0; i -= 2) {
-
-            // console.log(i, comment_indices[i-1], comment_indices[i]);
-
-            var start_index = comment_indices[i - 1];
-            var end_index = comment_indices[i];
-
-            // console.log(string.substring(comment_indices[i], comment_indices[i+1]+2));
-            // string = string.replace(string.substring(comment_indices[i], comment_indices[i+1]+2), "");
-
-            // console.log(string.substring(start_index, end_index+2));
-
-            string = string.replace(string.substring(start_index, end_index + 2), "");
+            // reset string to string without the removed CSS comment
+            string = string.replace(string.substring(comment_indices[i - 1], (comment_indices[i] + 2)), "");
         }
+        return string;
+    }
 
-        textarea.value = string;
+    function find_brace_indices(string) {
 
-        var string = textarea.value.replace(/[\s\xa0]+/g, " ").trim();
+        // http://stackoverflow.com/questions/11746581/nesting-media-rules-in-css
 
-        textarea.value = string;
-
-        var open_brace;
-        var open_brace_index;
-        var brace_indices = [];
-        var is_at_sign;
-        var at_brace_counter;
+        var open_brace,
+            open_brace_index,
+            brace_indices = [],
+            is_at_sign,
+            at_brace_counter;
 
         // loop over string
         for (var i = 0, l = string.length; i < l; i++) {
@@ -98,18 +83,13 @@ document.onreadystatechange = function() {
 
         }
 
-        // console.log(brace_indices);
+        return brace_indices;
 
-        // brace_indices.forEach(function(item, i) {
-        //     console.log(i, item);
-        //     // var str = string.substring(0, item[0]).trim().split("}");
-        //     console.log(string.substring(item[0], item[1]+1));
-        // });
+    }
 
-        // console.log(brace_indices.length)
+    function find_dupes(brace_indices) {
 
         var css_rules = [];
-
         var duplicates = [];
 
         for (var i = 0, l = brace_indices.length; i < l; i++) {
@@ -135,7 +115,6 @@ document.onreadystatechange = function() {
 
                     // check check for double properties
                     for (var k = 0, lll = declarations_array.length; k < lll; k++) {
-                        // console.log(declarations_array[k][0], 1, property, declarations_array[k][0] === property)
                         if (declarations_array[k][0] === property) {
                             console.log("SELECTOR", selector, "HAS REPETITIVE PROPERTY", property);
                             duplicates.push([selector, property, value]);
@@ -147,18 +126,35 @@ document.onreadystatechange = function() {
 
                 css_rules.push([selector, declarations_array, false]);
             } else {
-                // console.log(i);
                 // complex CSS declaration logic
                 css_rules.push([selector, string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""), true]);
-                // console.log(i, selector, string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""));
             }
         }
 
         // console.log(css_rules, duplicates)
         // console.log((duplicates));
+    }
+
+    // all resources have loaded (document + subresources)
+    if (document.readyState === "complete") {
+
+        // cache textarea element
+        var textarea = document.getElementsByTagName("textarea")[0],
+            string = textarea.value; // CSS to work with
+
+        // get all comment index points
+        var comment_indices = find_comment_indices(string, 0);
+
+        // remove all comments from CSS string
+        string = remove_comments(string, comment_indices)
+            // flatten string by removing unnecessary white-space
+            .replace(/[\s\xa0]+/g, " ").trim();
+
+        // get the brace indices
+        var brace_indices = find_brace_indices(string);
+
+        find_dupes(brace_indices);
 
     }
 
 };
-
-// http://stackoverflow.com/questions/11746581/nesting-media-rules-in-css
