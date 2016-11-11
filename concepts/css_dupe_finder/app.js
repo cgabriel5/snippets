@@ -5,9 +5,8 @@ document.onreadystatechange = function() {
     /* [functions.utils] */
 
     function find_comment_indices(string, position) {
-        var str = (comment_indice_counter % 2 == 0) ? "/*" : "*/";
+        var str = (comment_indice_counter % 2 === 0) ? "/*" : "*/";
         var index = string.indexOf(str, position);
-        // console.log(comment_indice_counter, str, index)
         if (-~index) {
             comment_indices.push(index);
             comment_indice_counter++;
@@ -17,7 +16,7 @@ document.onreadystatechange = function() {
     }
 
     // all resources have loaded (document + subresources)
-    if (document.readyState == "complete") {
+    if (document.readyState === "complete") {
 
         var textarea = document.getElementsByTagName("textarea")[0];
 
@@ -111,6 +110,8 @@ document.onreadystatechange = function() {
 
         var css_rules = [];
 
+        var duplicates = [];
+
         for (var i = 0, l = brace_indices.length; i < l; i++) {
 
             var point = brace_indices[i];
@@ -118,9 +119,9 @@ document.onreadystatechange = function() {
             var last_index = str.lastIndexOf("}");
             var selector;
             if (-~last_index) {
-                selector = str.substring(last_index + 2, str.length);
+                selector = str.substring(last_index + 2, str.length).trim();
             } else {
-                selector = str.substring(0, str.length);
+                selector = str.substring(0, str.length).trim();
             }
 
             // this is only for the simple CSS declarations
@@ -131,20 +132,33 @@ document.onreadystatechange = function() {
                     var parts = declarations[j].split(":");
                     var property = parts[0].trim();
                     var value = parts[1].trim();
-                    // console.log(parts, property, value);
+
+                    // check check for double properties
+                    for (var k = 0, lll = declarations_array.length; k < lll; k++) {
+                        // console.log(declarations_array[k][0], 1, property, declarations_array[k][0] === property)
+                        if (declarations_array[k][0] === property) {
+                            console.log("SELECTOR", selector, "HAS REPETITIVE PROPERTY", property);
+                            duplicates.push([selector, property, value]);
+                        }
+                    }
+
                     declarations_array.push([property, value]);
                 }
 
-                css_rules.push([selector.trim(), declarations_array]);
+                css_rules.push([selector, declarations_array, false]);
             } else {
+                // console.log(i);
                 // complex CSS declaration logic
-                css_rules.push([]);
-                console.log(i, string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""));
+                css_rules.push([selector, string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""), true]);
+                // console.log(i, selector, string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""));
             }
         }
 
-        console.log(css_rules)
+        // console.log(css_rules, duplicates)
+        // console.log((duplicates));
 
     }
 
 };
+
+// http://stackoverflow.com/questions/11746581/nesting-media-rules-in-css
