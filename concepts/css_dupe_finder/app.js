@@ -60,24 +60,28 @@ document.onreadystatechange = function() {
         for (var i = 0, l = string.length; i < l; i++) {
             var current_char = string.charAt(i);
 
-            if (current_char === "@") {
+            if (current_char === "@" && !is_at_sign) {
                 is_at_sign = true;
                 at_brace_counter = 0;
+                continue;
             }
             if (current_char === "{" && is_at_sign) {
                 // only set the index of the first open bracket
                 // this is the bracket following the selector
                 if (at_brace_counter === 0) open_brace_index = i;
                 at_brace_counter++;
+                // continue;
             }
             if (current_char === "}" && is_at_sign) {
                 // open_brace_index = i;
                 at_brace_counter--;
+                // continue;
             }
 
             if (current_char === "{" && !open_brace && !is_at_sign) {
                 open_brace_index = i;
                 open_brace = true;
+                // continue;
             }
 
             // =================
