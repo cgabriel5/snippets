@@ -87,10 +87,9 @@ document.onreadystatechange = function() {
 
     }
 
-    function find_dupes(brace_indices) {
+    function find_dupes(brace_indices, string, is_complex_selector) {
 
         var css_rules = [];
-        var duplicates = [];
 
         for (var i = 0, l = brace_indices.length; i < l; i++) {
 
@@ -117,7 +116,7 @@ document.onreadystatechange = function() {
                     for (var k = 0, lll = declarations_array.length; k < lll; k++) {
                         if (declarations_array[k][0] === property) {
                             console.log("SELECTOR", selector, "HAS REPETITIVE PROPERTY", property);
-                            duplicates.push([selector, property, value]);
+                            dupes.push([selector, property, value]);
                         }
                     }
 
@@ -128,32 +127,37 @@ document.onreadystatechange = function() {
             } else {
                 // complex CSS declaration logic
                 css_rules.push([selector, string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""), true]);
+                main(string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""), selector);
+
             }
         }
 
-        // console.log(css_rules, duplicates)
-        // console.log((duplicates));
+        // console.log(css_rules, dupes)
+        // console.log((dupes));
     }
 
-    // all resources have loaded (document + subresources)
-    if (document.readyState === "complete") {
-
-        // cache textarea element
-        var textarea = document.getElementsByTagName("textarea")[0],
-            string = textarea.value; // CSS to work with
-
+    function main(string, is_complex_selector) {
         // get all comment index points
         var comment_indices = find_comment_indices(string, 0);
 
         // remove all comments from CSS string
         string = remove_comments(string, comment_indices)
             // flatten string by removing unnecessary white-space
-            .replace(/[\s\xa0]+/g, " ").trim();
+            // .replace(/[\s\xa0]+/g, " ").trim();
 
         // get the brace indices
         var brace_indices = find_brace_indices(string);
 
-        find_dupes(brace_indices);
+        return find_dupes(brace_indices, string, is_complex_selector);
+    }
+
+    var dupes = [];
+
+    // all resources have loaded (document + subresources)
+    if (document.readyState === "complete") {
+
+        main(document.getElementsByTagName("textarea")[0].value, null); // CSS to work with
+        console.log("THE DUPES", dupes);
 
     }
 
