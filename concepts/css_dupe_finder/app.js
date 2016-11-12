@@ -89,8 +89,6 @@ document.onreadystatechange = function() {
 
     function find_dupes(brace_indices, string, is_complex_selector) {
 
-        var css_rules = [];
-
         for (var i = 0, l = brace_indices.length; i < l; i++) {
 
             var point = brace_indices[i];
@@ -103,61 +101,77 @@ document.onreadystatechange = function() {
                 selector = str.substring(0, str.length).trim();
             }
 
+            var css_string = string.substring(point[0] + 2, point[1]).trim().replace(/;$/, "");
+
             // this is only for the simple CSS declarations
             if (!brace_indices[i][2]) {
-                var declarations = string.substring(point[0] + 2, point[1]).trim().replace(/;$/, "").split(";");
+                var declarations = css_string.split(";");
+                if (declarations.length <= 1) continue; // only one or 0; declaration no way possible for their to be duplicates
+                // else start checking for duplicates
                 var declarations_array = [];
                 for (var j = 0, ll = declarations.length; j < ll; j++) {
-                    var parts = declarations[j].split(":");
-                    var property = parts[0].trim();
-                    var value = parts[1].trim();
+                    // get parts of declaration
+                    var parts = declarations[j].split(":"),
+                        property = parts[0].trim(),
+                        value = parts[1].trim();
 
-                    // check check for double properties
-                    for (var k = 0, lll = declarations_array.length; k < lll; k++) {
-                        if (declarations_array[k][0] === property) {
-                            console.log("SELECTOR", selector, "HAS REPETITIVE PROPERTY", property);
-                            dupes.push([selector, property, value]);
-                        }
+                    if (-~declarations_array.indexOf(property)) {
+                        // push all the CSS declations with the same property; these are the duplicates
+                        dupes.push([selector, property, value]);
+                    } else {
+                        declarations_array.push(property);
                     }
 
-                    declarations_array.push([property, value]);
                 }
+                dupes.push([null]); // dupe array selector spacer
 
-                css_rules.push([selector, declarations_array, false]);
+                // css_rules.push([selector, declarations_array, false]);
             } else {
-                // complex CSS declaration logic
-                css_rules.push([selector, string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""), true]);
-                main(string.substring(point[0] + 2, point[1]).trim().replace(/;$/, ""), selector);
+                // css_rules.push([selector, css_string, true]);
 
+                dupes.push([selector]);
+                main(css_string, selector);
             }
+
         }
 
-        // console.log(css_rules, dupes)
-        // console.log((dupes));
     }
 
     function main(string, is_complex_selector) {
-        // get all comment index points
-        var comment_indices = find_comment_indices(string, 0);
 
-        // remove all comments from CSS string
-        string = remove_comments(string, comment_indices)
-            // flatten string by removing unnecessary white-space
-            // .replace(/[\s\xa0]+/g, " ").trim();
+        // only remove comments the first time around
+        // if is_complex_selector is set to something
+        // main is being recursed this comments have
+        // already been removed
+        if (!is_complex_selector) {
+            // get all comment index points
+            var comment_indices = find_comment_indices(string, 0);
+            // remove all comments from CSS string
+            string = remove_comments(string, comment_indices)
+                // flatten string by removing unnecessary white-space
+                // .replace(/[\s\xa0]+/g, " ").trim();
+        }
 
         // get the brace indices
         var brace_indices = find_brace_indices(string);
-
         return find_dupes(brace_indices, string, is_complex_selector);
     }
 
-    var dupes = [];
+    var dupes = [],
+        css_rules = [];
 
     // all resources have loaded (document + subresources)
     if (document.readyState === "complete") {
 
         main(document.getElementsByTagName("textarea")[0].value, null); // CSS to work with
-        console.log("THE DUPES", dupes);
+        console.log("");
+        console.log("");
+        console.log("");
+        console.table("THE DUPES");
+        console.table(dupes);
+        console.log("");
+        console.table("CSS RULES");
+        console.table(css_rules);
 
     }
 
