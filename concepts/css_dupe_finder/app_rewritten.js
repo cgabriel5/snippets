@@ -25,6 +25,9 @@ document.onreadystatechange = function() {
             }
         };
 
+        // blocks array will contain all the CSS blocks found within the CSS string
+        var blocks = [];
+
         // loop over string
         for (var i = 0, l = string.length; i < l; i++) {
 
@@ -103,8 +106,9 @@ document.onreadystatechange = function() {
                         // move index to the newly found brace
                         if (flags.counter.brace === 0) {
                             // log selector and code block
-                            console.log(selector);
-                            console.log(string.substring(flags.open.brace, i).replace(/^\{|\}$/g, "").trim());
+                            var code_block = string.substring(flags.open.brace, i).replace(/^\{|\}$/g, "").trim();
+                            // add the selector + code block to blocks array
+                            blocks.push([selector, code_block, true]);
                             flags.counter.brace = null; // unset the flag
                         }
 
@@ -113,13 +117,46 @@ document.onreadystatechange = function() {
 
                     }
 
-                    break;
                 }
+            }
+
+            // check for braces, this is for simple code blocks
+            if (char_code === 123) { // character: {
+                // get the selector
+
+                // get the indices for the previous closed brace & semicolon
+                var end_brace_index = string.lastIndexOf("}", i),
+                    semicolon_index = string.lastIndexOf(";", i);
+
+                // place both indices into an array
+                var prev_indices = [(!-~end_brace_index ? null : end_brace_index), (!-~semicolon_index ? null : semicolon_index)].filter(Number); // http://stackoverflow.com/questions/281264/remove-empty-elements-from-an-array-in-javascript/2843625#2843625
+                // get the lowest indice in number. this index will be the
+                // closest to the first open brace. if there is no brace at all,
+                // null is returned in place of -1.
+                var prev_index = (prev_indices.length) ? Math.max.apply(null, prev_indices) : null;
+                // finally, get selector from CSS string
+                var selector = string.substring(((prev_index) ? (prev_index + 1) : 0), i).trim();
+
+                // get the CSS code block
+
+                // get the closing brace index
+                var end_brace_index = string.indexOf("}", (i + 1));
+                var code_block = string.substring(i, (end_brace_index + 1));
+                // add the selector + code block to blocks array
+                blocks.push([selector, code_block, false]);
             }
 
         }
 
-        console.log(flags);
+        // console.log(flags);
+        console.log(blocks.length);
+        blocks.forEach(function(block) {
+            console.log("");
+            console.log(block[0]);
+            console.log(block[1]);
+            console.log(block[2]);
+            console.log("");
+        });
 
     }
 
