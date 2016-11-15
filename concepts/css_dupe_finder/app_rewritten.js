@@ -32,11 +32,11 @@ document.onreadystatechange = function() {
         // replacing it prevents the detection of false comment/brace/atsign detections
         var content_property_contents = [];
         var regexp_content_props_counter = -1;
-        var regexp_content_props = new RegExp(/content:.*;/, "gi");
+        var regexp_content_props = new RegExp(/content:.*;/, "gi"); // content:\s?["|'].*["|'];
         string = string.replace(regexp_content_props, function(content, index) {
             // store content + index for later use
             content_property_contents.push([content, index]);
-            return "$content["+ (++regexp_content_props_counter) +"];";
+            return "$content[" + (++regexp_content_props_counter) + "];";
         });
 
         // loop over string
@@ -160,14 +160,14 @@ document.onreadystatechange = function() {
         }
 
         // console.log(flags);
-        console.log(blocks.length);
-        blocks.forEach(function(block) {
-            console.log("");
-            console.log(block[0]);
-            console.log(block[1]);
-            console.log(block[2]);
-            console.log("");
-        });
+        console.log(blocks.length, blocks);
+        // blocks.forEach(function(block) {
+        //     console.log("");
+        //     console.log(block[0]);
+        //     console.log(block[1]);
+        //     console.log(block[2]);
+        //     console.log("");
+        // });
 
     }
 
