@@ -89,7 +89,7 @@ document.onreadystatechange = function() {
                     flags.atsign = i;
                     // skip loop all the way to the position of the start brace
                     i = flags.open.brace;
-                    var selector = string.substring(flags.atsign, flags.open.brace);
+                    var selector = string.substring(flags.atsign, flags.open.brace).trim();
                     // set the brace counter
                     flags.counter.brace = 1;
                     // get entire code block...start by getting the next brace index
