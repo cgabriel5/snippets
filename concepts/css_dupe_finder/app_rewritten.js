@@ -72,6 +72,41 @@ document.onreadystatechange = function() {
         return [frequency, size];
     }
 
+    function log_dupes(blocks) {
+
+        // loop over blocks
+        for (var i = 0, l = blocks.length; i < l; i++) {
+
+            var block = blocks[i];
+            var selector = block[0];
+            // var css_text = block[1];
+            var dupes = block[2][0];
+
+            console.log(selector);
+
+            // loop over the duplicate properties
+            for (var prop in dupes) {
+
+                if (dupes.hasOwnProperty(prop)) {
+
+                    // get the dupes
+                    var dupe_array = dupes[prop];
+
+                    // loop over every dupe prop within each property and log
+                    for (var j = 0, ll = dupe_array.length; j < ll; j++) {
+                        var dupe_declaration = dupe_array[j];
+                        console.log(dupe_declaration[0] + ":", dupe_declaration[1] + ";");
+                    }
+
+                }
+
+            }
+            // log a space between dupes
+            console.log("");
+        }
+
+    }
+
     // all resources have loaded (document + subresources)
     if (document.readyState === "complete") {
 
@@ -334,23 +369,8 @@ document.onreadystatechange = function() {
 
         }
 
-        blocks.forEach(function(block) {
-            var selector = block[0];
-            // var css_text = block[1];
-            var dupes = block[2][0];
-            console.log(selector);
-            for (var prop in dupes) {
-                if (dupes.hasOwnProperty(prop)) {
-                    var dupe_array = dupes[prop];
-                    for (var i = 0, l = dupe_array.length; i < l; i++) {
-                        var dupe_declaration = dupe_array[i];
-                        console.log(dupe_declaration[0] + ":", dupe_declaration[1]);
-                    }
-                }
-            }
-            console.log("");
-            console.log("");
-        });
+        // log the dupes to the console
+        log_dupes(blocks);
 
     }
 
