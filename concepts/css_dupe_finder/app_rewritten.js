@@ -4,6 +4,16 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
+    function placehold_csscontent_prop(string, container) {
+        var regexp_content_props_counter = -1,
+            regexp_content_props = new RegExp(/content:.*;/, "gi"); // content:\s?["|'].*["|'];
+        return string.replace(regexp_content_props, function(content, index) {
+            // store content + index for later use
+            content_property_contents.push([content, index]);
+            return "$$content[" + (++regexp_content_props_counter) + "];";
+        });
+    }
+
     function dupe_check(selector, css_text) {
 
         // prepare css string + define vars
@@ -90,13 +100,7 @@ document.onreadystatechange = function() {
         // replace all content properties as they can contain text
         // replacing it prevents the detection of false comment/brace/atsign detections
         var content_property_contents = [];
-        var regexp_content_props_counter = -1;
-        var regexp_content_props = new RegExp(/content:.*;/, "gi"); // content:\s?["|'].*["|'];
-        string = string.replace(regexp_content_props, function(content, index) {
-            // store content + index for later use
-            content_property_contents.push([content, index]);
-            return "$$content[" + (++regexp_content_props_counter) + "];";
-        });
+        string = placehold_csscontent_prop(string, content_property_contents);
 
         // loop over string
         for (var i = 0, l = string.length; i < l; i++) {
