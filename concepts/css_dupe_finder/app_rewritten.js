@@ -10,6 +10,9 @@ document.onreadystatechange = function() {
         // get the CSS string to work with
         var string = document.getElementsByTagName("textarea")[0].value;
 
+        // remove comments from CSS string
+        string = string.replace(/\/\*.*?\*\//g, "");
+
         var flags = {
             "atsign": null,
             "open": {
