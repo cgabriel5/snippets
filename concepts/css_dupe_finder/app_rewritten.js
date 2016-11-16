@@ -75,6 +75,15 @@ document.onreadystatechange = function() {
         // remove comments from CSS string
         string = string.replace(/\/\*.*?\*\//g, "");
 
+        // blocks array will contain all the CSS blocks found within the CSS string
+        var blocks = [];
+
+        // replace all content properties as they can contain text
+        // replacing it prevents the detection of false comment/brace/atsign detections
+        var content_property_contents = [];
+        string = placehold_csscontent_prop(string, content_property_contents);
+
+        // flags are used while parsing string in main loop
         var flags = {
             "atsign": null,
             "open": {
@@ -94,15 +103,7 @@ document.onreadystatechange = function() {
             }
         };
 
-        // blocks array will contain all the CSS blocks found within the CSS string
-        var blocks = [];
-
-        // replace all content properties as they can contain text
-        // replacing it prevents the detection of false comment/brace/atsign detections
-        var content_property_contents = [];
-        string = placehold_csscontent_prop(string, content_property_contents);
-
-        // loop over string
+        // main loop: loop over string
         for (var i = 0, l = string.length; i < l; i++) {
 
             // cache the current character in loop
