@@ -12,14 +12,17 @@ document.onreadystatechange = function() {
         // var checked_props = [];
         // var dupes = [];
         var frequency = {};
+
+        var declaration_replacement_fn = function() {
+            return content_property_contents[(arguments[1] * 1)][0];
+        };
+
         for (var i = 0, l = declarations.length; i < l; i++) {
             var declaration = declarations[i].trim();
             // replace the content CSS placeholder with original CSS
             if (-~declaration.indexOf("$$content[")) {
                 // replace placeholder
-                declaration = declaration.replace(/\$\$content\[(\d+)\]/, function() {
-                    return content_property_contents[(arguments[1] * 1)][0];
-                });
+                declaration = declaration.replace(/\$\$content\[(\d+)\]/, declaration_replacement_fn);
             }
             var colon_index = declaration.indexOf(":");
             var property = declaration.substring(0, colon_index).trim();
@@ -141,8 +144,8 @@ document.onreadystatechange = function() {
                     flags.atsign = i;
                     // skip loop all the way to the position of the start brace
                     i = flags.open.brace;
-                    var selector = string.substring(flags.atsign, flags.open.brace).trim(),
-                        selector_original = selector;
+                    var selector = string.substring(flags.atsign, flags.open.brace).trim();
+                    // selector_original = selector;
                     // set the brace counter
                     flags.counter.brace = 1;
 
@@ -198,17 +201,18 @@ document.onreadystatechange = function() {
 
                             // console.log("a code block", 1, selector, 1, text_between);
                             // get the last child selector
-                            var selectors = selector.split(" / ");
-                            var last_selector = selectors[selectors.length - 1];
+                            var selectors = selector.split(" / "),
+                                last_selector = selectors[selectors.length - 1],
+                                dupes;
                             // console.log("last child selector", last_selector);
                             if (last_selector.charAt(0) === "@") {
                                 // check if empty
                                 // if (text_between === "") {
-                                var dupes = dupe_check(selector, text_between);
+                                dupes = dupe_check(selector, text_between);
                                 if (dupes[1]) blocks.push([selector, text_between, dupes]);
                                 // }
                             } else { // regular CSS selector
-                                var dupes = dupe_check(selector, text_between);
+                                dupes = dupe_check(selector, text_between);
                                 if (dupes[1]) blocks.push([selector, text_between, dupes]);
 
                             }
@@ -309,7 +313,7 @@ document.onreadystatechange = function() {
         blocks.forEach(function(block) {
             // console.log(block)
             var selector = block[0];
-            var css_text = block[1];
+            // var css_text = block[1];
             var dupes = block[2][0];
             console.log(selector);
             for (var prop in dupes) {
