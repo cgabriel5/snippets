@@ -38,8 +38,6 @@ document.onreadystatechange = function() {
             }
         }
 
-        // console.log(frequency);
-
         // add all properties with more than one frequency
         for (var prop in frequency) {
             if (frequency.hasOwnProperty(prop) && frequency[prop].length <= 1) {
@@ -96,8 +94,6 @@ document.onreadystatechange = function() {
 
         // loop over string
         for (var i = 0, l = string.length; i < l; i++) {
-
-            // console.log(flags.atsign, flags.open.brace, flags.closed.brace, flags.open.comment, flags.closed.comment, flags.counter.brace);
 
             // cache the current character in loop
             var char = string.charAt(i),
@@ -187,7 +183,7 @@ document.onreadystatechange = function() {
                                 complex_levels++;
                                 // add to selector
                                 selector += " / " + text_between;
-                                // console.log(">>>", complex_levels, selector);
+
                             } else if (type === "s") {
                                 // the start of a new code block append the new selector to parent selector
                                 // for simple code blocks remove all preceding sumple code block selectors
@@ -196,15 +192,14 @@ document.onreadystatechange = function() {
                                     return (s.charAt(0) === "@");
                                 }).join(" / ") + " / " + text_between;
                             }
-                            // console.log(">>>", complex_levels, selector);
+
                         } else if (first_brace === "{" && last_brace === "}") { // code block
 
-                            // console.log("a code block", 1, selector, 1, text_between);
                             // get the last child selector
                             var selectors = selector.split(" / "),
                                 last_selector = selectors[selectors.length - 1],
                                 dupes;
-                            // console.log("last child selector", last_selector);
+
                             if (last_selector.charAt(0) === "@") {
                                 // check if empty
                                 // if (text_between === "") {
@@ -222,7 +217,7 @@ document.onreadystatechange = function() {
                                 flags.child.complex = true;
                                 // increment complex_levels
                                 complex_levels++;
-                                // console.log(">>>", complex_levels, selector);
+
                                 // add to selector
                                 selector += " / " + text_between;
                             } else if (type === "s") {
@@ -233,11 +228,10 @@ document.onreadystatechange = function() {
                                     return (s.charAt(0) === "@");
                                 }).join(" / ") + " / " + text_between;
                             }
-                            // console.log(">>>", complex_levels, selector);
+
                         } else if (first_brace === "}" && last_brace === "}") { // end of complex code block
                             // decrement the complex level
                             // remove child selector from selector
-                            // console.log(selector);
 
                             // remove all the simple css selectors
                             selector = selector.split(" / ").filter(function(s) {
@@ -246,11 +240,9 @@ document.onreadystatechange = function() {
                             // now remove go down one nested level down
                             selector.splice(-1, 1); // http://stackoverflow.com/questions/19544452/remove-last-item-from-array
                             selector = selector.join(" / ");
-                            // console.log("<<<", complex_levels, selector);
+
                             complex_levels--;
                         }
-                        // console.log(">>>", complex_levels);
-                        // console.log(type, first_brace, last_brace, text_between);
 
                         // track new brace index
                         brace_indices_track.push(next_index);
@@ -309,9 +301,7 @@ document.onreadystatechange = function() {
 
         }
 
-        // console.log(flags);
         blocks.forEach(function(block) {
-            // console.log(block)
             var selector = block[0];
             // var css_text = block[1];
             var dupes = block[2][0];
@@ -327,9 +317,6 @@ document.onreadystatechange = function() {
             }
             console.log("");
             console.log("");
-            // console.log(block[0]);
-            // console.log(block[1]);
-            // console.table(block[2]);
         });
 
     }
