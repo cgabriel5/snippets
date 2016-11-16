@@ -4,6 +4,51 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
+    function dupe_check(selector, css_text) {
+
+        // prepare css string
+        var declarations = css_text.split(";");
+        var size = 0;
+        // var checked_props = [];
+        // var dupes = [];
+        var frequency = {};
+        for (var i = 0, l = declarations.length; i < l; i++) {
+            var declaration = declarations[i].trim();
+            // replace the content CSS placeholder with original CSS
+            if (-~declaration.indexOf("$$content[")) {
+                // replace placeholder
+                declaration = declaration.replace(/\$\$content\[(\d+)\]/, function() {
+                    return content_property_contents[(arguments[1] * 1)][0];
+                });
+            }
+            var colon_index = declaration.indexOf(":");
+            var property = declaration.substring(0, colon_index).trim();
+            var value = declaration.substring((colon_index + 1), declaration.length).trim();
+
+            if (frequency[property]) {
+                frequency[property].push([property, value, declaration]); // increase frequency
+            } else { // init frequency
+                frequency[property] = [
+                    [property, value, declaration]
+                ];
+                size++;
+            }
+        }
+
+        // console.log(frequency);
+
+        // add all properties with more than one frequency
+        for (var prop in frequency) {
+            if (frequency.hasOwnProperty(prop) && frequency[prop].length <= 1) {
+                delete frequency[prop];
+                size--;
+            }
+        }
+
+        // return the dupes
+        return [frequency, size];
+    }
+
     // all resources have loaded (document + subresources)
     if (document.readyState === "complete") {
 
@@ -43,7 +88,7 @@ document.onreadystatechange = function() {
         string = string.replace(regexp_content_props, function(content, index) {
             // store content + index for later use
             content_property_contents.push([content, index]);
-            return "$content[" + (++regexp_content_props_counter) + "];";
+            return "$$content[" + (++regexp_content_props_counter) + "];";
         });
 
         // loop over string
@@ -57,20 +102,20 @@ document.onreadystatechange = function() {
 
             // look out for these characters: @, {, }, /*, */
 
-            // check for comments, opening to potential comment
-            // if a comment is found the entire comment is skipped
-            // by forwarding the loop index to the position of the
-            // closing comment characters + 2
-            if (char_code === 47) { // character: /
-                // check that the next character is an asterisk
-                if (string.charCodeAt(i + 1) === 42) { // character: *
-                    // **we have the opening of a comment**
-                    // look for the closing comment...
-                    var closing_comment_index = string.indexOf("*/", (i + 1));
-                    // skip loop all the way to the position of the ending closing comment characters
-                    i = closing_comment_index + 2;
-                }
-            }
+            // // check for comments, opening to potential comment
+            // // if a comment is found the entire comment is skipped
+            // // by forwarding the loop index to the position of the
+            // // closing comment characters + 2
+            // if (char_code === 47) { // character: /
+            //     // check that the next character is an asterisk
+            //     if (string.charCodeAt(i + 1) === 42) { // character: *
+            //         // **we have the opening of a comment**
+            //         // look for the closing comment...
+            //         var closing_comment_index = string.indexOf("*/", (i + 1));
+            //         // skip loop all the way to the position of the ending closing comment characters
+            //         i = closing_comment_index + 2;
+            //     }
+            // }
 
             // check for atsigns
             if (char_code === 64) { // character: @
@@ -148,7 +193,7 @@ document.onreadystatechange = function() {
                                     return (s.charAt(0) === "@");
                                 }).join(" / ") + " / " + text_between;
                             }
-                            console.log(">>>", complex_levels, selector);
+                            // console.log(">>>", complex_levels, selector);
                         } else if (first_brace === "{" && last_brace === "}") { // code block
 
                             // console.log("a code block", 1, selector, 1, text_between);
@@ -159,10 +204,12 @@ document.onreadystatechange = function() {
                             if (last_selector.charAt(0) === "@") {
                                 // check if empty
                                 // if (text_between === "") {
-                                blocks.push([selector, text_between]);
+                                var dupes = dupe_check(selector, text_between);
+                                if (dupes[1]) blocks.push([selector, text_between, dupes]);
                                 // }
                             } else { // regular CSS selector
-                                blocks.push([selector, text_between]);
+                                var dupes = dupe_check(selector, text_between);
+                                if (dupes[1]) blocks.push([selector, text_between, dupes]);
 
                             }
                         } else if (first_brace === "}" && last_brace === "{") { // end of code block, start of new code block
@@ -182,7 +229,7 @@ document.onreadystatechange = function() {
                                     return (s.charAt(0) === "@");
                                 }).join(" / ") + " / " + text_between;
                             }
-                            console.log(">>>", complex_levels, selector);
+                            // console.log(">>>", complex_levels, selector);
                         } else if (first_brace === "}" && last_brace === "}") { // end of complex code block
                             // decrement the complex level
                             // remove child selector from selector
@@ -195,7 +242,7 @@ document.onreadystatechange = function() {
                             // now remove go down one nested level down
                             selector.splice(-1, 1); // http://stackoverflow.com/questions/19544452/remove-last-item-from-array
                             selector = selector.join(" / ");
-                            console.log("<<<", complex_levels, selector);
+                            // console.log("<<<", complex_levels, selector);
                             complex_levels--;
                         }
                         // console.log(">>>", complex_levels);
@@ -250,22 +297,36 @@ document.onreadystatechange = function() {
 
                 // get the closing brace index
                 var end_brace_index = string.indexOf("}", (i + 1));
-                var code_block = string.substring(i, (end_brace_index + 1));
+                var code_block = string.substring((i + 1), end_brace_index).trim();
                 // add the selector + code block to blocks array
-                blocks.push([selector, code_block, false]);
+                var dupes = dupe_check(selector, code_block);
+                if (dupes[1]) blocks.push([selector, code_block, dupes]);
             }
 
         }
 
         // console.log(flags);
-        console.table(blocks);
-        // blocks.forEach(function(block) {
-        //     console.log("");
-        //     console.log(block[0]);
-        //     console.log(block[1]);
-        //     console.log(block[2]);
-        //     console.log("");
-        // });
+        blocks.forEach(function(block) {
+            // console.log(block)
+            var selector = block[0];
+            var css_text = block[1];
+            var dupes = block[2][0];
+            console.log(selector);
+            for (var prop in dupes) {
+                if (dupes.hasOwnProperty(prop)) {
+                    var dupe_array = dupes[prop];
+                    for (var i = 0, l = dupe_array.length; i < l; i++) {
+                        var dupe_declaration = dupe_array[i];
+                        console.log(dupe_declaration[0] + ":", dupe_declaration[1]);
+                    }
+                }
+            }
+            console.log("");
+            console.log("");
+            // console.log(block[0]);
+            // console.log(block[1]);
+            // console.table(block[2]);
+        });
 
     }
 
