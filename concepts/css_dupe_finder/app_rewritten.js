@@ -6,47 +6,53 @@ document.onreadystatechange = function() {
 
     function dupe_check(selector, css_text) {
 
-        // prepare css string
-        var declarations = css_text.split(";");
-        var size = 0;
-        // var checked_props = [];
-        // var dupes = [];
-        var frequency = {};
+        // prepare css string + define vars
+        var declarations = css_text.split(";"),
+            frequency = {},
+            size = 0,
+            declaration_replacement_fn = function() {
+                return content_property_contents[(arguments[1] * 1)][0];
+            };
 
-        var declaration_replacement_fn = function() {
-            return content_property_contents[(arguments[1] * 1)][0];
-        };
+        // loop vars
+        var declaration, colon_index, property, value;
 
+        // loop over declarations
         for (var i = 0, l = declarations.length; i < l; i++) {
-            var declaration = declarations[i].trim();
+            // cache current declaration
+            declaration = declarations[i].trim();
             // replace the content CSS placeholder with original CSS
             if (-~declaration.indexOf("$$content[")) {
                 // replace placeholder
-                declaration = declaration.replace(/\$\$content\[(\d+)\]/, declaration_replacement_fn);
+                declaration = declaration
+                    .replace(/\$\$content\[(\d+)\]/, declaration_replacement_fn);
             }
-            var colon_index = declaration.indexOf(":");
-            var property = declaration.substring(0, colon_index).trim();
-            var value = declaration.substring((colon_index + 1), declaration.length).trim();
+            // get colon index to get property and its value
+            colon_index = declaration.indexOf(":");
+            property = declaration.substring(0, colon_index).trim();
+            value = declaration.substring((colon_index + 1), declaration.length).trim();
 
+            // update frequency map
             if (frequency[property]) {
                 frequency[property].push([property, value, declaration]); // increase frequency
             } else { // init frequency
                 frequency[property] = [
                     [property, value, declaration]
                 ];
-                size++;
+                size++; // increment object size
             }
         }
 
-        // add all properties with more than one frequency
+        // loop through all properties, remove all unique CSS properties
         for (var prop in frequency) {
+            // if property is unique remove from object
             if (frequency.hasOwnProperty(prop) && frequency[prop].length <= 1) {
                 delete frequency[prop];
-                size--;
+                size--; // decrease object size to accomodate prop removal
             }
         }
 
-        // return the dupes
+        // return dupes
         return [frequency, size];
     }
 
