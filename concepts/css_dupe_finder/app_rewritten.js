@@ -14,6 +14,12 @@ document.onreadystatechange = function() {
         });
     }
 
+    function rem_simple_add_simple_selector(selector, text_between) {
+        return selector.split(" / ").filter(function(s) {
+            return (s.charAt(0) === "@");
+        }).join(" / ") + " / " + text_between;
+    }
+
     function dupe_check(selector, css_text) {
 
         // prepare css string + define vars
@@ -129,156 +135,169 @@ document.onreadystatechange = function() {
 
             // check for atsigns
             if (char_code === 64) { // character: @
+
                 // check to see that it is not a one-liner (i.e. @charset, @import, @namespace)
                 // get the index of the immediate space after the last letter
-                var space_index = string.indexOf(" ", (i + 1));
-                var atrule_name = string.substring((i + 1), space_index);
+                var space_index = string.indexOf(" ", (i + 1)),
+                    atrule_name = string.substring((i + 1), space_index);
+
+                // check if artule is a simple one-liner
                 if (-~["charset", "import", "namespace"].indexOf(atrule_name)) {
-                    // get the index if the next semicolon; meaning the end of the atrule
-                    var atrule_end = string.indexOf(";", (i + 1));
-                    // skip loop all the way to the position of the ending of atrule
-                    i = atrule_end + 1;
+                    // get the index of the next semicolon; meaning the end of the atrule
+                    // forward loop all the way to the position of the ending of atrule
+                    i = string.indexOf(";", (i + 1)) + 1;
+
                 } else { // all other css atrules
 
-                    // only run when there is no actve atsign flag
-                    if (flags.atsign) continue;
+                    // // ?????????
+                    // only run when there is no active atsign flag
+                    // if (flags.atsign) continue;
+                    // // ?????????
 
-                    // get the index of the opening brace
-                    var brace_start = string.indexOf("{", (i + 1));
-                    // set the brace_open flag
-                    flags.open.brace = brace_start;
+                    // get the index of the opening brace + set the brace_open flag
+                    flags.open.brace = string.indexOf("{", (i + 1));
                     // set the atsign flag
                     flags.atsign = i;
-                    // skip loop all the way to the position of the start brace
-                    i = flags.open.brace;
-                    var selector = string.substring(flags.atsign, flags.open.brace).trim();
-                    // selector_original = selector;
                     // set the brace counter
                     flags.counter.brace = 1;
+                    // forward loop all the way to the position of the start brace
+                    i = flags.open.brace;
 
+                    // grab selector (text between atsign and open brace indices)
+                    var selector = string.substring(flags.atsign, flags.open.brace).trim();
                     // keep track of the brace indices
                     var brace_indices_track = [i];
+                    // the amount of nested (comples "@") levels
+                    var nested_levels = 0;
 
-                    var complex_levels = 0;
-
-                    // get entire code block...start by getting the next brace index
+                    // start parsing CSS code block...start by getting the next brace index
                     while (flags.counter.brace) {
 
                         // get the indices for the next open and closed brace
                         var start_brace_index = string.indexOf("{", i + 1),
                             end_brace_index = string.indexOf("}", i + 1);
 
-                        // place both indices into an array
-                        var brace_indices = [(!-~start_brace_index ? null : start_brace_index), (!-~end_brace_index ? null : end_brace_index)].filter(Number); // http://stackoverflow.com/questions/281264/remove-empty-elements-from-an-array-in-javascript/2843625#2843625
-                        // get the lowest indice in number. this index will be the
+                        // place both indices into an array and then filter array to only
+                        // have numbers, -1 will be replaced with null, which will then
+                        // get pruned out with the filter function
+                        // filter(Number): http://stackoverflow.com/questions/281264/remove-empty-elements-from-an-array-in-javascript/2843625#2843625
+                        var brace_indices = [(!-~start_brace_index ? null : start_brace_index), (!-~end_brace_index ? null : end_brace_index)].filter(Number);
+
+                        // get the lowest index number. this index will be the
                         // closest to the first open brace. if there is no brace at all,
                         // null is returned in place of -1.
                         var next_index = (brace_indices.length) ? Math.min.apply(null, brace_indices) : null;
-
+                        // get the last brace index from stored brace indices
                         var last_index = brace_indices_track[brace_indices_track.length - 1];
+                        // the text between the last and next brace points. depending on the braces
+                        // this could be a selector (simple "s" or complex "@":"x") or a CSS code block
                         var text_between = string.substring((last_index + 1), next_index).trim();
+
+                        // get the brace character using the last and next index points
                         var first_brace = string.charAt(last_index);
                         var last_brace = string.charAt(next_index);
-                        // check if simple or complex
+
+                        // check if simple or complex, used later on
                         var type = (text_between.charAt(0) === "@") ? "x" : "s";
-                        // var complex_levels = 0;
-                        // *{ { --> Start of complex block
-                        // *{ } --> CSS code block
-                        // *} { --> End of code block, start of new code block
-                        // *} } --> End of complex block
+
+                        // the types of possible brace match ups
+                        // { { --> Start of block (simple or complex)
+                        // { } --> CSS code block
+                        // } { --> End of code block, start of new code block
+                        // } } --> End of complex block
+
+                        // differentiate between brace match ups
                         if (first_brace === "{" && last_brace === "{") { // child selector
+
                             if (type === "x") {
                                 // set the appropriate flag
                                 flags.child.complex = true;
-                                // increment complex_levels
-                                complex_levels++;
+                                // increment nested_levels
+                                nested_levels++;
                                 // add to selector
                                 selector += " / " + text_between;
-
                             } else if (type === "s") {
-                                // the start of a new code block append the new selector to parent selector
-                                // for simple code blocks remove all preceding sumple code block selectors
+                                // for simple code blocks remove all preceding simple code block selectors
                                 // and only keep the nested parent @ complex selectors
-                                selector = selector.split(" / ").filter(function(s) {
-                                    return (s.charAt(0) === "@");
-                                }).join(" / ") + " / " + text_between;
+                                selector = rem_simple_add_simple_selector(selector, text_between);
                             }
 
                         } else if (first_brace === "{" && last_brace === "}") { // code block
 
-                            // get the last child selector
-                            var selectors = selector.split(" / "),
-                                last_selector = selectors[selectors.length - 1],
-                                dupes;
+                            // // ?????????
+                            // // get the last child selector
+                            // var selectors = selector.split(" / "),
+                            //     last_selector = selectors[selectors.length - 1],
+                            //     dupes;
 
-                            if (last_selector.charAt(0) === "@") {
-                                // check if empty
-                                // if (text_between === "") {
-                                dupes = dupe_check(selector, text_between);
-                                if (dupes[1]) blocks.push([selector, text_between, dupes]);
-                                // }
-                            } else { // regular CSS selector
-                                dupes = dupe_check(selector, text_between);
-                                if (dupes[1]) blocks.push([selector, text_between, dupes]);
+                            // if (last_selector.charAt(0) === "@") {
+                            //     // check if empty
+                            //     // if (text_between === "") {
+                            //     dupes = dupe_check(selector, text_between);
+                            //     if (dupes[1]) blocks.push([selector, text_between, dupes]);
+                            //     // }
+                            // } else { // regular CSS selector
+                            //     dupes = dupe_check(selector, text_between);
+                            //     if (dupes[1]) blocks.push([selector, text_between, dupes]);
+                            // }
+                            // // ?????????
 
-                            }
+                            // check code block for any duplicate properties
+                            var dupes = dupe_check(selector, text_between);
+                            // if any duplicate properties add them to the blocks array
+                            if (dupes[1]) blocks.push([selector, text_between, dupes]);
+
                         } else if (first_brace === "}" && last_brace === "{") { // end of code block, start of new code block
+
                             if (type === "x") {
                                 // set the appropriate flag
                                 flags.child.complex = true;
-                                // increment complex_levels
-                                complex_levels++;
-
+                                // increment nested_levels
+                                nested_levels++;
                                 // add to selector
                                 selector += " / " + text_between;
                             } else if (type === "s") {
-                                // the start of a new code block append the new selector to parent selector
-                                // for simple code blocks remove all preceding sumple code block selectors
+                                // for simple code blocks remove all preceding simple code block selectors
                                 // and only keep the nested parent @ complex selectors
-                                selector = selector.split(" / ").filter(function(s) {
-                                    return (s.charAt(0) === "@");
-                                }).join(" / ") + " / " + text_between;
+                                selector = rem_simple_add_simple_selector(selector, text_between);
                             }
 
                         } else if (first_brace === "}" && last_brace === "}") { // end of complex code block
-                            // decrement the complex level
-                            // remove child selector from selector
 
                             // remove all the simple css selectors
                             selector = selector.split(" / ").filter(function(s) {
                                 return (s.charAt(0) === "@");
                             });
                             // now remove go down one nested level down
-                            selector.splice(-1, 1); // http://stackoverflow.com/questions/19544452/remove-last-item-from-array
+                            // http://stackoverflow.com/questions/19544452/remove-last-item-from-array
+                            selector.splice(-1, 1);
+                            // turn array back to string
                             selector = selector.join(" / ");
 
-                            complex_levels--;
+                            // finally, decrease nested level
+                            nested_levels--;
+
                         }
 
-                        // track new brace index
+                        // add the next brace point to track track it
                         brace_indices_track.push(next_index);
 
                         // if the index matches the start brace "{", increase the brace counter
-                        // else if the brace is a closing brace "}", decrease the brace counter
                         if (start_brace_index === next_index) flags.counter.brace++;
+                        // else if the brace is a closing brace "}", decrease the brace counter
                         else if (end_brace_index === next_index) flags.counter.brace--;
 
-                        // reset the index to the last brace position
+                        // forward loop index to the next brace position
                         i = next_index + 1;
 
-                        // move index to the newly found brace
-                        if (flags.counter.brace === 0) {
-                            // log selector and code block
-                            var code_block = string.substring(flags.open.brace, i).replace(/^\{|\}$/g, "").trim();
-                            // add the selector + code block to blocks array
-                            // blocks.push([selector, code_block, true]);
-                            flags.counter.brace = null; // unset the flag
-                        }
-
-                        // unset the flag atsign
-                        flags.atsign = null;
+                        // if no more braces are found end the while loop by unsetting the
+                        // flags.counter.brace flag
+                        if (flags.counter.brace === 0) flags.counter.brace = null; // unset flag
 
                     }
+
+                    // unset the flag atsign
+                    flags.atsign = null;
 
                 }
             }
