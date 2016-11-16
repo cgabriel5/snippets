@@ -304,29 +304,32 @@ document.onreadystatechange = function() {
 
             // check for braces, this is for simple code blocks
             if (char_code === 123) { // character: {
-                // get the selector
 
                 // get the indices for the previous closed brace & semicolon
                 var end_brace_index = string.lastIndexOf("}", i),
                     semicolon_index = string.lastIndexOf(";", i);
 
                 // place both indices into an array
-                var prev_indices = [(!-~end_brace_index ? null : end_brace_index), (!-~semicolon_index ? null : semicolon_index)].filter(Number); // http://stackoverflow.com/questions/281264/remove-empty-elements-from-an-array-in-javascript/2843625#2843625
+                // filter(Number): http://stackoverflow.com/questions/281264/remove-empty-elements-from-an-array-in-javascript/2843625#2843625
+                var prev_indices = [(!-~end_brace_index ? null : end_brace_index), (!-~semicolon_index ? null : semicolon_index)].filter(Number);
+
                 // get the lowest indice in number. this index will be the
                 // closest to the first open brace. if there is no brace at all,
                 // null is returned in place of -1.
                 var prev_index = (prev_indices.length) ? Math.max.apply(null, prev_indices) : null;
+
                 // finally, get selector from CSS string
                 var selector = string.substring(((prev_index) ? (prev_index + 1) : 0), i).trim();
 
-                // get the CSS code block
+                // get the CSS code block by using the current index + 1 as the start
+                // and the closing brace index as the end point
+                var code_block = string.substring((i + 1), string.indexOf("}", (i + 1))).trim();
 
-                // get the closing brace index
-                var end_brace_index = string.indexOf("}", (i + 1));
-                var code_block = string.substring((i + 1), end_brace_index).trim();
-                // add the selector + code block to blocks array
+                // check code block for any duplicate properties
                 var dupes = dupe_check(selector, code_block);
+                // if any duplicate properties add them to the blocks array
                 if (dupes[1]) blocks.push([selector, code_block, dupes]);
+
             }
 
         }
