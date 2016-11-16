@@ -22,6 +22,10 @@ document.onreadystatechange = function() {
             },
             "counter": {
                 "brace": null
+            },
+            "child": {
+                "complex": null,
+                "simple": null,
             }
         };
 
@@ -89,9 +93,16 @@ document.onreadystatechange = function() {
                     flags.atsign = i;
                     // skip loop all the way to the position of the start brace
                     i = flags.open.brace;
-                    var selector = string.substring(flags.atsign, flags.open.brace).trim();
+                    var selector = string.substring(flags.atsign, flags.open.brace).trim(),
+                        selector_original = selector;
                     // set the brace counter
                     flags.counter.brace = 1;
+
+                    // keep track of the brace indices
+                    var brace_indices_track = [i];
+
+                    var complex_levels = 0;
+
                     // get entire code block...start by getting the next brace index
                     while (flags.counter.brace) {
 
@@ -106,6 +117,90 @@ document.onreadystatechange = function() {
                         // null is returned in place of -1.
                         var next_index = (brace_indices.length) ? Math.min.apply(null, brace_indices) : null;
 
+                        var last_index = brace_indices_track[brace_indices_track.length - 1];
+                        var text_between = string.substring((last_index + 1), next_index).trim();
+                        var first_brace = string.charAt(last_index);
+                        var last_brace = string.charAt(next_index);
+                        // check if simple or complex
+                        var type = (text_between.charAt(0) === "@") ? "x" : "s";
+                        // var complex_levels = 0;
+                        // *{ { --> Start of complex block
+                        // *{ } --> CSS code block
+                        // *} { --> End of code block, start of new code block
+                        // *} } --> End of complex block
+                        if (first_brace === "{" && last_brace === "{") { // child selector
+                            if (type === "x") {
+                                // set the appropriate flag
+                                flags.child.complex = true;
+                                // increment complex_levels
+                                complex_levels++;
+                                // add to selector
+                                selector += " / " + text_between;
+                                // console.log(">>>", complex_levels, selector);
+                            } else if (type === "s") {
+                                // the start of a new code block append the new selector to parent selector
+                                // for simple code blocks remove all preceding sumple code block selectors
+                                // and only keep the nested parent @ complex selectors
+                                selector = selector.split(" / ").filter(function(s) {
+                                    return (s.charAt(0) === "@");
+                                }).join(" / ") + " / " + text_between;
+                            }
+                            console.log(">>>", complex_levels, selector);
+                        } else if (first_brace === "{" && last_brace === "}") { // code block
+
+                            // console.log("a code block", 1, selector, 1, text_between);
+                            // get the last child selector
+                            var selectors = selector.split(" / ");
+                            var last_selector = selectors[selectors.length - 1];
+                            // console.log("last child selector", last_selector);
+                            if (last_selector.charAt(0) === "@") {
+                                // check if empty
+                                // if (text_between === "") {
+                                blocks.push([selector, text_between]);
+                                // }
+                            } else { // regular CSS selector
+                                blocks.push([selector, text_between]);
+
+                            }
+                        } else if (first_brace === "}" && last_brace === "{") { // end of code block, start of new code block
+                            if (type === "x") {
+                                // set the appropriate flag
+                                flags.child.complex = true;
+                                // increment complex_levels
+                                complex_levels++;
+                                // console.log(">>>", complex_levels, selector);
+                                // add to selector
+                                selector += " / " + text_between;
+                            } else if (type === "s") {
+                                // the start of a new code block append the new selector to parent selector
+                                // for simple code blocks remove all preceding sumple code block selectors
+                                // and only keep the nested parent @ complex selectors
+                                selector = selector.split(" / ").filter(function(s) {
+                                    return (s.charAt(0) === "@");
+                                }).join(" / ") + " / " + text_between;
+                            }
+                            console.log(">>>", complex_levels, selector);
+                        } else if (first_brace === "}" && last_brace === "}") { // end of complex code block
+                            // decrement the complex level
+                            // remove child selector from selector
+                            // console.log(selector);
+
+                            // remove all the simple css selectors
+                            selector = selector.split(" / ").filter(function(s) {
+                                return (s.charAt(0) === "@");
+                            });
+                            // now remove go down one nested level down
+                            selector.splice(-1, 1); // http://stackoverflow.com/questions/19544452/remove-last-item-from-array
+                            selector = selector.join(" / ");
+                            console.log("<<<", complex_levels, selector);
+                            complex_levels--;
+                        }
+                        // console.log(">>>", complex_levels);
+                        // console.log(type, first_brace, last_brace, text_between);
+
+                        // track new brace index
+                        brace_indices_track.push(next_index);
+
                         // if the index matches the start brace "{", increase the brace counter
                         // else if the brace is a closing brace "}", decrease the brace counter
                         if (start_brace_index === next_index) flags.counter.brace++;
@@ -119,7 +214,7 @@ document.onreadystatechange = function() {
                             // log selector and code block
                             var code_block = string.substring(flags.open.brace, i).replace(/^\{|\}$/g, "").trim();
                             // add the selector + code block to blocks array
-                            blocks.push([selector, code_block, true]);
+                            // blocks.push([selector, code_block, true]);
                             flags.counter.brace = null; // unset the flag
                         }
 
@@ -160,7 +255,7 @@ document.onreadystatechange = function() {
         }
 
         // console.log(flags);
-        console.log(blocks.length, blocks);
+        console.table(blocks);
         // blocks.forEach(function(block) {
         //     console.log("");
         //     console.log(block[0]);
