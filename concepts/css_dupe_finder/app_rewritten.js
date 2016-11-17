@@ -52,7 +52,7 @@ document.onreadystatechange = function() {
      */
     function dupe_check(selector, css_text) {
 
-        // prepare css string + define vars
+        // prepare CSS string + define vars
         var declarations = css_text.split(";"),
             frequency = {},
             size = 0,
@@ -94,7 +94,7 @@ document.onreadystatechange = function() {
             // if property is unique remove from object
             if (frequency.hasOwnProperty(prop) && frequency[prop].length <= 1) {
                 delete frequency[prop];
-                size--; // decrease object size to accomodate prop removal
+                size--; // decrease object size to accommodate prop removal
             }
         }
 
@@ -144,7 +144,7 @@ document.onreadystatechange = function() {
 
     }
 
-    // all resources have loaded (document + subresources)
+    // all resources have loaded (document + sub-resources)
     if (document.readyState === "complete") {
 
         // get the CSS string to work with
@@ -219,7 +219,7 @@ document.onreadystatechange = function() {
                     // forward loop all the way to the position of the ending of atrule
                     i = string.indexOf(";", (i + 1)) + 1;
 
-                } else { // all other css atrules
+                } else { // all other CSS atrules
 
                     // // ?????????
                     // only run when there is no active atsign flag
@@ -239,7 +239,7 @@ document.onreadystatechange = function() {
                     var selector = string.substring(flags.atsign, flags.open.brace).trim();
                     // keep track of the brace indices
                     var brace_indices_track = [i];
-                    // the amount of nested (comples "@") levels
+                    // the amount of nested (complex "@") levels
                     var nested_levels = 0;
 
                     // start parsing CSS code block...start by getting the next brace index
@@ -336,7 +336,7 @@ document.onreadystatechange = function() {
 
                         } else if (first_brace === "}" && last_brace === "}") { // end of complex code block
 
-                            // remove all the simple css selectors
+                            // remove all the simple CSS selectors
                             selector = selector.split(" / ").filter(function(s) {
                                 return (s.charAt(0) === "@");
                             });
