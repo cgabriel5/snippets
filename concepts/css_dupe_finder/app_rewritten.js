@@ -1,3 +1,7 @@
+/* jshint shadow:true */
+/* jshint bitwise: false */
+// http://jshint.com/docs/options/#shadow
+
 document.onreadystatechange = function() {
 
     "use strict";
