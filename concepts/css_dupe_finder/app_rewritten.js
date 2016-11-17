@@ -323,7 +323,7 @@ document.onreadystatechange = function() {
                         else if (end_brace_index === next_index) flags.counter.brace--;
 
                         // forward loop index to the next brace position
-                        i = next_index + 1;
+                        i = next_index;
 
                         // if no more braces are found end the while loop by unsetting the
                         // flags.counter.brace flag
