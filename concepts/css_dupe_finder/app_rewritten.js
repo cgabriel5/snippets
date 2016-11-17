@@ -8,7 +8,16 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
-    function placehold_csscontent_prop(string, container) {
+    /**
+     * @description [Replaces content property with placeholder. This is done to avoid detecting
+     *               braces and comments within the content string.]
+     * @param  {String} string                   [The string to work with.]
+     * @param  {Array} content_property_contents [The array where the contents will be stored and
+     *                                            looked up later.]
+     * @return {String}                          [The string with placeholder if the content
+     *                                            property is found.]
+     */
+    function placehold_csscontent_prop(string, content_property_contents) {
         var regexp_content_props_counter = -1,
             regexp_content_props = new RegExp(/content:.*;/, "gi"); // content:\s?["|'].*["|'];
         return string.replace(regexp_content_props, function(content, index) {
@@ -18,12 +27,29 @@ document.onreadystatechange = function() {
         });
     }
 
+    /**
+     * @description [Function removes all simple selectors (selectors that are not nested, don't
+     *               use the "@") from string and appends the new simple selector to string.]
+     * @param  {String} selector     [The selector to remove simples selectors and append new
+     *                                selector.]
+     * @param  {String} text_between [The new simple selector.]
+     * @return {String}              [The new selector with all simple selectors removed but with
+     *                                new simple selector appended.]
+     */
     function rem_simple_add_simple_selector(selector, text_between) {
         return selector.split(" / ").filter(function(s) {
             return (s.charAt(0) === "@");
         }).join(" / ") + " / " + text_between;
     }
 
+    /**
+     * @description [Goes through the dupe array checking block declarations for duplicate CSS
+     *               properties.]
+     * @param  {String} selector [The selector corresponding to the CSS code block.]
+     * @param  {String} css_text [The CSS code block declarations.]
+     * @return {Object}          [Object containing the duplicate properties in for format
+     *                            key: value => {dupe_property_name: array_of_dupe_declarations}]
+     */
     function dupe_check(selector, css_text) {
 
         // prepare css string + define vars
@@ -76,6 +102,13 @@ document.onreadystatechange = function() {
         return [frequency, size];
     }
 
+    /**
+     * @description [Logs the duplicate CSS properties found within each CSS code block.]
+     * @param  {Array} blocks [The collection of CSS code blocks that contain duplicate CSS
+     *                         properties.]
+     * @return {Null}        [Function does not return anything. Only logs duplicates info
+     *                        onto the console.]
+     */
     function log_dupes(blocks) {
 
         // loop over blocks
