@@ -35,12 +35,12 @@ document.onreadystatechange = function() {
      */
     function placehold_csscontent_prop(string, content_property_contents) {
         var regexp_content_props_counter = -1,
-            regexp_content_props = new RegExp(/content:.*?;/, "gi"); // content:\s?["|'].*["|'];
+            regexp_content_props = new RegExp(/content:.*?(?=;)/, "gi"); // content:\s?["|'].*["|'];
         return string.replace(regexp_content_props, function(content, index) {
             // store content + index for later use
             // console.log(11, content, index);
             content_property_contents.push([content, index]);
-            return "$$content[" + (++regexp_content_props_counter) + "];";
+            return "$$content[" + (++regexp_content_props_counter) + "]";
         });
     }
 
