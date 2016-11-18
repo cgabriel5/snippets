@@ -151,7 +151,15 @@ document.onreadystatechange = function() {
         var string = document.getElementsByTagName("textarea")[0].value;
 
         // remove comments from CSS string
-        string = string.replace(/\/\*.*?\*\//g, "");
+        string = string.replace(/\/\*.*?\*\//g, ""); // \/\*[^\/\*]?.*?\*\/
+
+        // add semicolons to last declarations in CSS blocks
+        // http://stackoverflow.com/questions/26984415/matching-ending-css-curly-brace-when-it-ends-without-a-semicolon/26984572#26984572
+        // regexp explained: ([^{};\s])(\s*})
+        // first capture group gets anything by a space or the literal characters {};
+        // second capture group gets any amount of space and a closing brace
+        // the replacement then puts a semicolon between the first two groups
+        string = string.replace(/([^{};\s])(\s*})/g, "$1;$2");
 
         // blocks array will contain all the CSS blocks found within the CSS string
         var blocks = [];
