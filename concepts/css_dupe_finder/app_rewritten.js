@@ -8,6 +8,22 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
+    function cleanup_selector(selector) {
+        return selector.replace(/\$\$parenthesis\[(\d+)\]/, function() {
+            return parenthesis_contents[(arguments[1] * 1)][0];
+        });
+    }
+
+    function placehold_parenthesis_contents(string, parenthesis_contents) {
+        var regexp_paren_counter = -1,
+            regexp_parenthesis = new RegExp(/\([^\(\)]*?\)/, "g");
+        return string.replace(regexp_parenthesis, function(content, index) {
+            // store content + index for later use
+            parenthesis_contents.push([content, index]);
+            return "$$parenthesis[" + (++regexp_paren_counter) + "]";
+        });
+    }
+
     /**
      * @description [Replaces content property with placeholder. This is done to avoid detecting
      *               braces and comments within the content string.]
@@ -19,9 +35,10 @@ document.onreadystatechange = function() {
      */
     function placehold_csscontent_prop(string, content_property_contents) {
         var regexp_content_props_counter = -1,
-            regexp_content_props = new RegExp(/content:.*;/, "gi"); // content:\s?["|'].*["|'];
+            regexp_content_props = new RegExp(/content:.*?;/, "gi"); // content:\s?["|'].*["|'];
         return string.replace(regexp_content_props, function(content, index) {
             // store content + index for later use
+            // console.log(11, content, index);
             content_property_contents.push([content, index]);
             return "$$content[" + (++regexp_content_props_counter) + "];";
         });
@@ -58,6 +75,9 @@ document.onreadystatechange = function() {
             size = 0,
             declaration_replacement_fn = function() {
                 return content_property_contents[(arguments[1] * 1)][0];
+            },
+            parenthesis_replacement_fn = function() {
+                return parenthesis_contents[(arguments[1] * 1)][0];
             };
 
         // loop vars
@@ -72,6 +92,12 @@ document.onreadystatechange = function() {
                 // replace placeholder
                 declaration = declaration
                     .replace(/\$\$content\[(\d+)\]/, declaration_replacement_fn);
+            }
+            // replace the parenthesis CSS placeholder with original CSS
+            if (-~declaration.indexOf("$$parenthesis[")) {
+                // replace placeholder
+                declaration = declaration
+                    .replace(/\$\$parenthesis\[(\d+)\]/, parenthesis_replacement_fn);
             }
             // get colon index to get property and its value
             colon_index = declaration.indexOf(":");
@@ -159,15 +185,29 @@ document.onreadystatechange = function() {
         // first capture group gets anything by a space or the literal characters {};
         // second capture group gets any amount of space and a closing brace
         // the replacement then puts a semicolon between the first two groups
+        // console.log("before", string);
         string = string.replace(/([^{};\s])(\s*})/g, "$1;$2");
+        // console.log("after", string);
 
         // blocks array will contain all the CSS blocks found within the CSS string
         var blocks = [];
+
+        // replace everything in the CSS string that is in parenthesis,
+        // replacing it prevents the detection of false semicolon endings. for example,
+        // the semicolon found in a base64 URL found after the mimetype is not an endpoint
+        // this short replacement will avoid situations like that.
+        var parenthesis_contents = [];
+        string = placehold_parenthesis_contents(string, parenthesis_contents);
 
         // replace all content properties as they can contain text
         // replacing it prevents the detection of false comment/brace/atsign detections
         var content_property_contents = [];
         string = placehold_csscontent_prop(string, content_property_contents);
+
+        // console.log(string.length, string);
+        // throw "stoped";
+        // console.log(">>", parenthesis_contents, content_property_contents);
+        // console.log(string);
 
         // flags are used while parsing string in main loop
         var flags = {
@@ -314,18 +354,18 @@ document.onreadystatechange = function() {
                             //     // check if empty
                             //     // if (text_between === "") {
                             //     dupes = dupe_check(selector, text_between);
-                            //     if (dupes[1]) blocks.push([selector, text_between, dupes]);
+                            //     if (dupes[1]) blocks.push([cleanup_selector(selector), text_between, dupes]);
                             //     // }
                             // } else { // regular CSS selector
                             //     dupes = dupe_check(selector, text_between);
-                            //     if (dupes[1]) blocks.push([selector, text_between, dupes]);
+                            //     if (dupes[1]) blocks.push([cleanup_selector(selector), text_between, dupes]);
                             // }
                             // // ?????????
 
                             // check code block for any duplicate properties
                             var dupes = dupe_check(selector, text_between);
                             // if any duplicate properties add them to the blocks array
-                            if (dupes[1]) blocks.push([selector, text_between, dupes]);
+                            if (dupes[1]) blocks.push([cleanup_selector(selector), text_between, dupes]);
 
                         } else if (first_brace === "}" && last_brace === "{") { // end of code block, start of new code block
 
@@ -408,7 +448,7 @@ document.onreadystatechange = function() {
                 // check code block for any duplicate properties
                 var dupes = dupe_check(selector, code_block);
                 // if any duplicate properties add them to the blocks array
-                if (dupes[1]) blocks.push([selector, code_block, dupes]);
+                if (dupes[1]) blocks.push([cleanup_selector(selector), code_block, dupes]);
 
             }
 
