@@ -8,22 +8,19 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
+    // RegExp patterns
+    var regexp = {
+        // "parens": new RegExp(/\([^\(\)]*?\)/, "g"),
+        // "parens": new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g"),
+        // http://stackoverflow.com/questions/17333124/using-regex-to-match-function-calls-containing-parentheses/17333209#17333209
+        "parens": [new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g"), "parenthesis"],
+        // "content": new RegExp(/content:.*?(?=;\s*(\w|\}))/, "gi"),
+        "content": [new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi"), "content"]
+    };
+
     function cleanup_selector(selector) {
         return selector.replace(/\$\$parenthesis\[(\d+)\]/, function() {
             return parenthesis_contents[(arguments[1] * 1)][0];
-        });
-    }
-
-    function placehold_parenthesis_contents(string, parenthesis_contents) {
-        var regexp_paren_counter = -1,
-            // regexp_parenthesis = new RegExp(/\([^\(\)]*?\)/, "g");
-            // regexp_parenthesis = new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g");
-            // http://stackoverflow.com/questions/17333124/using-regex-to-match-function-calls-containing-parentheses/17333209#17333209
-            regexp_parenthesis = new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g");
-        return string.replace(regexp_parenthesis, function() {
-            // store content + index for later use
-            parenthesis_contents.push([arguments[0], arguments[arguments.length - 1]]);
-            return "$$parenthesis[" + (++regexp_paren_counter) + "]";
         });
     }
 
@@ -36,14 +33,14 @@ document.onreadystatechange = function() {
      * @return {String}                          [The string with placeholder if the content
      *                                            property is found.]
      */
-    function placehold_csscontent_prop(string, content_property_contents) {
-        var regexp_content_props_counter = -1,
-            // regexp_content_props = new RegExp(/content:.*?(?=;\s*(\w|\}))/, "gi");
-            regexp_content_props = new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi");
-        return string.replace(regexp_content_props, function() {
-            // store content + index for later use
-            content_property_contents.push([arguments[0], arguments[arguments.length - 1]]);
-            return "$$content[" + (++regexp_content_props_counter) + "]";
+    function placehold(string, array, pattern_info) {
+        var counter = -1,
+            pattern = pattern_info[0],
+            placeholder = pattern_info[1];
+        return string.replace(pattern, function() {
+            // store match + index for later use
+            array.push([arguments[0], arguments[arguments.length - 1]]);
+            return "$$" + placeholder + "[" + (++counter) + "]";
         });
     }
 
@@ -198,12 +195,12 @@ document.onreadystatechange = function() {
         // the semicolon found in a base64 URL found after the mimetype is not an endpoint
         // this short replacement will avoid situations like that.
         var parenthesis_contents = [];
-        string = placehold_parenthesis_contents(string, parenthesis_contents);
+        string = placehold(string, parenthesis_contents, regexp.parens);
 
         // replace all content properties as they can contain text
         // replacing it prevents the detection of false comment/brace/atsign detections
         var content_property_contents = [];
-        string = placehold_csscontent_prop(string, content_property_contents);
+        string = placehold(string, content_property_contents, regexp.content);
 
         console.log(">>", parenthesis_contents.length);
         console.log(">>", content_property_contents.length);
