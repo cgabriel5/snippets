@@ -8,19 +8,29 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
-    // RegExp patterns
+    // RegExp info
     var regexp = {
-        // "parens": new RegExp(/\([^\(\)]*?\)/, "g"),
-        // "parens": new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g"),
-        // http://stackoverflow.com/questions/17333124/using-regex-to-match-function-calls-containing-parentheses/17333209#17333209
-        "parens": [new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g"), "parenthesis"],
-        // "content": new RegExp(/content:.*?(?=;\s*(\w|\}))/, "gi"),
-        "content": [new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi"), "content"]
+        "counter": -1,
+        "container": [],
+        "info": {
+            "parens": {
+                // "parens": new RegExp(/\([^\(\)]*?\)/, "g"),
+                // "parens": new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g"),
+                // http://stackoverflow.com/questions/17333124/using-regex-to-match-function-calls-containing-parentheses/17333209#17333209
+                "pattern": new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g"),
+                "placeholder": "parenthesis"
+            },
+            "content": {
+                // "content": new RegExp(/content:.*?(?=;\s*(\w|\}))/, "gi"),
+                "pattern": new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi"),
+                "placeholder": "content"
+            }
+        }
     };
 
-    function cleanup_selector(selector) {
-        return selector.replace(/\$\$parenthesis\[(\d+)\]/, function() {
-            return parenthesis_contents[(arguments[1] * 1)][0];
+    function cleanup(string) {
+        return string.replace(/\$\$_placeholder_\[(\d+)\]/g, function() {
+            return regexp.container[(arguments[1] * 1)][0];
         });
     }
 
@@ -28,19 +38,19 @@ document.onreadystatechange = function() {
      * @description [Replaces content property with placeholder. This is done to avoid detecting
      *               braces and comments within the content string.]
      * @param  {String} string                   [The string to work with.]
-     * @param  {Array} content_property_contents [The array where the contents will be stored and
+     * @param  {Array} regexp.container [The array where the contents will be stored and
      *                                            looked up later.]
      * @return {String}                          [The string with placeholder if the content
      *                                            property is found.]
      */
-    function placehold(string, array, pattern_info) {
-        var counter = -1,
-            pattern = pattern_info[0],
-            placeholder = pattern_info[1];
+    function placehold(string, type) {
+        var info = regexp.info[type],
+            pattern = info.pattern,
+            container = regexp.container;
         return string.replace(pattern, function() {
             // store match + index for later use
-            array.push([arguments[0], arguments[arguments.length - 1]]);
-            return "$$" + placeholder + "[" + (++counter) + "]";
+            container.push([arguments[0], arguments[arguments.length - 1]]);
+            return "$$" + "_placeholder_" + "[" + (++regexp.counter) + "]";
         });
     }
 
@@ -72,13 +82,7 @@ document.onreadystatechange = function() {
         // prepare CSS string + define vars
         var declarations = css_text.split(";"),
             frequency = {},
-            size = 0,
-            declaration_replacement_fn = function() {
-                return content_property_contents[(arguments[1] * 1)][0];
-            },
-            parenthesis_replacement_fn = function() {
-                return parenthesis_contents[(arguments[1] * 1)][0];
-            };
+            size = 0;
 
         // loop vars
         var declaration, colon_index, property, value;
@@ -87,18 +91,8 @@ document.onreadystatechange = function() {
         for (var i = 0, l = declarations.length; i < l; i++) {
             // cache current declaration
             declaration = declarations[i].trim();
-            // replace the content CSS placeholder with original CSS
-            if (-~declaration.indexOf("$$content[")) {
-                // replace placeholder
-                declaration = declaration
-                    .replace(/\$\$content\[(\d+)\]/, declaration_replacement_fn);
-            }
-            // replace the parenthesis CSS placeholder with original CSS
-            if (-~declaration.indexOf("$$parenthesis[")) {
-                // replace placeholder
-                declaration = declaration
-                    .replace(/\$\$parenthesis\[(\d+)\]/, parenthesis_replacement_fn);
-            }
+            // replace placeholders, if any
+            declaration = cleanup(declaration);
             // get colon index to get property and its value
             colon_index = declaration.indexOf(":");
             property = declaration.substring(0, colon_index).trim();
@@ -124,8 +118,9 @@ document.onreadystatechange = function() {
             }
         }
 
-        // return dupes
-        return [frequency, size];
+        // only add to block array if there are any duplicate CSS properties
+        if (size) blocks.push([cleanup(selector), css_text, [frequency, size]]);
+
     }
 
     /**
@@ -194,16 +189,13 @@ document.onreadystatechange = function() {
         // replacing it prevents the detection of false semicolon endings. for example,
         // the semicolon found in a base64 URL found after the mimetype is not an endpoint
         // this short replacement will avoid situations like that.
-        var parenthesis_contents = [];
-        string = placehold(string, parenthesis_contents, regexp.parens);
+        string = placehold(string, "parens");
 
         // replace all content properties as they can contain text
         // replacing it prevents the detection of false comment/brace/atsign detections
-        var content_property_contents = [];
-        string = placehold(string, content_property_contents, regexp.content);
+        string = placehold(string, "content");
 
-        console.log(">>", parenthesis_contents.length);
-        console.log(">>", content_property_contents.length);
+        console.log(">>", regexp.container.length);
 
         // flags are used while parsing string in main loop
         var flags = {
@@ -340,28 +332,8 @@ document.onreadystatechange = function() {
 
                         } else if (first_brace === "{" && last_brace === "}") { // code block
 
-                            // // ?????????
-                            // // get the last child selector
-                            // var selectors = selector.split(" / "),
-                            //     last_selector = selectors[selectors.length - 1],
-                            //     dupes;
-
-                            // if (last_selector.charAt(0) === "@") {
-                            //     // check if empty
-                            //     // if (text_between === "") {
-                            //     dupes = dupe_check(selector, text_between);
-                            //     if (dupes[1]) blocks.push([cleanup_selector(selector), text_between, dupes]);
-                            //     // }
-                            // } else { // regular CSS selector
-                            //     dupes = dupe_check(selector, text_between);
-                            //     if (dupes[1]) blocks.push([cleanup_selector(selector), text_between, dupes]);
-                            // }
-                            // // ?????????
-
                             // check code block for any duplicate properties
-                            var dupes = dupe_check(selector, text_between);
-                            // if any duplicate properties add them to the blocks array
-                            if (dupes[1]) blocks.push([cleanup_selector(selector), text_between, dupes]);
+                            dupe_check(selector, text_between);
 
                         } else if (first_brace === "}" && last_brace === "{") { // end of code block, start of new code block
 
@@ -442,9 +414,7 @@ document.onreadystatechange = function() {
                 var code_block = string.substring((i + 1), string.indexOf("}", (i + 1))).trim();
 
                 // check code block for any duplicate properties
-                var dupes = dupe_check(selector, code_block);
-                // if any duplicate properties add them to the blocks array
-                if (dupes[1]) blocks.push([cleanup_selector(selector), code_block, dupes]);
+                dupe_check(selector, code_block);
 
             }
 
