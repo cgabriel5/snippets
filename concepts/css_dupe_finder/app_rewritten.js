@@ -19,7 +19,9 @@ document.onreadystatechange = function() {
     function placehold_parenthesis_contents(string, parenthesis_contents) {
         var regexp_paren_counter = -1,
             // regexp_parenthesis = new RegExp(/\([^\(\)]*?\)/, "g");
-            regexp_parenthesis = new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g");
+            // regexp_parenthesis = new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g");
+            // http://stackoverflow.com/questions/17333124/using-regex-to-match-function-calls-containing-parentheses/17333209#17333209
+            regexp_parenthesis = new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g");
         return string.replace(regexp_parenthesis, function(content, index) {
             // store content + index for later use
             parenthesis_contents.push([content, index]);
