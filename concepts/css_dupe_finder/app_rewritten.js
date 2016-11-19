@@ -8,6 +8,8 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
+
+
     function cleanup_selector(selector) {
         return selector.replace(/\$\$parenthesis\[(\d+)\]/, function() {
             return parenthesis_contents[(arguments[1] * 1)][0];
@@ -16,10 +18,12 @@ document.onreadystatechange = function() {
 
     function placehold_parenthesis_contents(string, parenthesis_contents) {
         var regexp_paren_counter = -1,
-            regexp_parenthesis = new RegExp(/\([^\(\)]*?\)/, "g");
+            // regexp_parenthesis = new RegExp(/\([^\(\)]*?\)/, "g");
+            regexp_parenthesis = new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g");
         return string.replace(regexp_parenthesis, function(content, index) {
             // store content + index for later use
             parenthesis_contents.push([content, index]);
+            // console.log(content);
             return "$$parenthesis[" + (++regexp_paren_counter) + "]";
         });
     }
@@ -35,7 +39,7 @@ document.onreadystatechange = function() {
      */
     function placehold_csscontent_prop(string, content_property_contents) {
         var regexp_content_props_counter = -1,
-            regexp_content_props = new RegExp(/content:.*?(?=;)/, "gi"); // content:\s?["|'].*["|'];
+            regexp_content_props = new RegExp(/content.*?(?=;\s*(\w|\}))/, "gi");
         return string.replace(regexp_content_props, function(content, index) {
             // store content + index for later use
             // console.log(11, content, index);
@@ -204,10 +208,8 @@ document.onreadystatechange = function() {
         var content_property_contents = [];
         string = placehold_csscontent_prop(string, content_property_contents);
 
-        // console.log(string.length, string);
-        // throw "stoped";
-        // console.log(">>", parenthesis_contents, content_property_contents);
-        // console.log(string);
+        console.log(">>", parenthesis_contents.length);
+        console.log(">>", content_property_contents.length);
 
         // flags are used while parsing string in main loop
         var flags = {
@@ -455,6 +457,7 @@ document.onreadystatechange = function() {
         }
 
         // log the dupes to the console
+        console.log(blocks.length);
         log_dupes(blocks);
 
     }
