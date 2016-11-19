@@ -8,8 +8,6 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
-
-
     function cleanup_selector(selector) {
         return selector.replace(/\$\$parenthesis\[(\d+)\]/, function() {
             return parenthesis_contents[(arguments[1] * 1)][0];
@@ -22,10 +20,9 @@ document.onreadystatechange = function() {
             // regexp_parenthesis = new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g");
             // http://stackoverflow.com/questions/17333124/using-regex-to-match-function-calls-containing-parentheses/17333209#17333209
             regexp_parenthesis = new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g");
-        return string.replace(regexp_parenthesis, function(content, index) {
+        return string.replace(regexp_parenthesis, function() {
             // store content + index for later use
-            parenthesis_contents.push([content, index]);
-            // console.log(content);
+            parenthesis_contents.push([arguments[0], arguments[arguments.length - 1]]);
             return "$$parenthesis[" + (++regexp_paren_counter) + "]";
         });
     }
@@ -41,11 +38,11 @@ document.onreadystatechange = function() {
      */
     function placehold_csscontent_prop(string, content_property_contents) {
         var regexp_content_props_counter = -1,
-            regexp_content_props = new RegExp(/content.*?(?=;\s*(\w|\}))/, "gi");
-        return string.replace(regexp_content_props, function(content, index) {
+            // regexp_content_props = new RegExp(/content:.*?(?=;\s*(\w|\}))/, "gi");
+            regexp_content_props = new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi");
+        return string.replace(regexp_content_props, function() {
             // store content + index for later use
-            // console.log(11, content, index);
-            content_property_contents.push([content, index]);
+            content_property_contents.push([arguments[0], arguments[arguments.length - 1]]);
             return "$$content[" + (++regexp_content_props_counter) + "]";
         });
     }
@@ -191,9 +188,7 @@ document.onreadystatechange = function() {
         // first capture group gets anything by a space or the literal characters {};
         // second capture group gets any amount of space and a closing brace
         // the replacement then puts a semicolon between the first two groups
-        // console.log("before", string);
         string = string.replace(/([^{};\s])(\s*})/g, "$1;$2");
-        // console.log("after", string);
 
         // blocks array will contain all the CSS blocks found within the CSS string
         var blocks = [];
