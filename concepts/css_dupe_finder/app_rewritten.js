@@ -19,20 +19,17 @@ document.onreadystatechange = function() {
         "info": {
             "content": {
                 // "content": new RegExp(/content:.*?(?=;\s*(\w|\}))/, "gi"),
-                "pattern": new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi"),
-                "placeholder": "content"
+                "pattern": new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi")
             },
             "entity": {
                 // https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
-                "pattern": new RegExp(/&#?x?([\da-f]|[a-z])+;/, "gi"),
-                "placeholder": "content"
+                "pattern": new RegExp(/&#?x?([\da-f]|[a-z])+;/, "gi")
             },
             "parens": {
                 // "parens": new RegExp(/\([^\(\)]*?\)/, "g"),
                 // "parens": new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g"),
                 // http://stackoverflow.com/questions/17333124/using-regex-to-match-function-calls-containing-parentheses/17333209#17333209
-                "pattern": new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g"),
-                "placeholder": "parenthesis"
+                "pattern": new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g")
             }
         }
     };
