@@ -17,17 +17,22 @@ document.onreadystatechange = function() {
         "counter": -1,
         "container": [],
         "info": {
+            "content": {
+                // "content": new RegExp(/content:.*?(?=;\s*(\w|\}))/, "gi"),
+                "pattern": new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi"),
+                "placeholder": "content"
+            },
+            "entity": {
+                // https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+                "pattern": new RegExp(/&#?x?([\da-f]|[a-z])+;/, "gi"),
+                "placeholder": "content"
+            },
             "parens": {
                 // "parens": new RegExp(/\([^\(\)]*?\)/, "g"),
                 // "parens": new RegExp(/(?![:|\s*])(?!\w+)\(.*?\)(?=(,|"|'|;|\s|\{|\}))/, "g"),
                 // http://stackoverflow.com/questions/17333124/using-regex-to-match-function-calls-containing-parentheses/17333209#17333209
                 "pattern": new RegExp(/\(([^()]*|\([^()]*\))*?\)/, "g"),
                 "placeholder": "parenthesis"
-            },
-            "content": {
-                // "content": new RegExp(/content:.*?(?=;\s*(\w|\}))/, "gi"),
-                "pattern": new RegExp(/(?!((\{|;)\s*?))content:(.*?)(?=;\s*(-|\w|\}))/, "gi"),
-                "placeholder": "content"
             }
         }
     };
@@ -191,6 +196,13 @@ document.onreadystatechange = function() {
 
         // blocks array will contain all the CSS blocks found within the CSS string
         var blocks = [];
+
+        // replace everything in the CSS string that is in parenthesis,
+        // replacing it prevents the detection of false semicolon endings. for example,
+        // the semicolon found in a base64 URL found after the mimetype is not an endpoint
+        // this short replacement will avoid situations like that.
+        // https://dev.w3.org/html5/html-author/charref
+        string = placehold(string, "entity");
 
         // replace everything in the CSS string that is in parenthesis,
         // replacing it prevents the detection of false semicolon endings. for example,
