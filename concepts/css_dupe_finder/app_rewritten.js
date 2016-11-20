@@ -8,7 +8,11 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
-    // RegExp info
+    /**
+     * @description [Contains the counter, container, and different RegExp patterns used to
+     *               placehold.]
+     * @type {Object}
+     */
     var regexp = {
         "counter": -1,
         "container": [],
@@ -28,6 +32,11 @@ document.onreadystatechange = function() {
         }
     };
 
+    /**
+     * @description [Replaces placeholder with its original content.]
+     * @param  {String} string [The string to work with.]
+     * @return {String}        [String with its original contents.]
+     */
     function cleanup(string) {
         return string.replace(/\$\$_placeholder_\[(\d+)\]/g, function() {
             return regexp.container[(arguments[1] * 1)][0];
@@ -35,13 +44,11 @@ document.onreadystatechange = function() {
     }
 
     /**
-     * @description [Replaces content property with placeholder. This is done to avoid detecting
-     *               braces and comments within the content string.]
+     * @description [Depending on the RegExp pattern used (dependent on the "type"), the matching
+     *               pattern contents are replaced with a placeholder. This is done to avoid
+     *               detecting false brace/comments/semicolon matches in string.]
      * @param  {String} string                   [The string to work with.]
-     * @param  {Array} regexp.container [The array where the contents will be stored and
-     *                                            looked up later.]
-     * @return {String}                          [The string with placeholder if the content
-     *                                            property is found.]
+     * @return {String}                          [The string with placeholder where needed.]
      */
     function placehold(string, type) {
         var info = regexp.info[type],
