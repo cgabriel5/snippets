@@ -9,11 +9,10 @@ document.onreadystatechange = function() {
     /* [functions.utils] */
 
     /**
-     * @description [Logs the duplicate CSS properties found within each CSS code block.]
-     * @param  {Array} blocks [The collection of CSS code blocks that contain duplicate CSS
-     *                         properties.]
-     * @return {Null}        [Function does not return anything. Only logs duplicates info
-     *                        onto the console.]
+     * @description [Cleans up the CSS dupe blocks by prettifying them (adds proper code
+     *               indentation).]
+     * @param  {Array} blocks [The array of dupe code blocks.]
+     * @return {Array}        [The formated dupe code blocks.]
      */
     function format(blocks) {
 
@@ -69,6 +68,12 @@ document.onreadystatechange = function() {
 
     }
 
+    /**
+     * @description [Logs the code blocks that contain dupe CSS declarations.]
+     * @param  {Array} blocks [Collection of code blocks containing dupe CSS
+     *                         properties.]
+     * @return {Null}        [Only logs duplicates info onto the console.]
+     */
     function log(dupes) {
 
         // log the dupes length
@@ -82,6 +87,8 @@ document.onreadystatechange = function() {
         }
 
     }
+
+    /* [app.body] */
 
     // all resources have loaded (document + sub-resources)
     if (document.readyState === "complete") {
