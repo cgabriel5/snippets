@@ -52,7 +52,7 @@ document.onreadystatechange = function() {
                     // loop over every dupe prop within each property and log
                     for (var j = 0, ll = dupe_array.length; j < ll; j++) {
                         var dupe_declaration = dupe_array[j];
-                        build.push(indentation + dupe_declaration[0] + ":", dupe_declaration[1] + ";\n");
+                        build.push(indentation + dupe_declaration[0] + ": ", dupe_declaration[1] + ";\n");
                     }
                 }
             }
