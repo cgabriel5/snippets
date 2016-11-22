@@ -97,7 +97,7 @@ document.onreadystatechange = function() {
         var string = document.getElementsByTagName("textarea")[0].value;
 
         // create new web worker
-        var worker = new Worker("worker.js");
+        var worker = new Worker("js/worker.js");
         // send data to web worker
         worker.postMessage({ "action": "start", "string": string });
 
