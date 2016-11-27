@@ -389,6 +389,20 @@ document.onreadystatechange = function() {
                         string_copy = string_copy.replace(str, "`" + ++counter + "`");
                     }
 
+                } else if (-~operators.indexOf(char)) { // get operators
+                    // check if the next character is an equal sign
+                    var next_char = string.charAt(i + 1);
+                    var str = string.substring(i, (i + ((next_char === "=") ? 2 : 1)));
+                    // get the function
+                    // only add to list if the function is in list
+                    // if (-~keywords.indexOf(str)) {
+                    // add the string to array
+                    parts.push([str, "operator"]);
+                    // parts.push(str);
+                    // replace the substring in the copy string
+                    string_copy = string_copy.replace(str, "`" + ++counter + "`");
+                    // }
+
                 }
             }
 
