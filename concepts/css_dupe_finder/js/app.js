@@ -272,6 +272,32 @@ document.onreadystatechange = function() {
                 }
             }
 
+            // comment detection
+            if (((prev_char === "/" && char === "*") || (char === flags.is.pair && next_char === "/"))) {
+                if (flags.is.wrap !== "string") {
+                    if (flags.string_start === null && flags.is.wrap === null) {
+                        // set flags
+                        flags.is.wrap = "comment";
+                        flags.string_start = i;
+                        // must match the same type of quote
+                        flags.is.pair = char;
+                    } else if (flags.string_start !== null && flags.is.wrap === "comment") {
+                        // get the comment since the open /*
+                        var str = string.substring(flags.string_start - 1, i + 2);
+                        // add the string to array
+                        parts.push([str, "comment"]);
+                        // parts.push(str);
+                        // replace the substring in the copy string
+                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
+                        // unset flags
+                        flags.is.wrap = null;
+                        flags.string_start = null;
+                        // must match the same type of quote
+                        flags.is.pair = null;
+                    }
+                }
+            }
+
         }
 
         console.log("the parts", parts);
