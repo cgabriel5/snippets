@@ -169,6 +169,21 @@ document.onreadystatechange = function() {
         // console.log("");
         // console.log(regexp.container.length, regexp.container);
 
+        regexp.container.forEach(function(item, i) {
+            var placeholder = item[0];
+            var css_class = item[1];
+        });
+
+        string = string.replace(/_css_\w+_/g, "_placeholder_");
+
+        string = string.replace(/\$\$_placeholder_\[(\d+)\]/g, function() {
+            var index = arguments[1] * 1;
+            var info = regexp.container[index];
+            return "<span class=\"" + info[1] + "\">" + regexp.container[(arguments[1] * 1)][0] + "</span>";
+        });
+
+        return string;
+
     }
 
     /**
