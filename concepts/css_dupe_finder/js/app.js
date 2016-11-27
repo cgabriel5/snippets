@@ -67,6 +67,108 @@ document.onreadystatechange = function() {
 
         };
 
+        // start the placeholding...
+
+        // placehold strings
+        var css_string_fn = function() {
+            // console.log(arguments);
+            regexp.container.push([arguments[0], "lang-css-string"]);
+            return "$$" + "_css_string_" + "[" + (++regexp.counter) + "]";
+        };
+        string = string.replace(regexp.string.double.filled, css_string_fn);
+        string = string.replace(regexp.string.single.filled, css_string_fn);
+        string = string.replace(regexp.string.double.empty, css_string_fn);
+        string = string.replace(regexp.string.single.empty, css_string_fn);
+
+        // placehold hexcolors
+        string = string.replace(regexp.comment.pattern, function() {
+            // console.log("hex-comment", arguments);
+            regexp.container.push([arguments[0], "lang-css-comment"]);
+            return "$$" + "_css_comment_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold hexcolors
+        string = string.replace(regexp.hexcolor.pattern, function() {
+            // console.log("hex-color", arguments);
+            regexp.container.push([arguments[0], "lang-css-hexcolor"]);
+            return "$$" + "_css_hexcolor_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold selectors
+        string = string.replace(regexp.selectors.class, function() {
+            // console.log("css-class", arguments);
+            regexp.container.push([arguments[0], "lang-css-class"]);
+            return "$$" + "_css_class_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold selectors
+        string = string.replace(regexp.selectors.id, function() {
+            // console.log("css-id", arguments);
+            regexp.container.push([arguments[0], "lang-css-id"]);
+            return "$$" + "_css_id_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold numbers
+        string = string.replace(regexp.number.pattern, function() {
+            // console.log("css-number", arguments);
+            regexp.container.push([arguments[0], "lang-css-number"]);
+            return "$$" + "_css_number_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold units
+        string = string.replace(regexp.units.list, function() {
+            // console.log("css-units", arguments);
+            regexp.container.push([arguments[2], "lang-css-unit"]);
+            return arguments[1] + "$$" + "_css_unit_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold colorname
+        string = string.replace(regexp.atrules.list, function() {
+            // console.log("css-atrule", arguments);
+            regexp.container.push([arguments[0], "lang-css-atrule"]);
+            return "$$" + "_css_atrule_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold functions
+        string = string.replace(regexp.functions.list, function() {
+            // console.log("css-functions", arguments);
+            regexp.container.push([arguments[0], "lang-css-function"]);
+            return "$$" + "_css_function_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold selectors
+        string = string.replace(regexp.keywords.list, function() {
+            // console.log("css-keywords", arguments);
+            regexp.container.push([arguments[0], "lang-css-keyword"]);
+            return "$$" + "_css_keyword_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold colornames
+        string = string.replace(regexp.colornames.list, function() {
+            // console.log("css-colorname", arguments);
+            regexp.container.push([arguments[0], "lang-css-colorname"]);
+            return "$$" + "_css_colorname_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold property value
+        string = string.replace(regexp.properties.list, function() {
+            // console.log("css-property", arguments);
+            regexp.container.push([arguments[0], "lang-css-property"]);
+            return "$$" + "_css_property_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // placehold selectors
+        string = string.replace(regexp.selectors.tags, function() {
+            // console.log("css-tags", arguments);
+            regexp.container.push([arguments[0], "lang-css-tag"]);
+            return "$$" + "_css_tag_" + "[" + (++regexp.counter) + "]";
+        });
+
+        // console.log("");
+        // console.log(string);
+        // console.log("");
+        // console.log(regexp.container.length, regexp.container);
+
     }
 
     /**
