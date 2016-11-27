@@ -217,6 +217,66 @@ document.onreadystatechange = function() {
 
         // value:
         //     hexcolors, numbers, units, functions, keywords, colornames
+
+        var flags = {
+            "is": {
+                "wrap": null,
+                "pair": null
+            },
+            "string_start": null,
+            "grab": {
+                "start": null,
+                "end": null
+            }
+        }
+
+        var parts = [];
+        var counter = -1;
+
+        // copy the string
+        var string_copy = string;
+
+        // loop over string
+        for (var i = 0, l = string.length; i < l; i++) {
+
+            // cache the current character
+            var char = string.charAt(i);
+            // get the previous char
+            var prev_char = (i === 0) ? " " : string.charAt(i - 1);
+            // var next_char = (i === l - 1) ? " " : string.charAt(i + 1);
+            var next_char = string.charAt(i + 1);
+
+            // string detection
+            if ((-~["\"", "'"].indexOf(char) || char === flags.is.pair) && prev_char !== "\\") {
+                if (flags.is.wrap !== "comment") {
+                    if (flags.string_start === null && flags.is.wrap === null) {
+                        // set flags
+                        flags.is.wrap = "string";
+                        flags.string_start = i;
+                        // must match the same type of quote
+                        flags.is.pair = char;
+                    } else if (flags.string_start !== null && flags.is.wrap === "string") {
+                        // get the string since the open quote
+                        var str = string.substring(flags.string_start, i + 1);
+                        // add the string to array
+                        parts.push([str, "string"]);
+                        // parts.push(str);
+                        // replace the substring in the copy string
+                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
+                        // unset flags
+                        flags.is.wrap = null;
+                        flags.string_start = null;
+                        // must match the same type of quote
+                        flags.is.pair = null;
+                    }
+                }
+            }
+
+        }
+
+        console.log("the parts", parts);
+        console.log(string_copy);
+
     }
 
     /**
