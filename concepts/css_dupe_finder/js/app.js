@@ -186,6 +186,39 @@ document.onreadystatechange = function() {
 
     }
 
+    function parser(string, mode) {
+        // strings
+        // comments
+
+        // hexcolors
+        // selectors
+        //     class
+        //     id
+        // numbers
+        // units
+        // atrules
+        // functions
+        // keywords
+        // colornames
+        // properties
+        // selectors
+        //     tags
+
+        // ----------------------
+
+        // universal:
+        //     strings, comments
+
+        // selector:
+        //     class, id, numbers, units, atrules, functions?, keywords, tags
+
+        // property:
+        //     properties
+
+        // value:
+        //     hexcolors, numbers, units, functions, keywords, colornames
+    }
+
     /**
      * @description [Cleans up the CSS dupe blocks by prettifying them (adds proper code
      *               indentation).]
