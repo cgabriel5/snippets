@@ -351,8 +351,25 @@ document.onreadystatechange = function() {
                         string_copy = string_copy.replace(str, "`" + ++counter + "`");
                     }
 
-                }
+                } else if (char === "(") { // get functions
+                    // loop backwords until anything but a lette or hyphen is hit
+                    for (var j = i - 1; j > -1; j--) {
+                        var letter = string.charAt(j).toLowerCase();
+                        // stop loop if not an allowed character (!a-z && hyphen)
+                        if (/[^a-z-]/i.test(letter)) break;
+                    }
+                    // get the function
+                    var str = string.substring(j + 1, i);
+                    // only add to list if the function is in list
+                    if (-~functions.indexOf(str)) {
+                        // add the string to array
+                        parts.push([str, "function"]);
+                        // parts.push(str);
+                        // replace the substring in the copy string
+                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
+                    }
 
+                }
             }
 
         } else if (mode === "property") {
