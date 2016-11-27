@@ -369,6 +369,26 @@ document.onreadystatechange = function() {
                         string_copy = string_copy.replace(str, "`" + ++counter + "`");
                     }
 
+                } else if (char === "!" || char === ":") { // get keywords
+                    // console.log("the char", char);
+                    // loop backwords until anything but a lette or hyphen is hit
+                    var forward = (char === ":") ? 2 : 1;
+                    for (var j = i + forward; j < l; j++) {
+                        var letter = string.charAt(j).toLowerCase();
+                        // stop loop if not an allowed character (!a-z)
+                        if (/[^a-z]/i.test(letter)) break;
+                    }
+                    // get the function
+                    var str = string.substring((i + ((char === "!") ? 0 : 1)), j);
+                    // only add to list if the function is in list
+                    if (-~keywords.indexOf(str)) {
+                        // add the string to array
+                        parts.push([str, "keyword"]);
+                        // parts.push(str);
+                        // replace the substring in the copy string
+                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
+                    }
+
                 }
             }
 
