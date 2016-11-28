@@ -329,6 +329,7 @@ document.onreadystatechange = function() {
 
             // cache the current character
             var char = string.charAt(i),
+                prev_char = string.charAt(i - 1),
                 next_char = string.charAt(i + 1);
 
             // fast forward on the ticks, as they are the placeholders
@@ -486,6 +487,8 @@ document.onreadystatechange = function() {
                 // get the fastforwarded string
                 var str = string.substring(i, findex);
 
+                // console.log(">>>", str);
+
                 // reset the index
                 i = findex - 1;
 
@@ -496,13 +499,27 @@ document.onreadystatechange = function() {
                 // all else === black
 
                 // check if string is an attribute
-                if (string.charAt(i - 1) === "[" || string.charAt(findex) === "(") continue;
+                if (prev_char === "[" || string.charAt(findex) === "(") continue;
 
                 var type = null;
+                var is_prefixed = (str.charAt(0) === "-");
 
                 // check what if string is a tag, property or a colorname
-                if (-~properties.indexOf(str)) {
+                if (is_prefixed || (!is_prefixed && -~properties.indexOf(str))) {
+                    // non prefixed property is valid
                     type = "property";
+                    // if prefixed validate prefix
+                    if (is_prefixed) {
+                        // prefix present..check if valid
+                        var hyphen_index = str.indexOf("-", 1);
+                        var prefix = str.substring(1, hyphen_index);
+                        var property = str.substring(hyphen_index + 1, str.length);
+                        // check whether prefix and property is valid
+                        if (!-~prefixes.indexOf(prefix) || !-~properties.indexOf(property)) {
+                            // did not pass validation
+                            type = null;
+                        }
+                    }
                 } else if (-~colornames.indexOf(str)) {
                     type = "colorname";
                 } else if (-~tags.indexOf(str)) {
@@ -510,6 +527,7 @@ document.onreadystatechange = function() {
                 }
 
                 if (type) {
+                    console.log(">>>", str);
                     // add to array
                     parts.push([str, type]);
                     // placehold str
