@@ -169,6 +169,8 @@ document.onreadystatechange = function() {
         // console.log("");
         // console.log(regexp.container.length, regexp.container);
 
+        // start adding html
+
         regexp.container.forEach(function(item, i) {
             var placeholder = item[0];
             var css_class = item[1];
@@ -187,6 +189,7 @@ document.onreadystatechange = function() {
     }
 
     function parser(string, mode) {
+
         // strings
         // comments
 
@@ -262,7 +265,7 @@ document.onreadystatechange = function() {
                         parts.push([str, "string"]);
                         // parts.push(str);
                         // replace the substring in the copy string
-                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
+                        string_copy = string_copy.replace(str, dots());
                         // unset flags
                         flags.is.wrap = null;
                         flags.string_start = null;
@@ -288,7 +291,7 @@ document.onreadystatechange = function() {
                         parts.push([str, "comment"]);
                         // parts.push(str);
                         // replace the substring in the copy string
-                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
+                        string_copy = string_copy.replace(str, dots());
                         // unset flags
                         flags.is.wrap = null;
                         flags.string_start = null;
@@ -308,114 +311,276 @@ document.onreadystatechange = function() {
 
         var atrules = ["charset", "import", "namespace", "media", "supports", "document", "page", "font-face", "keyframes", "viewport", "counter-style", "font-feature-values", "swash", "ornaments", "annotation", "stylistic", "styleset", "character-variant"];
         var operators = ["~", "*", "=", ">", "+", "|", "^", "$", "~=", "|=", "^=", "$=", "*="];
-        var keywords = ["!important", "before", "after"];
+        var keywords = ["!important", ":before", ":after", ":selection"];
         // var allowed = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "-"];
+        var properties = ["accelerator", "azimuth", "background", "background-attachment", "background-color", "background-image", "background-position", "background-position-x", "background-position-y", "background-repeat", "behavior", "border", "border-bottom", "border-bottom-color", "border-bottom-style", "border-bottom-width", "border-collapse", "border-color", "border-left", "border-left-color", "border-left-style", "border-left-width", "border-right", "border-right-color", "border-right-style", "border-right-width", "border-spacing", "border-style", "border-top", "border-top-color", "border-top-style", "border-top-width", "border-width", "bottom", "caption-side", "clear", "clip", "color", "content", "counter-increment", "counter-reset", "cue", "cue-after", "cue-before", "cursor", "direction", "display", "elevation", "empty-cells", "filter", "float", "font", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "height", "ime-mode", "include-source", "layer-background-color", "layer-background-image", "layout-flow", "layout-grid", "layout-grid-char", "layout-grid-char-spacing", "layout-grid-line", "layout-grid-mode", "layout-grid-type", "left", "letter-spacing", "line-break", "line-height", "list-style", "list-style-image", "list-style-position", "list-style-type", "margin", "margin-bottom", "margin-left", "margin-right", "margin-top", "marker-offset", "marks", "max-height", "max-width", "min-height", "min-width", "-moz-binding", "-moz-border-radius", "-moz-border-radius-topleft", "-moz-border-radius-topright", "-moz-border-radius-bottomright", "-moz-border-radius-bottomleft", "-moz-border-top-colors", "-moz-border-right-colors", "-moz-border-bottom-colors", "-moz-border-left-colors", "-moz-opacity", "-moz-outline", "-moz-outline-color", "-moz-outline-style", "-moz-outline-width", "-moz-user-focus", "-moz-user-input", "-moz-user-modify", "-moz-user-select", "orphans", "outline", "outline-color", "outline-style", "outline-width", "overflow", "overflow-X", "overflow-Y", "padding", "padding-bottom", "padding-left", "padding-right", "padding-top", "page", "page-break-after", "page-break-before", "page-break-inside", "pause", "pause-after", "pause-before", "pitch", "pitch-range", "play-during", "position", "quotes", "-replace", "richness", "right", "ruby-align", "ruby-overhang", "ruby-position", "-set-link-source", "size", "speak", "speak-header", "speak-numeral", "speak-punctuation", "speech-rate", "stress", "scrollbar-arrow-color", "scrollbar-base-color", "scrollbar-dark-shadow-color", "scrollbar-face-color", "scrollbar-highlight-color", "scrollbar-shadow-color", "scrollbar-3d-light-color", "scrollbar-track-color", "table-layout", "text-align", "text-align-last", "text-decoration", "text-indent", "text-justify", "text-overflow", "text-shadow", "text-transform", "text-autospace", "text-kashida-space", "text-underline-position", "top", "unicode-bidi", "-use-link-source", "vertical-align", "visibility", "voice-family", "volume", "white-space", "widows", "width", "word-break", "word-spacing", "word-wrap", "writing-mode", "z-index", "zoom", "animation-delay", "animation-direction", "animation-duration", "animation-fill-mode", "animation-iteration-count", "animation-name", "animation-play-state", "animation-timing-function", "background-blend-mode", "background-clip", "background-origin", "background-size", "border-radius", "border-bottom-left-radius", "border-bottom-right-radius", "border-image-outset", "border-image-repeat", "border-image-slice", "border-image-source", "border-image-width", "border-top-left-radius", "border-top-right-radius", "box-shadow", "box-sizing", "break-after", "break-before", "break-inside", "font-kerning", "font-variant-ligatures", "font-variant-caps", "font-variant-numeric", "image-rendering", "isolation", "mix-blend-mode", "motion-offset", "motion-path", "motion-rotation", "object-fit", "object-position", "opacity", "outline-offset", "overflow-wrap", "overflow-x", "overflow-y", "pointer-events", "resize", "tab-size", "text-rendering", "text-size-adjust", "touch-action", "transition-delay", "transition-duration", "transition-property", "transition-timing-function", "will-change", "appearance", "backface-visibility", "border-horizontal-spacing", "border-image", "border-vertical-spacing", "box-align", "box-decoration-break", "box-direction", "box-flex", "box-flex-group", "box-lines", "box-ordinal-group", "box-orient", "box-pack", "box-reflect", "clip-path", "column-count", "column-gap", "column-rule-color", "column-rule-style", "column-rule-width", "column-span", "column-width", "align-content", "align-items", "align-self", "flex-basis", "flex-grow", "flex-shrink", "flex-direction", "flex-wrap", "justify-content", "font-smoothing", "highlight", "hyphens", "hyphenate-character", "line-clamp", "locale", "margin-before-collapse", "margin-after-collapse", "mask-box-image", "mask-box-image-outset", "mask-box-image-repeat", "mask-box-image-slice", "mask-box-image-source", "mask-box-image-width", "mask-clip", "mask-composite", "mask-image", "mask-origin", "mask-position", "mask-repeat", "mask-size", "order", "perspective", "perspective-origin", "print-color-adjust", "rtl-ordering", "shape-outside", "shape-image-threshold", "shape-margin", "tap-highlight-color", "text-combine", "text-decorations-in-effect", "text-emphasis-color", "text-emphasis-position", "text-emphasis-style", "text-fill-color", "text-orientation", "text-security", "text-stroke-color", "text-stroke-width", "transform", "transform-origin", "transform-style", "user-drag", "user-modify", "user-select", "app-region", "buffered-rendering", "clip-rule", "mask", "flood-color", "flood-opacity", "lighting-color", "stop-color", "stop-opacity", "color-interpolation", "color-interpolation-filters", "color-rendering", "fill", "fill-opacity", "fill-rule", "marker-end", "marker-mid", "marker-start", "mask-type", "shape-rendering", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "alignment-baseline", "baseline-shift", "dominant-baseline", "text-anchor", "vector-effect", "paint-order", "d", "cx", "cy", "x", "y", "r", "rx", "ry"];
 
         // reset the strings
-        string = string_copy;
+        string = " " + string_copy + " "; // pad string to help with edge cases
         string_copy = string;
 
-        if (mode === "selector") {
-            // selector: class, id, numbers, units, atrules, functions?, keywords, tags
-            // variable: classes, id
-            //      dynamic: numbers
-            // static: *atrules, functions, keywords, tags
+        // if (mode === "selector") {
+        // selector: class, id, numbers, units, atrules, functions?, keywords, tags
+        // variable: classes, id
+        //      dynamic: numbers
+        // static: *atrules, functions, keywords, tags
 
-            for (var i = 0, l = string.length; i < l; i++) {
+        for (var i = 0, l = string.length; i < l; i++) {
 
-                // cache the current character
-                var char = string.charAt(i);
+            // cache the current character
+            var char = string.charAt(i),
+                next_char = string.charAt(i + 1);
 
-                // fast forward on the ticks
-                if (char === "`") {
-                    // console.log("before", i);
-                    // get the next tick
-                    var next_tick = string.indexOf("`", i + 1);
-                    i = next_tick + 1;
-                    // console.log("after", i);
-                    continue;
-                }
-
-                if (char === "@") { // get atrules
-                    // get all characters until first space
-                    var first_space = string.indexOf(" ", i + 1);
-                    // get the atrule
-                    // var str = string.substring(flags.string_start - 1, i + 2);
-                    var str = string.substring(i, (-~first_space) ? first_space : i);
-                    // only if we have a an atrule do we add to the list
-                    if (str) {
-                        // add the string to array
-                        parts.push([str, "atrule"]);
-                        // parts.push(str);
-                        // replace the substring in the copy string
-                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
-                    }
-
-                } else if (char === "(") { // get functions
-                    // loop backwords until anything but a lette or hyphen is hit
-                    for (var j = i - 1; j > -1; j--) {
-                        var letter = string.charAt(j).toLowerCase();
-                        // stop loop if not an allowed character (!a-z && hyphen)
-                        if (/[^a-z-]/i.test(letter)) break;
-                    }
-                    // get the function
-                    var str = string.substring(j + 1, i);
-                    // only add to list if the function is in list
-                    if (-~functions.indexOf(str)) {
-                        // add the string to array
-                        parts.push([str, "function"]);
-                        // parts.push(str);
-                        // replace the substring in the copy string
-                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
-                    }
-
-                } else if (char === "!" || char === ":") { // get keywords
-                    // console.log("the char", char);
-                    // loop backwords until anything but a lette or hyphen is hit
-                    var forward = (char === ":") ? 2 : 1;
-                    for (var j = i + forward; j < l; j++) {
-                        var letter = string.charAt(j).toLowerCase();
-                        // stop loop if not an allowed character (!a-z)
-                        if (/[^a-z]/i.test(letter)) break;
-                    }
-                    // get the function
-                    var str = string.substring((i + ((char === "!") ? 0 : 1)), j);
-                    // only add to list if the function is in list
-                    if (-~keywords.indexOf(str)) {
-                        // add the string to array
-                        parts.push([str, "keyword"]);
-                        // parts.push(str);
-                        // replace the substring in the copy string
-                        string_copy = string_copy.replace(str, "`" + ++counter + "`");
-                    }
-
-                } else if (-~operators.indexOf(char)) { // get operators
-                    // check if the next character is an equal sign
-                    var next_char = string.charAt(i + 1);
-                    var str = string.substring(i, (i + ((next_char === "=") ? 2 : 1)));
-                    // get the function
-                    // only add to list if the function is in list
-                    // if (-~keywords.indexOf(str)) {
-                    // add the string to array
-                    parts.push([str, "operator"]);
-                    // parts.push(str);
-                    // replace the substring in the copy string
-                    string_copy = string_copy.replace(str, "`" + ++counter + "`");
-                    // }
-
-                }
+            // fast forward on the ticks, as they are the placeholders
+            if (char === "`") {
+                // reset the loop index to the character after the ending tick
+                // and skip to the next loop iteration
+                i = string.indexOf("`", i + 1) + 1;
+                continue;
             }
 
-        } else if (mode === "property") {
-            // property: properties
+            if (char === "@") { // atrule
 
-        } else if (mode === "value") {
-            // value: hexcolors, numbers, units, functions, keywords, colornames
+                // get the forward index
+                var findex = forward(i, string, /[^a-z\-]/i);
+                // get the fastforwarded string
+                var atrule = string.substring(i, findex);
+
+                // check if string is in allowed atrules
+                if (-~atrules.indexOf(atrule.slice(1))) {
+                    // add to array
+                    parts.push([atrule, "atrule"]);
+                    // placehold atrule
+                    string_copy = string_copy.replace(atrule, dots());
+                    // reset loop index position
+                    i = findex;
+                }
+
+            } else if (char === "(") { // function
+
+                // get the reverse index
+                var rindex = reverse(i, string, /[^a-z-]/i);
+                // get the fastforwarded string
+                var fn = string.substring(rindex, i);
+
+                // check if string is in allowed functions
+                if (-~functions.indexOf(fn.replace(/\($/, ""))) {
+                    // add to array
+                    parts.push([fn, "function"]);
+                    // placehold function
+                    string_copy = string_copy.replace(fn, dots());
+                    // loop does not need to be reset as the search was
+                    // done in reverse
+                }
+
+            } else if (char === "!" || char === ":") { // keywords
+
+                if (char === ":") {
+                    // check if the next char is also a colon...
+                    // if so...skip iteration. this is done in the case
+                    // of ::after as the loop will continue the next iteration
+                    if (next_char === " " || /[^a-z\-]/i.test(next_char)) continue;
+                }
+
+                // get the forward index
+                var findex = forward(i, string, /[^a-z]/i);
+                // get the fastforwarded string
+                var keyword = string.substring(i, findex);
+
+                // check if string is in allowed keywords
+                if (-~keywords.indexOf(keyword)) {
+                    // remove starting colons if present
+                    keyword = keyword.replace(/^:/g, "");
+                    // add to array
+                    parts.push([keyword, "keyword"]);
+                    // placehold keyword
+                    string_copy = string_copy.replace(keyword, dots());
+                    // reset loop index position
+                    i = findex + 1;
+                }
+
+            } else if (-~operators.indexOf(char)) { // operators
+
+                // check if the next character is an equal sign
+                var operator = string.substring(i, (i + ((next_char === "=") ? 2 : 1)));
+
+                // only add to list if operator is in list
+                if (-~operators.indexOf(char)) {
+                    // add the string to array
+                    parts.push([operator, "operator"]);
+                    // placehold operator
+                    string_copy = string_copy.replace(operator, dots());
+                    // only fast forward if the operator is 2 in length
+                    if (operator.length === 2) i = i + 1;
+                }
+
+            } else if (/[0-9]/.test(char)) { // numbers
+
+                // get whole numbers, floats, decimals, units
+                // look ahead and only get the numbers
+                var unit = null;
+                for (var j = i + 1; j < l; j++) {
+                    var fchar = string.charAt(j);
+                    // if anything else than a number..check for potential unit
+                    if (/[^0-9]/.test(fchar)) {
+                        // now search for the unit if there...
+                        for (var k = j + 1; k < l; k++) {
+                            var ffchar = string.charAt(k);
+                            if (/[^a-z]/i.test(ffchar)) {
+                                // get the unit
+                                unit = string.substring(j, k);
+                                // check if unit is allowed..else set to null
+                                if (!-~units.indexOf(unit)) unit = null;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                // get the number
+                var number = string.substring(i, j);
+                // add to array
+                parts.push([number, "number"]);
+                // placehold number
+                string_copy = string_copy.replace(number, dots());
+
+                // reset index to the character after the last number
+                // this is set to the last j in the loop as the loop stops
+                // when anything but a number is hit...therefore, the index
+                // is set to this new character
+                i = j;
+
+                if (unit) {
+                    // add to array
+                    parts.push([unit, "unit"]);
+                    // placehold unit
+                    string_copy = string_copy.replace(unit, dots());
+                    // reset index to the character after the last letter in
+                    // the unit. this is set to the last k in the loop as the
+                    // loop stops when anything but a letter is hit...therefore,
+                    // the index is set to this new character
+                    i = k;
+                }
+
+            } else if (char === "#" || char === ".") { // class,id
+
+                // get the forward index
+                var findex = forward(i, string, /[^a-z0-9\-_]/);
+                // get the fastforwarded string
+                var selector = string.substring(i, findex);
+
+                // check if string is in allowed selectors
+                if (selector) {
+                    // add to array
+                    parts.push([selector, ((char === "#") ? "id" : "class")]);
+                    // placehold selector
+                    string_copy = string_copy.replace(selector, dots());
+                    // reset loop index position
+                    i = findex - 1;
+                }
+
+            } else if (/[a-z\-_]/i.test(char)) { // tags,property,colornames
+
+                // get the forward index
+                var findex = forward(i, string, /[^a-z\-_]/i);
+                // get the fastforwarded string
+                var str = string.substring(i, findex);
+
+                // reset the index
+                i = findex - 1;
+
+                // attribute ==> [
+                // property  ==> :
+                // function  ==> (
+                // tag, colorname
+                // all else === black
+
+                // check if string is an attribute
+                if (string.charAt(i - 1) === "[" || string.charAt(findex) === "(") continue;
+
+                var type = null;
+
+                // check what if string is a tag, property or a colorname
+                if (-~properties.indexOf(str)) {
+                    type = "property";
+                } else if (-~colornames.indexOf(str)) {
+                    type = "colorname";
+                } else if (-~tags.indexOf(str)) {
+                    type = "tag";
+                }
+
+                if (type) {
+                    // add to array
+                    parts.push([str, type]);
+                    // placehold str
+                    string_copy = string_copy.replace(str, dots());
+                }
+
+            }
 
         }
 
-        console.log("the parts", parts);
-        console.log(string_copy);
+        // } else if (mode === "property") {
+        //     // property: properties
+
+        // } else if (mode === "value") {
+        //     // value: hexcolors, numbers, units, functions, keywords, colornames
+
+        // }
+
+        // remove place holders with HTML
+        string_copy = string_copy.replace(/`\.*`/g, function() {
+
+            var index = arguments[0].replace("`", "").split(".").length - 1;
+
+            // console.log(index, arguments[0]);
+
+            // var index = arguments[1] * 1;
+            var info = parts[index];
+            return "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
+        });
+
+        // console.log(string_copy);
+
+        function reverse(index, string, pattern) {
+            // loop backwords until pattern is false
+            for (var i = index - 1; i > -1; i--) {
+                // we add 1 to the returned index because the return happens on the
+                // characters that does not pass the pattern test. therefore, we add
+                // 1 because the next char (to its right) is the last char that did
+                // pass the test
+                if (pattern.test(string.charAt(i))) return i + 1;
+            }
+            // else return the provided index
+            return index;
+        }
+
+        function forward(index, string, pattern) {
+            // fastforward until anything pattern is false
+            for (var i = index + 1; i < string.length; i++) {
+                if (pattern.test(string.charAt(i))) return i;
+            }
+            // else return the provided index
+            return index;
+        }
+
+        function dots() {
+            // incremenet the counter
+            // ++counter;
+            // if (counter === "5") console.log("555");
+            return "`" + Array((++counter || 0) + 1).join(".") + "`";
+            // return "`" + (++counter) + "`";
+        }
+
+        // http://stackoverflow.com/questions/1431094/how-do-i-replace-a-character-at-a-particular-index-in-javascript
+        function replaceat(string, index, character) {
+            return string.substr(0, index) + character + string.substr(index + character.length);
+        }
+
+        // console.log("the parts", parts);
+        // console.log(string_copy);
+
+        return string_copy.trim();
 
     }
 
@@ -507,9 +672,9 @@ document.onreadystatechange = function() {
         var code1 = document.getElementById("code1");
         var v = code1.innerHTML;
         var highlighted = colorizer(v);
-        code1.innerHTML = highlighted;
-
-        parser(v, "selector");
+        var colored = parser(v);
+        // code1.innerHTML = highlighted;
+        code1.innerHTML = colored;
 
         // get the CSS string to work with
         var string = document.getElementsByTagName("textarea")[0].value;
