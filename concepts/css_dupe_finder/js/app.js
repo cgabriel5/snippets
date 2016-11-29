@@ -236,6 +236,8 @@ document.onreadystatechange = function() {
         var parts = [];
         var counter = -1;
 
+        // pad string to help with edge cases
+        string = " " + string + " ";
         // copy the string
         var string_copy = string;
 
@@ -245,9 +247,8 @@ document.onreadystatechange = function() {
             // cache the current character
             var char = string.charAt(i);
             // get the previous char
-            var prev_char = (i === 0) ? " " : string.charAt(i - 1);
-            // var next_char = (i === l - 1) ? " " : string.charAt(i + 1);
-            var next_char = string.charAt(i + 1);
+            var prev_char = string.charAt(i - 1),
+                next_char = string.charAt(i + 1);
 
             // string detection
             if ((-~["\"", "'"].indexOf(char) || char === flags.is.pair) && prev_char !== "\\") {
@@ -301,6 +302,21 @@ document.onreadystatechange = function() {
                 }
             }
 
+            // id the end is reached and the flags.string_start is on...there was an unmatched
+            // quote or comment. to prevent an infinite loop the index is reset to the next character
+            // after the unmatched quote/comment chars so the parsing can continue as normal
+            if ((i === (l - 1)) && flags.string_start) {
+
+                // reset the index to skip unmatched ending character
+                i = flags.string_start + 1;
+                // unset flags
+                flags.is.wrap = null;
+                flags.string_start = null;
+                // must match the same type of quote
+                flags.is.pair = null;
+
+            }
+
         }
 
         var prefixes = ["ms", "mso", "moz", "o", "atscwap", "webkit", "khtml", "apple", "prince", "ah", "hp", "ro", "rim", "tc"];
@@ -333,11 +349,13 @@ document.onreadystatechange = function() {
                 next_char = string.charAt(i + 1);
 
             // fast forward on the ticks, as they are the placeholders
-            if (char === "`") {
+            // skip on the remaining characters
+            if (-~["`", " ", "\"", "'"].indexOf(char)) {
                 // reset the loop index to the character after the ending tick
                 // and skip to the next loop iteration
-                i = string.indexOf("`", i + 1) + 1;
+                if (char === "`") i = string.indexOf("`", i + 1);
                 continue;
+                // if (i === -1) break; // used to stop infinite loop while debugging
             }
 
             if (char === "@") { // atrule
@@ -435,7 +453,7 @@ document.onreadystatechange = function() {
                                 break;
                             }
                         }
-                        break;
+                        break; // anything but a number breaks loop
                     }
                 }
                 // get the number
@@ -449,7 +467,7 @@ document.onreadystatechange = function() {
                 // this is set to the last j in the loop as the loop stops
                 // when anything but a number is hit...therefore, the index
                 // is set to this new character
-                i = j;
+                i = j - 1;
 
                 if (unit) {
                     // add to array
@@ -460,7 +478,7 @@ document.onreadystatechange = function() {
                     // the unit. this is set to the last k in the loop as the
                     // loop stops when anything but a letter is hit...therefore,
                     // the index is set to this new character
-                    i = k;
+                    i = k - 1;
                 }
 
             } else if (char === "#" || char === ".") { // class,id
@@ -527,7 +545,7 @@ document.onreadystatechange = function() {
                 }
 
                 if (type) {
-                    console.log(">>>", str);
+                    // console.log(">>>", str);
                     // add to array
                     parts.push([str, type]);
                     // placehold str
