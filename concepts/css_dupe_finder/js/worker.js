@@ -298,8 +298,47 @@ function main(string) {
 
                     } else if (first_brace === "{" && last_brace === "}") { // code block
 
+                        // this this error gets thrown there is a code block right after a complex selector
+                        // this is not valid CSS and messes up the nested level count
+                        // this is an example:
+                        // @media screen and (max-width: 500px) {
+                        //     .option-status {
+                        //         padding: 2px 6px 0 6px;
+                        //         font-size: 14px;
+                        //         font-size: 15px;
+                        //     }
+                        //     /* --------------------------------- Error Causing CSS*/
+                        //     @media screen {
+                        //         @media2 {
+                        //             width: 200px; <--- this code block must be wrapped in a simple selector
+                        //             width: 300px; <--/
+                        //         }
+                        //     }
+                        //     /* --------------------------------- Correct CSS*/
+                        //     @media screen {
+                        //         @media2 {
+                        //             .purple {
+                        //                  width: 200px; <--- nested levels can now be accounted for
+                        //                  width: 300px; <--/
+                        //             }
+                        //         }
+                        //     }
+                        //     /* --------------------------------- */
+                        //     .green {
+                        //         padding: 2px 6px 0 6px;
+                        //         font-size: 14px;
+                        //         font-size: 15px;
+                        //     }
+                        // }
+
                         // check code block for any duplicate properties
                         dupe_check(selector, text_between);
+
+                        if (type === "s") {
+                            // for simple code blocks remove all preceding simple code block selectors
+                            // and only keep the nested parent @ complex selectors
+                            selector = rem_simple_add_simple_selector(selector, "");
+                        }
 
                     } else if (first_brace === "}" && last_brace === "{") { // end of code block, start of new code block
 
