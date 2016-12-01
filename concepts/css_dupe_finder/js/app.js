@@ -405,8 +405,27 @@ document.onreadystatechange = function() {
                 // get the fastforwarded string
                 var fn = string.substring(rindex, i);
 
+                var prefix = "";
+                // check for possible browser prefix
+                if (fn.charAt(0) === "-") {
+                    // get the second hyphen index
+                    var hyphen_index = fn.indexOf("-", 1);
+                    // get/set the prefix
+                    prefix = fn.substring(1, hyphen_index);
+                    // reset the fn
+                    fn = fn.substring(hyphen_index + 1, fn.length);
+                    // check if fn is valid...if not reset back to empty
+                    if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                        prefix = "";
+                        fn = ""; // purposely invalidate fn
+                    }
+                }
+
                 // check if string is in allowed functions
                 if (-~functions.indexOf(fn.replace(/\($/, "").toLowerCase())) {
+
+                    // if a prefix is present...reset fn back to normal
+                    if (prefix) fn = ("-" + prefix + "-" + fn);
 
                     // add to array
                     flags.parts.push([fn, "function"]);
