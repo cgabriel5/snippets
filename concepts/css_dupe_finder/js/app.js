@@ -450,8 +450,6 @@ document.onreadystatechange = function() {
                 // get the fastforwarded string
                 var keyword = string.substring(i, findex);
 
-                console.log(">>>", keyword);
-
                 var prefix = "";
                 // check for possible browser prefix
                 if (keyword.charAt(1) === "-") {
@@ -528,6 +526,19 @@ document.onreadystatechange = function() {
                         // continue on the dot character as the number is a double (decimal)
                         if (fchar !== ".") break; // anything but a number breaks loop
                     }
+                }
+
+                // check for negative sign(s)...max 2 negative signs w/ number
+                var negative_index = reverse(i, string, /[^\-]/);
+                if (i !== negative_index) { // negative number found
+                    // needs to be cut off after 2 negative signs
+                    if ((i - negative_index) > 2) {
+                        // reset negative_index index to only 2 negative signs
+                        negative_index = (i - 2);
+                    }
+                    // reset the index to negative sign index...this will include the
+                    // negative sign as part of the number
+                    i = negative_index;
                 }
 
                 // if the is_decimal flag is set, set during the class,id if check block,
