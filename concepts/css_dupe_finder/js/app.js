@@ -8,7 +8,7 @@ document.onreadystatechange = function() {
 
     /* [functions.utils] */
 
-    function colorizer(string, mode) {
+    function colorizer(string) {
 
         // universal: strings, comments
 
@@ -19,24 +19,27 @@ document.onreadystatechange = function() {
         // value: hexcolors, numbers, units, functions, keywords, colornames
 
         var flags = {
+            ////////////////////
+            "parts": [],
+            "counter": -1,
+            ////////////////////
             "is": {
                 "wrap": null,
                 "pair": null
             },
             "string_start": null,
-            "grab": {
-                "start": null,
-                "end": null
+            ////////////////////
+            "atsign": null,
+            "open": {
+                "brace": null
+            },
+            "brace": {
+                "counter": null
             }
-        }
-
-        var parts = [];
-        var counter = -1;
+        };
 
         // pad string to help with edge cases
         string = " " + string + " ";
-        // copy the string
-        var string_copy = string;
 
         // loop over string
         for (var i = 0, l = string.length; i < l; i++) {
@@ -60,11 +63,11 @@ document.onreadystatechange = function() {
                         // get the string since the open quote
                         var str = string.substring(flags.string_start, i + 1);
                         // add the string to array
-                        parts.push([str, "string"]);
+                        flags.parts.push([str, "string"]);
 
                         // replace the substring in the copy string
                         var start = string.substring(0, flags.string_start);
-                        var placeholder = "`" + (++counter) + "`";
+                        var placeholder = "`" + (++flags.counter) + "`";
                         var end = string.substring((flags.string_start + str.length), string.length);
                         // reset the string with the placeholder
                         string = start + placeholder + end;
@@ -95,11 +98,11 @@ document.onreadystatechange = function() {
                         // get the comment since the open /*
                         var str = string.substring(flags.string_start - 1, i + 2);
                         // add the string to array
-                        parts.push([str, "comment"]);
+                        flags.parts.push([str, "comment"]);
 
                         // replace the substring in the copy string
                         var start = string.substring(0, flags.string_start - 1);
-                        var placeholder = "`" + (++counter) + "`";
+                        var placeholder = "`" + (++flags.counter) + "`";
                         var end = string.substring(flags.string_start + (str.length - 1), string.length);
                         // reset the string with the placeholder
                         string = start + placeholder + end;
@@ -134,26 +137,10 @@ document.onreadystatechange = function() {
 
         }
 
-        // var blocks = [];
-
-        var flags = {
-            "atsign": null,
-            "open": {
-                "brace": null,
-                "comment": null,
-            },
-            "closed": {
-                "brace": null,
-                "comment": null,
-            },
-            "counter": {
-                "brace": null
-            },
-            "child": {
-                "complex": null,
-                "simple": null,
-            }
-        };
+        ///////////////////////////
+        ///////////////////////////
+        ///////////////////////////
+        ///////////////////////////
 
         // distinguish between selectors and code blocks
         for (var i = 0, l = string.length; i < l; i++) {
@@ -205,7 +192,7 @@ document.onreadystatechange = function() {
                     // set the atsign flag
                     flags.atsign = i;
                     // set the brace counter
-                    flags.counter.brace = 1;
+                    flags.brace.counter = 1;
                     // forward loop all the way to the position of the start brace
                     i = flags.open.brace;
 
@@ -217,7 +204,7 @@ document.onreadystatechange = function() {
                     var nested_levels = 0;
 
                     // start parsing CSS code block...start by getting the next brace index
-                    while (flags.counter.brace) {
+                    while (flags.brace.counter) {
 
                         // get the indices for the next open and closed brace
                         var start_brace_index = string.indexOf("{", i + 1),
@@ -260,7 +247,7 @@ document.onreadystatechange = function() {
                             // set the codeblock flag to true
                             cb = true;
                             // add to array
-                            parts.push([text_between, "block"]);
+                            flags.parts.push([text_between, "block"]);
                             // placehold block
                             string = placehold(i + 1, string, text_between);
                             // reset length and index
@@ -277,9 +264,9 @@ document.onreadystatechange = function() {
                         brace_indices_track.push(next_index);
 
                         // if the index matches the start brace "{", increase the brace counter
-                        if (start_brace_index === next_index) flags.counter.brace++;
+                        if (start_brace_index === next_index) flags.brace.counter++;
                         // else if the brace is a closing brace "}", decrease the brace counter
-                        else if (end_brace_index === next_index) flags.counter.brace--;
+                        else if (end_brace_index === next_index) flags.brace.counter--;
 
                         // forward loop index to the next brace position
                         if (!cb) {
@@ -289,8 +276,8 @@ document.onreadystatechange = function() {
                         }
 
                         // if no more braces are found end the while loop by unsetting the
-                        // flags.counter.brace flag
-                        if (flags.counter.brace === 0) flags.counter.brace = null; // unset flag
+                        // flags.brace.counter flag
+                        if (flags.brace.counter === 0) flags.brace.counter = null; // unset flag
 
                     }
 
@@ -325,7 +312,7 @@ document.onreadystatechange = function() {
                 var text_between = string.substring((i + 1), string.indexOf("}", (i + 1)));
 
                 // add to array
-                parts.push([text_between, "block"]);
+                flags.parts.push([text_between, "block"]);
                 // placehold block
                 string = placehold((i + 1), string, text_between);
                 // reset length and index
@@ -385,7 +372,7 @@ document.onreadystatechange = function() {
                 if (-~atrules.indexOf(atrule.slice(1).toLowerCase())) {
 
                     // add to array
-                    parts.push([atrule, "atrule"]);
+                    flags.parts.push([atrule, "atrule"]);
                     // placehold function
                     string = placehold(i, string, atrule);
                     // reset length and index
@@ -405,7 +392,7 @@ document.onreadystatechange = function() {
                 if (-~functions.indexOf(fn.replace(/\($/, "").toLowerCase())) {
 
                     // add to array
-                    parts.push([fn, "function"]);
+                    flags.parts.push([fn, "function"]);
                     // placehold function
                     string = placehold(rindex, string, fn);
                     // reset length and index
@@ -435,7 +422,7 @@ document.onreadystatechange = function() {
                     keyword = keyword.replace(/^:/g, "");
 
                     // add to array
-                    parts.push([keyword, "keyword"]);
+                    flags.parts.push([keyword, "keyword"]);
                     // placehold keyword
                     string = placehold(i, string, keyword);
                     // reset length and index
@@ -453,7 +440,7 @@ document.onreadystatechange = function() {
                 if (-~operators.indexOf(char)) {
 
                     // add the string to array
-                    parts.push([operator, "operator"]);
+                    flags.parts.push([operator, "operator"]);
                     // placehold operator
                     string = placehold(i, string, operator);
                     // reset length and index
@@ -497,7 +484,7 @@ document.onreadystatechange = function() {
                 var number = string.substring(i - decimal_sub, j);
 
                 // add to array
-                parts.push([number, "number"]);
+                flags.parts.push([number, "number"]);
                 // placehold number
                 string = placehold((i - decimal_sub), string, number);
                 // reset length and index
@@ -508,7 +495,7 @@ document.onreadystatechange = function() {
                 if (unit) {
 
                     // add to array
-                    parts.push([unit, "unit"]);
+                    flags.parts.push([unit, "unit"]);
                     // placehold unit
                     string = placehold(i, string, unit);
                     // reset length and index
@@ -562,7 +549,7 @@ document.onreadystatechange = function() {
                 if (selector.slice(1) !== "") {
 
                     // add to array
-                    parts.push([selector, ((char === "#") ? (!is_hexcolor ? "id" : "hexcolor") : "class")]);
+                    flags.parts.push([selector, ((char === "#") ? (!is_hexcolor ? "id" : "hexcolor") : "class")]);
                     // placehold selector
                     string = placehold(i, string, selector);
                     // reset length and index
@@ -614,7 +601,7 @@ document.onreadystatechange = function() {
                 //}
 
                 // add to array
-                parts.push([str, "tag"]);
+                flags.parts.push([str, "tag"]);
                 // placehold str
                 string = placehold(i, string, str);
                 // reset length and index
@@ -626,12 +613,12 @@ document.onreadystatechange = function() {
         }
 
         function counter_to_string() {
-            return (counter.toString().length + 2);
+            return (flags.counter.toString().length + 2);
         }
 
         function placehold(index, string, str) {
             var start = string.substring(0, index);
-            var placeholder = "`" + (++counter) + "`";
+            var placeholder = "`" + (++flags.counter) + "`";
             var end = string.substring((index + str.length), string.length);
             // reset the string with the placeholder
             return (start + placeholder + end);
@@ -661,7 +648,7 @@ document.onreadystatechange = function() {
 
         // remove place holders with HTML
         return string.replace(/`\d+`/g, function() {
-            var info = parts[(arguments[0].replace(/`/g, "") * 1)];
+            var info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
             return "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
         });
 
