@@ -450,8 +450,29 @@ document.onreadystatechange = function() {
                 // get the fastforwarded string
                 var keyword = string.substring(i, findex);
 
+                console.log(">>>", keyword);
+
+                var prefix = "";
+                // check for possible browser prefix
+                if (keyword.charAt(1) === "-") {
+                    // get the second hyphen index
+                    var hyphen_index = keyword.indexOf("-", 2);
+                    // get/set the prefix
+                    prefix = keyword.substring(2, hyphen_index);
+                    // reset the keyword
+                    keyword = ":" + keyword.substring(hyphen_index + 1, keyword.length);
+                    // check if keyword is valid...if not reset back to empty
+                    if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                        prefix = "";
+                        keyword = ""; // purposely invalidate keyword
+                    }
+                }
+
                 // check if string is in allowed keywords
-                if (-~keywords.indexOf(keyword)) {
+                if (-~keywords.indexOf(keyword.toLowerCase())) {
+
+                    // if a prefix is present...reset keyword back to normal
+                    if (prefix) keyword = (":-" + prefix + "-" + keyword.slice(1));
 
                     i++; // increase index to not include the starting colon
                     // remove starting colon if present
