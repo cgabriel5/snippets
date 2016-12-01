@@ -339,352 +339,364 @@ document.onreadystatechange = function() {
         // unique array: http://stackoverflow.com/questions/6940103/how-do-i-make-an-array-with-unique-elements-i-e-remove-duplicates/23282067#23282067
         var properties = ["accelerator", "azimuth", "background", "background-attachment", "background-color", "background-image", "background-position", "background-position-x", "background-position-y", "background-repeat", "behavior", "border", "border-bottom", "border-bottom-color", "border-bottom-style", "border-bottom-width", "border-collapse", "border-color", "border-left", "border-left-color", "border-left-style", "border-left-width", "border-right", "border-right-color", "border-right-style", "border-right-width", "border-spacing", "border-style", "border-top", "border-top-color", "border-top-style", "border-top-width", "border-width", "bottom", "caption-side", "clear", "clip", "color", "content", "counter-increment", "counter-reset", "cue", "cue-after", "cue-before", "cursor", "direction", "display", "elevation", "empty-cells", "filter", "float", "font", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "height", "ime-mode", "include-source", "layer-background-color", "layer-background-image", "layout-flow", "layout-grid", "layout-grid-char", "layout-grid-char-spacing", "layout-grid-line", "layout-grid-mode", "layout-grid-type", "left", "letter-spacing", "line-break", "line-height", "list-style", "list-style-image", "list-style-position", "list-style-type", "margin", "margin-bottom", "margin-left", "margin-right", "margin-top", "marker-offset", "marks", "max-height", "max-width", "min-height", "min-width", "-moz-binding", "-moz-border-radius", "-moz-border-radius-topleft", "-moz-border-radius-topright", "-moz-border-radius-bottomright", "-moz-border-radius-bottomleft", "-moz-border-top-colors", "-moz-border-right-colors", "-moz-border-bottom-colors", "-moz-border-left-colors", "-moz-opacity", "-moz-outline", "-moz-outline-color", "-moz-outline-style", "-moz-outline-width", "-moz-user-focus", "-moz-user-input", "-moz-user-modify", "-moz-user-select", "orphans", "outline", "outline-color", "outline-style", "outline-width", "overflow", "overflow-X", "overflow-Y", "padding", "padding-bottom", "padding-left", "padding-right", "padding-top", "page", "page-break-after", "page-break-before", "page-break-inside", "pause", "pause-after", "pause-before", "pitch", "pitch-range", "play-during", "position", "quotes", "-replace", "richness", "right", "ruby-align", "ruby-overhang", "ruby-position", "-set-link-source", "size", "speak", "speak-header", "speak-numeral", "speak-punctuation", "speech-rate", "stress", "scrollbar-arrow-color", "scrollbar-base-color", "scrollbar-dark-shadow-color", "scrollbar-face-color", "scrollbar-highlight-color", "scrollbar-shadow-color", "scrollbar-3d-light-color", "scrollbar-track-color", "table-layout", "text-align", "text-align-last", "text-decoration", "text-indent", "text-justify", "text-overflow", "text-shadow", "text-transform", "text-autospace", "text-kashida-space", "text-underline-position", "top", "unicode-bidi", "-use-link-source", "vertical-align", "visibility", "voice-family", "volume", "white-space", "widows", "width", "word-break", "word-spacing", "word-wrap", "writing-mode", "z-index", "zoom", "animation-delay", "animation-direction", "animation-duration", "animation-fill-mode", "animation-iteration-count", "animation-name", "animation-play-state", "animation-timing-function", "background-blend-mode", "background-clip", "background-origin", "background-size", "border-radius", "border-bottom-left-radius", "border-bottom-right-radius", "border-image-outset", "border-image-repeat", "border-image-slice", "border-image-source", "border-image-width", "border-top-left-radius", "border-top-right-radius", "box-shadow", "box-sizing", "break-after", "break-before", "break-inside", "font-kerning", "font-variant-ligatures", "font-variant-caps", "font-variant-numeric", "image-rendering", "isolation", "mix-blend-mode", "motion-offset", "motion-path", "motion-rotation", "object-fit", "object-position", "opacity", "outline-offset", "overflow-wrap", "overflow-x", "overflow-y", "pointer-events", "resize", "tab-size", "text-rendering", "text-size-adjust", "touch-action", "transition-delay", "transition-duration", "transition-property", "transition-timing-function", "will-change", "appearance", "backface-visibility", "border-horizontal-spacing", "border-image", "border-vertical-spacing", "box-align", "box-decoration-break", "box-direction", "box-flex", "box-flex-group", "box-lines", "box-ordinal-group", "box-orient", "box-pack", "box-reflect", "clip-path", "column-count", "column-gap", "column-rule-color", "column-rule-style", "column-rule-width", "column-span", "column-width", "align-content", "align-items", "align-self", "flex-flow", "flex-basis", "flex-grow", "flex-shrink", "flex-direction", "flex-wrap", "flex-pack", "flex-line-pack", "flex-align", "flex-order", "justify-content", "font-smoothing", "highlight", "hyphens", "hyphenate-character", "line-clamp", "locale", "margin-before-collapse", "margin-after-collapse", "mask-box-image", "mask-box-image-outset", "mask-box-image-repeat", "mask-box-image-slice", "mask-box-image-source", "mask-box-image-width", "mask-clip", "mask-composite", "mask-image", "mask-origin", "mask-position", "mask-repeat", "mask-size", "order", "perspective", "perspective-origin", "print-color-adjust", "rtl-ordering", "shape-outside", "shape-image-threshold", "shape-margin", "tap-highlight-color", "text-combine", "text-decorations-in-effect", "text-emphasis-color", "text-emphasis-position", "text-emphasis-style", "text-fill-color", "text-orientation", "text-security", "text-stroke-color", "text-stroke-width", "transform", "transform-origin", "transform-style", "user-drag", "user-modify", "user-select", "app-region", "buffered-rendering", "clip-rule", "mask", "flood-color", "flood-opacity", "lighting-color", "stop-color", "stop-opacity", "color-interpolation", "color-interpolation-filters", "color-rendering", "fill", "fill-opacity", "fill-rule", "marker-end", "marker-mid", "marker-start", "mask-type", "shape-rendering", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "alignment-baseline", "baseline-shift", "dominant-baseline", "text-anchor", "vector-effect", "paint-order", "d", "cx", "cy", "x", "y", "r", "rx", "ry", "touch-callout"];
 
-        // flags
-        var is_decimal = false;
+        string = parser(string, "selectors", flags);
+        // string = parser(string, "code_blocks");
 
-        for (var i = 0, l = string.length; i < l; i++) {
+        function parser(string, mode, flags) {
 
-            if (i === -1) break; // used to stop infinite loop while debugging
+            // console.log("parsing!!", mode);
 
-            // cache the current character
-            var char = string.charAt(i),
-                prev_char = string.charAt(i - 1),
-                next_char = string.charAt(i + 1);
+            // flags
+            var is_decimal = false;
 
-            // skip current iteration on these characters
-            if (-~["`", " ", "\"", "'", "{", "}"].indexOf(char)) {
-                // fast forward index on ticks, as they are the placeholders
-                // theresore...set loop index to character after the ending tick
-                if (char === "`") i = string.indexOf("`", i + 1);
-                // skip to next loop iteration
-                continue;
+            for (var i = 0, l = string.length; i < l; i++) {
 
-            } else if (char === "@") { // atrule
+                if (i === -1) break; // used to stop infinite loop while debugging
 
-                // get the forward index
-                var findex = forward(i, string, /[^a-z\-]/i);
-                // get the fastforwarded string
-                var atrule = string.substring(i, findex);
+                // cache the current character
+                var char = string.charAt(i),
+                    prev_char = string.charAt(i - 1),
+                    next_char = string.charAt(i + 1);
 
-                var prefix = "";
-                // check for possible browser prefix
-                if (atrule.charAt(1) === "-") {
-                    // get the second hyphen index
-                    var hyphen_index = atrule.indexOf("-", 2);
-                    // get/set the prefix
-                    prefix = atrule.substring(2, hyphen_index);
-                    // reset the atrule
-                    atrule = "@" + atrule.substring(hyphen_index + 1, atrule.length);
-                    // check if atrule is valid...if not reset back to empty
-                    if (!-~prefixes.indexOf(prefix.toLowerCase())) {
-                        prefix = "";
-                        atrule = ""; // purposely invalidate atrule
-                    }
-                }
+                // skip current iteration on these characters
+                if (-~["`", " ", "\"", "'", "{", "}"].indexOf(char)) {
+                    // fast forward index on ticks, as they are the placeholders
+                    // theresore...set loop index to character after the ending tick
+                    if (char === "`") i = string.indexOf("`", i + 1);
+                    // skip to next loop iteration
+                    continue;
 
-                // check if string is in allowed atrules
-                if (-~atrules.indexOf(atrule.slice(1).toLowerCase())) {
+                } else if (char === "@") { // atrule
 
-                    // if a prefix is present...reset atrule back to normal
-                    if (prefix) atrule = ("@-" + prefix + "-" + atrule.slice(1));
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z\-]/i);
+                    // get the fastforwarded string
+                    var atrule = string.substring(i, findex);
 
-                    // add to array
-                    flags.parts.push([atrule, "atrule"]);
-                    // placehold function
-                    string = placehold(i, string, atrule);
-                    // reset length and index
-                    i = i + counter_to_string();
-                    l = string.length;
-
-                }
-
-            } else if (char === "(") { // function
-
-                // get the reverse index
-                var rindex = reverse(i, string, /[^a-z-]/i);
-                // get the fastforwarded string
-                var fn = string.substring(rindex, i);
-
-                var prefix = "";
-                // check for possible browser prefix
-                if (fn.charAt(0) === "-") {
-                    // get the second hyphen index
-                    var hyphen_index = fn.indexOf("-", 1);
-                    // get/set the prefix
-                    prefix = fn.substring(1, hyphen_index);
-                    // reset the fn
-                    fn = fn.substring(hyphen_index + 1, fn.length);
-                    // check if fn is valid...if not reset back to empty
-                    if (!-~prefixes.indexOf(prefix.toLowerCase())) {
-                        prefix = "";
-                        fn = ""; // purposely invalidate fn
-                    }
-                }
-
-                // check if string is in allowed functions
-                if (-~functions.indexOf(fn.replace(/\($/, "").toLowerCase())) {
-
-                    // if a prefix is present...reset fn back to normal
-                    if (prefix) fn = ("-" + prefix + "-" + fn);
-
-                    // add to array
-                    flags.parts.push([fn, "function"]);
-                    // placehold function
-                    string = placehold(rindex, string, fn);
-                    // reset length and index
-                    i = rindex + counter_to_string();
-                    l = string.length;
-
-                }
-
-            } else if (char === ":") { // keywords
-
-                // if the next char after the current colon is anything
-                // but a letter it must be skipped. this is done to cover
-                // the use of double colons like ::after. the keyword "after"
-                // will get picked up on the next iteration.
-                if (/[^a-z\-]/i.test(next_char)) continue;
-
-                // get the forward index
-                var findex = forward(i, string, /[^a-z\-]/i);
-                // get the fastforwarded string
-                var keyword = string.substring(i, findex);
-
-                var prefix = "";
-                // check for possible browser prefix
-                if (keyword.charAt(1) === "-") {
-                    // get the second hyphen index
-                    var hyphen_index = keyword.indexOf("-", 2);
-                    // get/set the prefix
-                    prefix = keyword.substring(2, hyphen_index);
-                    // reset the keyword
-                    keyword = ":" + keyword.substring(hyphen_index + 1, keyword.length);
-                    // check if keyword is valid...if not reset back to empty
-                    if (!-~prefixes.indexOf(prefix.toLowerCase())) {
-                        prefix = "";
-                        keyword = ""; // purposely invalidate keyword
-                    }
-                }
-
-                // check if string is in allowed keywords
-                if (-~keywords.indexOf(keyword.toLowerCase())) {
-
-                    // if a prefix is present...reset keyword back to normal
-                    if (prefix) keyword = (":-" + prefix + "-" + keyword.slice(1));
-
-                    i++; // increase index to not include the starting colon
-                    // remove starting colon if present
-                    keyword = keyword.replace(/^:/g, "");
-
-                    // add to array
-                    flags.parts.push([keyword, "keyword"]);
-                    // placehold keyword
-                    string = placehold(i, string, keyword);
-                    // reset length and index
-                    i = i + counter_to_string();
-                    l = string.length;
-
-                }
-
-            } else if (-~operators.indexOf(char)) { // operators
-
-                // check if the next character is an equal sign
-                var operator = string.substring(i, (i + ((next_char === "=") ? 2 : 1)));
-
-                // only add to list if operator is in list
-                if (-~operators.indexOf(char)) {
-
-                    // add the string to array
-                    flags.parts.push([operator, "operator"]);
-                    // placehold operator
-                    string = placehold(i, string, operator);
-                    // reset length and index
-                    i = ((i - 1) + counter_to_string());
-                    l = string.length;
-
-                }
-
-            } else if (/[0-9]/.test(char)) { // numbers(doubles, integers, floats, units)
-
-                var unit = null;
-                // look ahead and only get the numbers
-                for (var j = i + 1; j < l; j++) {
-                    var fchar = string.charAt(j);
-                    // if anything else than a number..check for potential unit
-                    if (/[^0-9]/.test(fchar)) {
-                        // now search for the unit if there...
-                        for (var k = j + 1; k < l; k++) {
-                            var ffchar = string.charAt(k);
-                            if (/[^a-z]/i.test(ffchar)) {
-                                // get the unit
-                                unit = string.substring(j, k);
-                                // check if unit is allowed..else set to null
-                                if (!-~units.indexOf(unit)) unit = null;
-                                break;
-                            }
+                    var prefix = "";
+                    // check for possible browser prefix
+                    if (atrule.charAt(1) === "-") {
+                        // get the second hyphen index
+                        var hyphen_index = atrule.indexOf("-", 2);
+                        // get/set the prefix
+                        prefix = atrule.substring(2, hyphen_index);
+                        // reset the atrule
+                        atrule = "@" + atrule.substring(hyphen_index + 1, atrule.length);
+                        // check if atrule is valid...if not reset back to empty
+                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                            prefix = "";
+                            atrule = ""; // purposely invalidate atrule
                         }
-                        // continue on the dot character as the number is a double (decimal)
-                        if (fchar !== ".") break; // anything but a number breaks loop
                     }
-                }
 
-                // check for negative sign(s)...max 2 negative signs w/ number
-                var negative_index = reverse(i, string, /[^\-]/);
-                if (i !== negative_index) { // negative number found
-                    // needs to be cut off after 2 negative signs
-                    if ((i - negative_index) > 2) {
-                        // reset negative_index index to only 2 negative signs
-                        negative_index = (i - 2);
+                    // check if string is in allowed atrules
+                    if (-~atrules.indexOf(atrule.slice(1).toLowerCase())) {
+
+                        // if a prefix is present...reset atrule back to normal
+                        if (prefix) atrule = ("@-" + prefix + "-" + atrule.slice(1));
+
+                        // add to array
+                        flags.parts.push([atrule, "atrule"]);
+                        // placehold function
+                        string = placehold(i, string, atrule);
+                        // reset length and index
+                        i = i + counter_to_string();
+                        l = string.length;
+
                     }
-                    // reset the index to negative sign index...this will include the
-                    // negative sign as part of the number
-                    i = negative_index;
-                }
 
-                // if the is_decimal flag is set, set during the class,id if check block,
-                // the index needs to be set back by 1 position to include the dot with the
-                // number. this will, in turn, get the decimal number.
-                var decimal_sub = (is_decimal ? 1 : 0);
-                // is_decimal flag no longer needed, only needed for previous check
-                if (is_decimal) is_decimal = false;
+                } else if (char === "(") { // function
 
-                // get the number
-                var number = string.substring(i - decimal_sub, j);
+                    // get the reverse index
+                    var rindex = reverse(i, string, /[^a-z-]/i);
+                    // get the fastforwarded string
+                    var fn = string.substring(rindex, i);
 
-                // add to array
-                flags.parts.push([number, "number"]);
-                // placehold number
-                string = placehold((i - decimal_sub), string, number);
-                // reset length and index
-                i = (i + counter_to_string());
-                l = string.length;
+                    var prefix = "";
+                    // check for possible browser prefix
+                    if (fn.charAt(0) === "-") {
+                        // get the second hyphen index
+                        var hyphen_index = fn.indexOf("-", 1);
+                        // get/set the prefix
+                        prefix = fn.substring(1, hyphen_index);
+                        // reset the fn
+                        fn = fn.substring(hyphen_index + 1, fn.length);
+                        // check if fn is valid...if not reset back to empty
+                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                            prefix = "";
+                            fn = ""; // purposely invalidate fn
+                        }
+                    }
 
-                // if there is a unit add it to array, placehold, and reset index
-                if (unit) {
+                    // check if string is in allowed functions
+                    if (-~functions.indexOf(fn.replace(/\($/, "").toLowerCase())) {
+
+                        // if a prefix is present...reset fn back to normal
+                        if (prefix) fn = ("-" + prefix + "-" + fn);
+
+                        // add to array
+                        flags.parts.push([fn, "function"]);
+                        // placehold function
+                        string = placehold(rindex, string, fn);
+                        // reset length and index
+                        i = rindex + counter_to_string();
+                        l = string.length;
+
+                    }
+
+                } else if (char === ":") { // keywords
+
+                    // if the next char after the current colon is anything
+                    // but a letter it must be skipped. this is done to cover
+                    // the use of double colons like ::after. the keyword "after"
+                    // will get picked up on the next iteration.
+                    if (/[^a-z\-]/i.test(next_char)) continue;
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z\-]/i);
+                    // get the fastforwarded string
+                    var keyword = string.substring(i, findex);
+
+                    var prefix = "";
+                    // check for possible browser prefix
+                    if (keyword.charAt(1) === "-") {
+                        // get the second hyphen index
+                        var hyphen_index = keyword.indexOf("-", 2);
+                        // get/set the prefix
+                        prefix = keyword.substring(2, hyphen_index);
+                        // reset the keyword
+                        keyword = ":" + keyword.substring(hyphen_index + 1, keyword.length);
+                        // check if keyword is valid...if not reset back to empty
+                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                            prefix = "";
+                            keyword = ""; // purposely invalidate keyword
+                        }
+                    }
+
+                    // check if string is in allowed keywords
+                    if (-~keywords.indexOf(keyword.toLowerCase())) {
+
+                        // if a prefix is present...reset keyword back to normal
+                        if (prefix) keyword = (":-" + prefix + "-" + keyword.slice(1));
+
+                        i++; // increase index to not include the starting colon
+                        // remove starting colon if present
+                        keyword = keyword.replace(/^:/g, "");
+
+                        // add to array
+                        flags.parts.push([keyword, "keyword"]);
+                        // placehold keyword
+                        string = placehold(i, string, keyword);
+                        // reset length and index
+                        i = i + counter_to_string();
+                        l = string.length;
+
+                    }
+
+                } else if (-~operators.indexOf(char)) { // operators
+
+                    // check if the next character is an equal sign
+                    var operator = string.substring(i, (i + ((next_char === "=") ? 2 : 1)));
+
+                    // only add to list if operator is in list
+                    if (-~operators.indexOf(char)) {
+
+                        // add the string to array
+                        flags.parts.push([operator, "operator"]);
+                        // placehold operator
+                        string = placehold(i, string, operator);
+                        // reset length and index
+                        i = ((i - 1) + counter_to_string());
+                        l = string.length;
+
+                    }
+
+                } else if (/[0-9]/.test(char)) { // numbers(doubles, integers, floats, units)
+
+                    var unit = null;
+                    // look ahead and only get the numbers
+                    for (var j = i + 1; j < l; j++) {
+                        var fchar = string.charAt(j);
+                        // if anything else than a number..check for potential unit
+                        if (/[^0-9]/.test(fchar)) {
+                            // now search for the unit if there...
+                            for (var k = j + 1; k < l; k++) {
+                                var ffchar = string.charAt(k);
+                                if (/[^a-z]/i.test(ffchar)) {
+                                    // get the unit
+                                    unit = string.substring(j, k);
+                                    // check if unit is allowed..else set to null
+                                    if (!-~units.indexOf(unit)) unit = null;
+                                    break;
+                                }
+                            }
+                            // continue on the dot character as the number is a double (decimal)
+                            if (fchar !== ".") break; // anything but a number breaks loop
+                        }
+                    }
+
+                    // check for negative sign(s)...max 2 negative signs w/ number
+                    var negative_index = reverse(i, string, /[^\-]/);
+                    if (i !== negative_index) { // negative number found
+                        // needs to be cut off after 2 negative signs
+                        if ((i - negative_index) > 2) {
+                            // reset negative_index index to only 2 negative signs
+                            negative_index = (i - 2);
+                        }
+                        // reset the index to negative sign index...this will include the
+                        // negative sign as part of the number
+                        i = negative_index;
+                    }
+
+                    // if the is_decimal flag is set, set during the class,id if check block,
+                    // the index needs to be set back by 1 position to include the dot with the
+                    // number. this will, in turn, get the decimal number.
+                    var decimal_sub = (is_decimal ? 1 : 0);
+                    // is_decimal flag no longer needed, only needed for previous check
+                    if (is_decimal) is_decimal = false;
+
+                    // get the number
+                    var number = string.substring(i - decimal_sub, j);
 
                     // add to array
-                    flags.parts.push([unit, "unit"]);
-                    // placehold unit
-                    string = placehold(i, string, unit);
+                    flags.parts.push([number, "number"]);
+                    // placehold number
+                    string = placehold((i - decimal_sub), string, number);
                     // reset length and index
                     i = (i + counter_to_string());
                     l = string.length;
 
-                }
+                    // if there is a unit add it to array, placehold, and reset index
+                    if (unit) {
 
-            } else if (char === "#" || char === ".") { // class,id,hexcolors?
+                        // add to array
+                        flags.parts.push([unit, "unit"]);
+                        // placehold unit
+                        string = placehold(i, string, unit);
+                        // reset length and index
+                        i = (i + counter_to_string());
+                        l = string.length;
 
-                // get the forward index
-                var findex = forward(i, string, /[^a-z0-9\-_]/);
-                // get the fastforwarded string
-                var selector = string.substring(i, findex);
+                    }
 
-                // http://stackoverflow.com/questions/2812072/allowed-characters-for-css-identifiers/2812097#2812097
-                // selector cannot start with a number or hyphen then number
-                if (/[0-9]/.test(selector.charAt(1))) continue;
-                // selector cannot start with hyphen then number
-                if (selector.charAt(1) === "_" && /[0-9]/.test(selector.charAt(2))) continue;
+                } else if (char === "#" || char === ".") { // class,id,hexcolors?
 
-                // if the first character after the dot or hash is number skip
-                // the current iteration and set is_decimal flag. this will cause
-                // the next iteration to pick up with the number and run the number
-                // if check logic block.
-                if (char === "." && /[0-9]/.test(selector.charAt(1))) {
-                    // set flag. flag is used in conjunction with the number if check
-                    is_decimal = true;
-                    continue;
-                }
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z0-9\-_]/);
+                    // get the fastforwarded string
+                    var selector = string.substring(i, findex);
 
-                var is_hexcolor = false;
-                // if the char is a hash check if
-                // if (char === "#") {
+                    // http://stackoverflow.com/questions/2812072/allowed-characters-for-css-identifiers/2812097#2812097
+                    // selector cannot start with a number or hyphen then number
+                    if (/[0-9]/.test(selector.charAt(1))) continue;
+                    // selector cannot start with hyphen then number
+                    if (selector.charAt(1) === "_" && /[0-9]/.test(selector.charAt(2))) continue;
 
-                //     // get the forward index
-                //     var ffindex = forward(i, string, /[^a-f0-9]/i);
-                //     // get the fastforwarded string
-                //     var hexcolor = string.substring(i, ffindex);
-                //     // hexcolor must be either 3, 6, 8 hexadecimal characters in length
-                //     if (-~[3, 6, 8].indexOf(hexcolor.length - 1)) {
-                //         // reset the selector
-                //         selector = hexcolor;
-                //         is_hexcolor = true;
-                //         // reset the
-                //     }
-                // }
+                    // if the first character after the dot or hash is number skip
+                    // the current iteration and set is_decimal flag. this will cause
+                    // the next iteration to pick up with the number and run the number
+                    // if check logic block.
+                    if (char === "." && /[0-9]/.test(selector.charAt(1))) {
+                        // set flag. flag is used in conjunction with the number if check
+                        is_decimal = true;
+                        continue;
+                    }
 
-                // because classes and ids are variable and cannot check if they are
-                // in a list just check that the string is not empty
-                if (selector.slice(1) !== "") {
+                    var is_hexcolor = false;
+                    // if the char is a hash check if
+                    // if (char === "#") {
 
-                    // add to array
-                    flags.parts.push([selector, ((char === "#") ? (!is_hexcolor ? "id" : "hexcolor") : "class")]);
-                    // placehold selector
-                    string = placehold(i, string, selector);
-                    // reset length and index
-                    i = ((i - 1) + counter_to_string());
-                    l = string.length;
+                    //     // get the forward index
+                    //     var ffindex = forward(i, string, /[^a-f0-9]/i);
+                    //     // get the fastforwarded string
+                    //     var hexcolor = string.substring(i, ffindex);
+                    //     // hexcolor must be either 3, 6, 8 hexadecimal characters in length
+                    //     if (-~[3, 6, 8].indexOf(hexcolor.length - 1)) {
+                    //         // reset the selector
+                    //         selector = hexcolor;
+                    //         is_hexcolor = true;
+                    //         // reset the
+                    //     }
+                    // }
 
-                }
+                    // because classes and ids are variable and cannot check if they are
+                    // in a list just check that the string is not empty
+                    if (selector.slice(1) !== "") {
 
-            } else if (/[a-z\-_]/i.test(char)) { // tags,properties?,colornames?
+                        // add to array
+                        flags.parts.push([selector, ((char === "#") ? (!is_hexcolor ? "id" : "hexcolor") : "class")]);
+                        // placehold selector
+                        string = placehold(i, string, selector);
+                        // reset length and index
+                        i = ((i - 1) + counter_to_string());
+                        l = string.length;
 
-                // get the forward index
-                var findex = forward(i, string, /[^a-z\-_]/i);
-                // get the fastforwarded string
-                var str = string.substring(i, findex);
+                    }
 
-                // 1: check that if the previous character is not a letter
-                // for example, in the word "this" the letter s will be
-                // considered a tag element. this will prevent this case.
-                // likewise, for the property "-webkit-box" the x will be
-                // detected but because it is part of a word we must skip it
-                // 2, 3: skip if word is an attribute or a function
-                // attributes are left default color (black) and functions
-                // are handled in their own if check
-                if ( /*1,2*/ /[^\s\}]/i.test(prev_char) || /*3*/ string.charAt(findex) === "(") {
-                    // reset the index
-                    i = findex - 1;
-                    continue;
-                }
+                } else if (/[a-z\-_]/i.test(char)) { // tags,properties?,colornames?
 
-                // var type = null;
-                // // check what if string is a tag, property or a colorname
-                // var is_prefixed = (str.charAt(0) === "-");
-                // if (is_prefixed || (!is_prefixed && -~properties.indexOf(str))) {
-                //     // non prefixed property is valid
-                //     type = "property";
-                //     // if prefixed validate prefix
-                //     if (is_prefixed) {
-                //         // prefix present..check if valid
-                //         var hyphen_index = str.indexOf("-", 1);
-                //         var prefix = str.substring(1, hyphen_index);
-                //         var property = str.substring(hyphen_index + 1, str.length);
-                //         // check whether prefix and property is valid
-                //         if (!-~prefixes.indexOf(prefix) || !-~properties.indexOf(property)) {
-                //             // did not pass validation
-                //             type = null;
-                //         }
-                //     }
-                // } else if (-~colornames.indexOf(str)) {
-                //     type = "colorname";
-                // } else if (-~tags.indexOf(str)) {
-                //     type = "tag"; // {} HTML  >+~[,#.} {}
-                //}
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z\-_]/i);
+                    // get the fastforwarded string
+                    var str = string.substring(i, findex);
 
-                // only add to list if tag is in list
-                if (-~tags.indexOf(str)) {
+                    // 1: check that if the previous character is not a letter
+                    // for example, in the word "this" the letter s will be
+                    // considered a tag element. this will prevent this case.
+                    // likewise, for the property "-webkit-box" the x will be
+                    // detected but because it is part of a word we must skip it
+                    // 2, 3: skip if word is an attribute or a function
+                    // attributes are left default color (black) and functions
+                    // are handled in their own if check
+                    if ( /*1,2*/ /[^\s\}]/i.test(prev_char) || /*3*/ string.charAt(findex) === "(") {
+                        // reset the index
+                        i = findex - 1;
+                        continue;
+                    }
 
-                    // add to array
-                    flags.parts.push([str, "tag"]);
-                    // placehold str
-                    string = placehold(i, string, str);
-                    // reset length and index
-                    i = ((i - 1) + counter_to_string());
-                    l = string.length;
+                    // var type = null;
+                    // // check what if string is a tag, property or a colorname
+                    // var is_prefixed = (str.charAt(0) === "-");
+                    // if (is_prefixed || (!is_prefixed && -~properties.indexOf(str))) {
+                    //     // non prefixed property is valid
+                    //     type = "property";
+                    //     // if prefixed validate prefix
+                    //     if (is_prefixed) {
+                    //         // prefix present..check if valid
+                    //         var hyphen_index = str.indexOf("-", 1);
+                    //         var prefix = str.substring(1, hyphen_index);
+                    //         var property = str.substring(hyphen_index + 1, str.length);
+                    //         // check whether prefix and property is valid
+                    //         if (!-~prefixes.indexOf(prefix) || !-~properties.indexOf(property)) {
+                    //             // did not pass validation
+                    //             type = null;
+                    //         }
+                    //     }
+                    // } else if (-~colornames.indexOf(str)) {
+                    //     type = "colorname";
+                    // } else if (-~tags.indexOf(str)) {
+                    //     type = "tag"; // {} HTML  >+~[,#.} {}
+                    //}
+
+                    // only add to list if tag is in list
+                    if (-~tags.indexOf(str)) {
+
+                        // add to array
+                        flags.parts.push([str, "tag"]);
+                        // placehold str
+                        string = placehold(i, string, str);
+                        // reset length and index
+                        i = ((i - 1) + counter_to_string());
+                        l = string.length;
+
+                    }
 
                 }
 
             }
+
+            // return the parsed string
+            return string;
 
         }
 
