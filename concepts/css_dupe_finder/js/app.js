@@ -565,16 +565,19 @@ document.onreadystatechange = function() {
                 // get the fastforwarded string
                 var str = string.substring(i, findex);
 
-                // skip if word is an attribute or a function
-                // attributes are left default color (black) and functions
-                // are handled in their own if check
-                if (prev_char === "[" || string.charAt(findex) === "(") continue;
-                // check that if the previous character is not a letter
+                // 1: check that if the previous character is not a letter
                 // for example, in the word "this" the letter s will be
                 // considered a tag element. this will prevent this case.
                 // likewise, for the property "-webkit-box" the x will be
                 // detected but because it is part of a word we must skip it
-                if (/[a-z\-]/i.test(prev_char)) continue;
+                // 2, 3: skip if word is an attribute or a function
+                // attributes are left default color (black) and functions
+                // are handled in their own if check
+                if ( /*1,2*/ /[^\s\}]/i.test(prev_char) || /*3*/ string.charAt(findex) === "(") {
+                    // reset the index
+                    i = findex - 1;
+                    continue;
+                }
 
                 // var type = null;
                 // // check what if string is a tag, property or a colorname
@@ -600,13 +603,18 @@ document.onreadystatechange = function() {
                 //     type = "tag"; // {} HTML  >+~[,#.} {}
                 //}
 
-                // add to array
-                flags.parts.push([str, "tag"]);
-                // placehold str
-                string = placehold(i, string, str);
-                // reset length and index
-                i = ((i) + counter_to_string());
-                l = string.length;
+                // only add to list if tag is in list
+                if (-~tags.indexOf(str)) {
+
+                    // add to array
+                    flags.parts.push([str, "tag"]);
+                    // placehold str
+                    string = placehold(i, string, str);
+                    // reset length and index
+                    i = ((i - 1) + counter_to_string());
+                    l = string.length;
+
+                }
 
             }
 
