@@ -366,10 +366,27 @@ document.onreadystatechange = function() {
                 // get the fastforwarded string
                 var atrule = string.substring(i, findex);
 
-                // ** check for possible browser prefix
+                var prefix = "";
+                // check for possible browser prefix
+                if (atrule.charAt(1) === "-") {
+                    // get the second hyphen index
+                    var hyphen_index = atrule.indexOf("-", 2);
+                    // get/set the prefix
+                    prefix = atrule.substring(2, hyphen_index);
+                    // reset the atrule
+                    atrule = "@" + atrule.substring(hyphen_index + 1, atrule.length);
+                    // check if atrule is valid...if not reset back to empty
+                    if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                        prefix = "";
+                        atrule = ""; // purposely invalidate atrule
+                    }
+                }
 
                 // check if string is in allowed atrules
                 if (-~atrules.indexOf(atrule.slice(1).toLowerCase())) {
+
+                    // if a prefix is present...reset atrule back to normal
+                    if (prefix) atrule = ("@-" + prefix + "-" + atrule.slice(1));
 
                     // add to array
                     flags.parts.push([atrule, "atrule"]);
