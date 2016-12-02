@@ -143,7 +143,7 @@ document.onreadystatechange = function() {
         ///////////////////////////
         ///////////////////////////
 
-        console.log("string-->" + string);
+        // console.log("string-->" + string);
 
         // distinguish between selectors and code blocks
         for (var i = 0, l = string.length; i < l; i++) {
@@ -370,7 +370,7 @@ document.onreadystatechange = function() {
                     prev_char = string.charAt(i - 1),
                     next_char = string.charAt(i + 1);
 
-                // console.log("<<<<<<<<<<<<<<<<<<<<<<", i, char);
+                console.log("<<<<<<<<<<<<<<<<<<<<<<", i, char);
 
                 if (char === "@") { // atrule
 
@@ -384,6 +384,24 @@ document.onreadystatechange = function() {
                     string = placehold(i, string, atrule);
                     // reset the index
                     i = new_index(i);
+                    l = string.length;
+
+                } else if (char === "(") { // function
+
+                    // get the reverse index
+                    var rindex = reverse(i, string, /[^a-z-]/i);
+                    // get the fastforwarded string
+                    var fn = string.substring(rindex, i);
+                    // add to array
+                    flags.parts.push([fn, "function"]);
+                    // placehold function
+                    string = placehold(rindex, string, fn);
+                    // reset the index
+                    // add 1 to rindex to pick up after the open parenthesis
+                    // not adding 1 will cause an infinite loop as it starts
+                    // on the open parenthesis...triggering the function if
+                    // check again and again...
+                    i = new_index(rindex + 1);
                     l = string.length;
 
                 }
