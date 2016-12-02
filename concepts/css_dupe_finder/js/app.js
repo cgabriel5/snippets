@@ -327,7 +327,7 @@ document.onreadystatechange = function() {
         var prefixes = ["ms", "mso", "moz", "o", "atscwap", "webkit", "khtml", "apple", "prince", "ah", "hp", "ro", "rim", "tc"];
         var colornames = ["aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgrey", "darkgreen", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "grey", "green", "greenyellow", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgrey", "lightgreen", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"];
         var functions = ["alpha", "annotation", "attr", "blur", "brightness", "calc", "character-variant", "circle", "contrast", "counter", "cross-fade", "cubic-bezier", "drop-shadow", "element", "ellipse", "fit-content", "format", "grayscale", "hsl", "hsla", "hue-rotate", "image", "image-set", "inset", "invert", "leader", "linear-gradient", "local", "matrix", "matrix3d", "minmax", "opacity", "ornaments", "perspective", "polygon", "radial-gradient", "rect", "repeat", "repeating-linear-gradient", "repeating-radial-gradient", "rgb", "rgba", "rotate", "rotate3d", "rotatex", "rotatey", "rotatez", "saturate", "scale", "scale3d", "scalex", "scaley", "scalez", "sepia", "skew", "skewx", "skewy", "steps", "styleset", "stylistic", "swash", "symbols", "target-counter", "target-counters", "target-text", "translate", "translate3d", "translatex", "translatey", "translatez", "url", "var", "dir", "lang", "not", "nth-child", "nth-last-child", "nth-last-of-type", "nth-of-type"];
-        var tags = ["html", "img", "base", "head", "link", "meta", "style", "title", "address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4", "h5", "h6", "hgroup", "nav", "section", "dd", "div", "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre", "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn", "em", "i", "kbd", "mark", "q", "rp", "rt", "rtc", "ruby", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "area", "audio", "map", "track", "video", "embed", "object", "param", "source", "canvas", "noscript", "script", "del", "ins", "caption", "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "button", "datalist", "fieldset", "form", "input", "label", "legend", "meter", "optgroup", "option", "output", "progress", "select", "textarea", "details", "dialog", "menu", "menuitem", "summary", "content", "element", "shadow", "template", "acronym", "applet", "basefont", "big", "blink", "center", "command", "content", "dir", "font", "frame", "frameset", "isindex", "keygen", "listing", "marquee", "multicol", "nextid", "noembed", "plaintext", "spacer", "strike", "tt", "xmp"];
+        var tags = ["body", "html", "img", "base", "head", "link", "meta", "style", "title", "address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4", "h5", "h6", "hgroup", "nav", "section", "dd", "div", "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre", "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn", "em", "i", "kbd", "mark", "q", "rp", "rt", "rtc", "ruby", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "area", "audio", "map", "track", "video", "embed", "object", "param", "source", "canvas", "noscript", "script", "del", "ins", "caption", "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "button", "datalist", "fieldset", "form", "input", "label", "legend", "meter", "optgroup", "option", "output", "progress", "select", "textarea", "details", "dialog", "menu", "menuitem", "summary", "content", "element", "shadow", "template", "acronym", "applet", "basefont", "big", "blink", "center", "command", "content", "dir", "font", "frame", "frameset", "isindex", "keygen", "listing", "marquee", "multicol", "nextid", "noembed", "plaintext", "spacer", "strike", "tt", "xmp"];
         // https://developer.mozilla.org/en-US/docs/Web/CSS/time
         var units = ["em", "ex", "%", "px", "cm", "mm", "in", "pt", "pc", "ch", "rem", "vh", "vw", "vmin", "vmax", "s", "ms"];
         // @-rules https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule
@@ -339,7 +339,9 @@ document.onreadystatechange = function() {
         // unique array: http://stackoverflow.com/questions/6940103/how-do-i-make-an-array-with-unique-elements-i-e-remove-duplicates/23282067#23282067
         var properties = ["accelerator", "azimuth", "background", "background-attachment", "background-color", "background-image", "background-position", "background-position-x", "background-position-y", "background-repeat", "behavior", "border", "border-bottom", "border-bottom-color", "border-bottom-style", "border-bottom-width", "border-collapse", "border-color", "border-left", "border-left-color", "border-left-style", "border-left-width", "border-right", "border-right-color", "border-right-style", "border-right-width", "border-spacing", "border-style", "border-top", "border-top-color", "border-top-style", "border-top-width", "border-width", "bottom", "caption-side", "clear", "clip", "color", "content", "counter-increment", "counter-reset", "cue", "cue-after", "cue-before", "cursor", "direction", "display", "elevation", "empty-cells", "filter", "float", "font", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "height", "ime-mode", "include-source", "layer-background-color", "layer-background-image", "layout-flow", "layout-grid", "layout-grid-char", "layout-grid-char-spacing", "layout-grid-line", "layout-grid-mode", "layout-grid-type", "left", "letter-spacing", "line-break", "line-height", "list-style", "list-style-image", "list-style-position", "list-style-type", "margin", "margin-bottom", "margin-left", "margin-right", "margin-top", "marker-offset", "marks", "max-height", "max-width", "min-height", "min-width", "-moz-binding", "-moz-border-radius", "-moz-border-radius-topleft", "-moz-border-radius-topright", "-moz-border-radius-bottomright", "-moz-border-radius-bottomleft", "-moz-border-top-colors", "-moz-border-right-colors", "-moz-border-bottom-colors", "-moz-border-left-colors", "-moz-opacity", "-moz-outline", "-moz-outline-color", "-moz-outline-style", "-moz-outline-width", "-moz-user-focus", "-moz-user-input", "-moz-user-modify", "-moz-user-select", "orphans", "outline", "outline-color", "outline-style", "outline-width", "overflow", "overflow-X", "overflow-Y", "padding", "padding-bottom", "padding-left", "padding-right", "padding-top", "page", "page-break-after", "page-break-before", "page-break-inside", "pause", "pause-after", "pause-before", "pitch", "pitch-range", "play-during", "position", "quotes", "-replace", "richness", "right", "ruby-align", "ruby-overhang", "ruby-position", "-set-link-source", "size", "speak", "speak-header", "speak-numeral", "speak-punctuation", "speech-rate", "stress", "scrollbar-arrow-color", "scrollbar-base-color", "scrollbar-dark-shadow-color", "scrollbar-face-color", "scrollbar-highlight-color", "scrollbar-shadow-color", "scrollbar-3d-light-color", "scrollbar-track-color", "table-layout", "text-align", "text-align-last", "text-decoration", "text-indent", "text-justify", "text-overflow", "text-shadow", "text-transform", "text-autospace", "text-kashida-space", "text-underline-position", "top", "unicode-bidi", "-use-link-source", "vertical-align", "visibility", "voice-family", "volume", "white-space", "widows", "width", "word-break", "word-spacing", "word-wrap", "writing-mode", "z-index", "zoom", "animation-delay", "animation-direction", "animation-duration", "animation-fill-mode", "animation-iteration-count", "animation-name", "animation-play-state", "animation-timing-function", "background-blend-mode", "background-clip", "background-origin", "background-size", "border-radius", "border-bottom-left-radius", "border-bottom-right-radius", "border-image-outset", "border-image-repeat", "border-image-slice", "border-image-source", "border-image-width", "border-top-left-radius", "border-top-right-radius", "box-shadow", "box-sizing", "break-after", "break-before", "break-inside", "font-kerning", "font-variant-ligatures", "font-variant-caps", "font-variant-numeric", "image-rendering", "isolation", "mix-blend-mode", "motion-offset", "motion-path", "motion-rotation", "object-fit", "object-position", "opacity", "outline-offset", "overflow-wrap", "overflow-x", "overflow-y", "pointer-events", "resize", "tab-size", "text-rendering", "text-size-adjust", "touch-action", "transition-delay", "transition-duration", "transition-property", "transition-timing-function", "will-change", "appearance", "backface-visibility", "border-horizontal-spacing", "border-image", "border-vertical-spacing", "box-align", "box-decoration-break", "box-direction", "box-flex", "box-flex-group", "box-lines", "box-ordinal-group", "box-orient", "box-pack", "box-reflect", "clip-path", "column-count", "column-gap", "column-rule-color", "column-rule-style", "column-rule-width", "column-span", "column-width", "align-content", "align-items", "align-self", "flex-flow", "flex-basis", "flex-grow", "flex-shrink", "flex-direction", "flex-wrap", "flex-pack", "flex-line-pack", "flex-align", "flex-order", "justify-content", "font-smoothing", "highlight", "hyphens", "hyphenate-character", "line-clamp", "locale", "margin-before-collapse", "margin-after-collapse", "mask-box-image", "mask-box-image-outset", "mask-box-image-repeat", "mask-box-image-slice", "mask-box-image-source", "mask-box-image-width", "mask-clip", "mask-composite", "mask-image", "mask-origin", "mask-position", "mask-repeat", "mask-size", "order", "perspective", "perspective-origin", "print-color-adjust", "rtl-ordering", "shape-outside", "shape-image-threshold", "shape-margin", "tap-highlight-color", "text-combine", "text-decorations-in-effect", "text-emphasis-color", "text-emphasis-position", "text-emphasis-style", "text-fill-color", "text-orientation", "text-security", "text-stroke-color", "text-stroke-width", "transform", "transform-origin", "transform-style", "user-drag", "user-modify", "user-select", "app-region", "buffered-rendering", "clip-rule", "mask", "flood-color", "flood-opacity", "lighting-color", "stop-color", "stop-opacity", "color-interpolation", "color-interpolation-filters", "color-rendering", "fill", "fill-opacity", "fill-rule", "marker-end", "marker-mid", "marker-start", "mask-type", "shape-rendering", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "alignment-baseline", "baseline-shift", "dominant-baseline", "text-anchor", "vector-effect", "paint-order", "d", "cx", "cy", "x", "y", "r", "rx", "ry", "touch-callout"];
 
+        // console.log(">>>", string);
         string = parser(string, "selectors", flags);
+
         // string = parser(string, "code_blocks");
 
         function parser(string, mode, flags) {
@@ -348,6 +350,7 @@ document.onreadystatechange = function() {
 
             // flags
             var is_decimal = false;
+            var is_mode_selector = (mode === "selectors");
 
             for (var i = 0, l = string.length; i < l; i++) {
 
@@ -366,7 +369,7 @@ document.onreadystatechange = function() {
                     // skip to next loop iteration
                     continue;
 
-                } else if (char === "@") { // atrule
+                } else if (char === "@" && is_mode_selector) { // atrule
 
                     // get the forward index
                     var findex = forward(i, string, /[^a-z\-]/i);
@@ -579,7 +582,7 @@ document.onreadystatechange = function() {
 
                     }
 
-                } else if (char === "#" || char === ".") { // class,id,hexcolors?
+                } else if ((char === "#" || char === ".") && is_mode_selector) { // class,id
 
                     // get the forward index
                     var findex = forward(i, string, /[^a-z0-9\-_]/);
@@ -602,29 +605,12 @@ document.onreadystatechange = function() {
                         continue;
                     }
 
-                    var is_hexcolor = false;
-                    // if the char is a hash check if
-                    // if (char === "#") {
-
-                    //     // get the forward index
-                    //     var ffindex = forward(i, string, /[^a-f0-9]/i);
-                    //     // get the fastforwarded string
-                    //     var hexcolor = string.substring(i, ffindex);
-                    //     // hexcolor must be either 3, 6, 8 hexadecimal characters in length
-                    //     if (-~[3, 6, 8].indexOf(hexcolor.length - 1)) {
-                    //         // reset the selector
-                    //         selector = hexcolor;
-                    //         is_hexcolor = true;
-                    //         // reset the
-                    //     }
-                    // }
-
                     // because classes and ids are variable and cannot check if they are
                     // in a list just check that the string is not empty
                     if (selector.slice(1) !== "") {
 
                         // add to array
-                        flags.parts.push([selector, ((char === "#") ? (!is_hexcolor ? "id" : "hexcolor") : "class")]);
+                        flags.parts.push([selector, ((char === "#") ? "id" : "class")]);
                         // placehold selector
                         string = placehold(i, string, selector);
                         // reset length and index
@@ -633,7 +619,27 @@ document.onreadystatechange = function() {
 
                     }
 
-                } else if (/[a-z\-_]/i.test(char)) { // tags,properties?,colornames?
+                } else if (char === "#" && !is_mode_selector) { // hexcolors
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-f0-9]/i);
+                    // get the fastforwarded string
+                    var hexcolor = string.substring(i, findex);
+
+                    // hexcolor must be either 3, 6, 8 hexadecimal characters in length
+                    if (-~[3, 6, 8].indexOf(hexcolor.length - 1)) {
+
+                        // add to array
+                        flags.parts.push([hexcolor, "hexcolor"]);
+                        // placehold hexcolor
+                        string = placehold(i, string, hexcolor);
+                        // reset length and index
+                        i = ((i - 1) + counter_to_string());
+                        l = string.length;
+
+                    }
+
+                } else if (/[a-z\-_]/i.test(char) && is_mode_selector) { // tags
 
                     // get the forward index
                     var findex = forward(i, string, /[^a-z\-_]/i);
@@ -654,35 +660,78 @@ document.onreadystatechange = function() {
                         continue;
                     }
 
-                    // var type = null;
-                    // // check what if string is a tag, property or a colorname
-                    // var is_prefixed = (str.charAt(0) === "-");
-                    // if (is_prefixed || (!is_prefixed && -~properties.indexOf(str))) {
-                    //     // non prefixed property is valid
-                    //     type = "property";
-                    //     // if prefixed validate prefix
-                    //     if (is_prefixed) {
-                    //         // prefix present..check if valid
-                    //         var hyphen_index = str.indexOf("-", 1);
-                    //         var prefix = str.substring(1, hyphen_index);
-                    //         var property = str.substring(hyphen_index + 1, str.length);
-                    //         // check whether prefix and property is valid
-                    //         if (!-~prefixes.indexOf(prefix) || !-~properties.indexOf(property)) {
-                    //             // did not pass validation
-                    //             type = null;
-                    //         }
-                    //     }
-                    // } else if (-~colornames.indexOf(str)) {
-                    //     type = "colorname";
-                    // } else if (-~tags.indexOf(str)) {
-                    //     type = "tag"; // {} HTML  >+~[,#.} {}
-                    //}
-
                     // only add to list if tag is in list
                     if (-~tags.indexOf(str)) {
 
                         // add to array
                         flags.parts.push([str, "tag"]);
+                        // placehold str
+                        string = placehold(i, string, str);
+                        // reset length and index
+                        i = ((i - 1) + counter_to_string());
+                        l = string.length;
+
+                    }
+
+                } else if (/[a-z\-_]/i.test(char) && !is_mode_selector) { // properties,colornames
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z\-_]/i);
+                    // get the fastforwarded string
+                    var str = string.substring(i, findex);
+
+                    // 1: check that if the previous character is not a letter
+                    // for example, in the word "this" the letter s will be
+                    // considered a tag element. this will prevent this case.
+                    // likewise, for the property "-webkit-box" the x will be
+                    // detected but because it is part of a word we must skip it
+                    // 2, 3: skip if word is an attribute or a function
+                    // attributes are left default color (black) and functions
+                    // are handled in their own if check
+                    if ( /*1,2*/ /[^\s\}]/i.test(prev_char) || /*3*/ string.charAt(findex) === "(") {
+                        // reset the index
+                        i = findex - 1;
+                        continue;
+                    }
+
+                    var type = null;
+                    // check what if string is a property or colorname
+                    var is_prefixed = (str.charAt(0) === "-");
+                    if (is_prefixed || (!is_prefixed && -~properties.indexOf(str))) {
+
+                        // non prefixed property is valid
+                        type = "property";
+                        // if prefixed validate prefix
+                        if (is_prefixed) {
+                            // prefix present..check if valid
+                            var hyphen_index = str.indexOf("-", 1);
+                            var prefix = str.substring(1, hyphen_index);
+                            var property = str.substring(hyphen_index + 1, str.length);
+                            // check whether prefix and property is valid
+                            if (!-~prefixes.indexOf(prefix) || !-~properties.indexOf(property)) {
+                                // did not pass validation
+                                type = null;
+                            }
+                        }
+
+                        // finally, property name must be followed by a colon
+                        // get the forward index
+                        var ffindex = forward(findex, string, /[^\:\s]/);
+                        // get the fastforwarded string
+                        var colon = string.substring(findex, ffindex).trim();
+
+                        // purposely invalidate
+                        if (colon !== ":") type = null;
+
+                    } else if (-~colornames.indexOf(str)) {
+                        type = "colorname";
+                    }
+
+                    // only add if it is a colorname or property
+                    if (type) {
+
+                        // add to array
+                        flags.parts.push([str, type]);
                         // placehold str
                         string = placehold(i, string, str);
                         // reset length and index
@@ -737,7 +786,19 @@ document.onreadystatechange = function() {
         // remove place holders with HTML
         return string.replace(/`\d+`/g, function() {
             var info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
-            return "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
+            var type = info[1]
+            var string;
+            // console.log(type);
+            if (type === "block") {
+                // parse the string with mode=block
+                string = parser(info[0], "code_blocks", flags).replace(/`\d+`/g, function() {
+                    var block_info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
+                    return "<span class=\"lang-css-" + block_info[1] + "\">" + block_info[0] + "</span>";
+                });
+            } else {
+                string = "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
+            }
+            return string;
         });
 
     }
