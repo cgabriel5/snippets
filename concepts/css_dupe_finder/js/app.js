@@ -11,11 +11,8 @@ document.onreadystatechange = function() {
     function colorizer(string) {
 
         // universal: strings, comments
-
         // selector: selectors(class, id, tags), numbers, units, atrules, functions?, keywords
-
         // property: properties
-
         // value: hexcolors, numbers, units, functions, keywords, colornames
 
         var flags = {
@@ -38,6 +35,9 @@ document.onreadystatechange = function() {
             }
         };
 
+        // add 1 to include the last letter character of wanted string
+        var include_last_char = 1;
+
         // pad string to help with edge cases
         string = " " + string + " ";
 
@@ -59,21 +59,19 @@ document.onreadystatechange = function() {
                         flags.string_start = i;
                         // must match the same type of quote
                         flags.is.pair = char;
-                    } else if (flags.string_start !== null && flags.is.wrap === "string") {
+                    } else if (flags.string_start !== null && flags.is.wrap === "string" && flags.is.pair === char) {
+
+                        // store original index to see code clearer
+                        var original_index = flags.string_start;
+
                         // get the string since the open quote
-                        var str = string.substring(flags.string_start, i + 1);
+                        var str = string.substring(original_index, (i + include_last_char));
                         // add the string to array
                         flags.parts.push([str, "string"]);
-
-                        // replace the substring in the copy string
-                        var start = string.substring(0, flags.string_start);
-                        var placeholder = "`" + (++flags.counter) + "`";
-                        var end = string.substring((flags.string_start + str.length), string.length);
-                        // reset the string with the placeholder
-                        string = start + placeholder + end;
-
-                        // reset length and index
-                        i = (flags.string_start) + counter_to_string();
+                        // placehold string
+                        string = placehold(original_index, string, str);
+                        // reset the index
+                        i = new_index(original_index);
                         l = string.length;
 
                         // unset flags
@@ -95,20 +93,19 @@ document.onreadystatechange = function() {
                         // must match the same type of quote
                         flags.is.pair = char;
                     } else if (flags.string_start !== null && flags.is.wrap === "comment") {
+
+                        // store original index to see code clearer
+                        var original_index = flags.string_start;
+
                         // get the comment since the open /*
-                        var str = string.substring(flags.string_start - 1, i + 2);
-                        // add the string to array
+                        var str = string.substring((original_index - 1), (i + (include_last_char * 2)));
+                        // add the comment to array
                         flags.parts.push([str, "comment"]);
-
-                        // replace the substring in the copy string
-                        var start = string.substring(0, flags.string_start - 1);
-                        var placeholder = "`" + (++flags.counter) + "`";
-                        var end = string.substring(flags.string_start + (str.length - 1), string.length);
-                        // reset the string with the placeholder
-                        string = start + placeholder + end;
-
-                        // reset length and index
-                        i = (flags.string_start - 1) + counter_to_string();
+                        // placehold string
+                        string = placehold(original_index, string, str, true /* set is_comment flag */ );
+                        // reset the index
+                        // move back 1 extra position to compensate for the 2 characters --> /*
+                        i = new_index(original_index) - 1;
                         l = string.length;
 
                         // unset flags
@@ -125,8 +122,12 @@ document.onreadystatechange = function() {
             // after the unmatched quote/comment chars so the parsing can continue as normal
             if ((i === (l - 1)) && flags.string_start) {
 
-                // reset the index to skip unmatched ending character
-                i = flags.string_start + 1;
+                // reset the index to skip unmatched ending character.
+                // the index will increase naturally when the new
+                // iteration begins. this will continue the loop where
+                // the unmatched quote was plus 1 position ahead, or the
+                // next charcters after the unmatched quote :)
+                i = flags.string_start;
                 // unset flags
                 flags.is.wrap = null;
                 flags.string_start = null;
@@ -142,13 +143,15 @@ document.onreadystatechange = function() {
         ///////////////////////////
         ///////////////////////////
 
+        console.log("string-->" + string);
+
         // distinguish between selectors and code blocks
         for (var i = 0, l = string.length; i < l; i++) {
-            // console.log(i);
             // cache the current character in loop
             var char = string.charAt(i),
                 char_code = char.charCodeAt(0);
             var cb = null;
+
             // look out for these characters: @, {, }, /*, */
 
             // if (-~["`", " ", "\"", "'"].indexOf(char)) {
@@ -159,6 +162,7 @@ document.onreadystatechange = function() {
                 continue;
                 // if (i === -1) break; // used to stop infinite loop while debugging
             }
+
             // check for atsigns
             if (char_code === 64) { // character: @
 
@@ -222,9 +226,14 @@ document.onreadystatechange = function() {
                         var next_index = (brace_indices.length) ? Math.min.apply(null, brace_indices) : null;
                         // get the last brace index from stored brace indices
                         var last_index = brace_indices_track[brace_indices_track.length - 1];
+
+                        // increment index by 1 as we do not want to get the opening brace
+                        // only want what is bwteen the beaces
+                        var between_text_index = last_index + 1;
+
                         // the text between the last and next brace points. depending on the braces
                         // this could be a selector (simple "s" or complex "@":"x") or a CSS code block
-                        var text_between = string.substring((last_index + 1), next_index);
+                        var text_between = string.substring(between_text_index, next_index);
 
                         // get the brace character using the last and next index points
                         var first_brace = string.charAt(last_index);
@@ -249,10 +258,13 @@ document.onreadystatechange = function() {
                             // add to array
                             flags.parts.push([text_between, "block"]);
                             // placehold block
-                            string = placehold(i + 1, string, text_between);
+                            string = placehold(between_text_index, string, text_between);
                             // reset length and index
-                            i = ((last_index + 1) + counter_to_string());
+                            i = new_index(between_text_index);
                             l = string.length;
+
+                            // placehold block
+                            // string = placehold(between_text_index, string, text_between);
 
                         } else if (first_brace === "}" && last_brace === "{") { // end of code block, start of new code block
                             // leave alone dont do anything
@@ -307,16 +319,20 @@ document.onreadystatechange = function() {
                 // finally, get selector from CSS string
                 var selector = string.substring(((prev_index) ? (prev_index + 1) : 0), i);
 
+                // increment index by 1 as we do not want to get the opening brace
+                // only want what is bwteen the beaces
+                var between_text_index = i + 1;
+
                 // get the CSS code block by using the current index + 1 as the start
                 // and the closing brace index as the end point
-                var text_between = string.substring((i + 1), string.indexOf("}", (i + 1)));
+                var text_between = string.substring(between_text_index, string.indexOf("}", (i + 1)));
 
                 // add to array
                 flags.parts.push([text_between, "block"]);
                 // placehold block
-                string = placehold((i + 1), string, text_between);
+                string = placehold(between_text_index, string, text_between);
                 // reset length and index
-                i = ((i + 1) + counter_to_string());
+                i = new_index(between_text_index);
                 l = string.length;
 
             }
@@ -346,417 +362,54 @@ document.onreadystatechange = function() {
 
         function parser(string, mode, flags) {
 
-            // console.log("parsing!!", mode);
-
-            // flags
-            var is_decimal = false;
-            var is_mode_selector = (mode === "selectors");
-
+            // loop over string
             for (var i = 0, l = string.length; i < l; i++) {
-
-                if (i === -1) break; // used to stop infinite loop while debugging
 
                 // cache the current character
                 var char = string.charAt(i),
                     prev_char = string.charAt(i - 1),
                     next_char = string.charAt(i + 1);
 
-                // skip current iteration on these characters
-                if (-~["`", " ", "\"", "'", "{", "}"].indexOf(char)) {
-                    // fast forward index on ticks, as they are the placeholders
-                    // theresore...set loop index to character after the ending tick
-                    if (char === "`") i = string.indexOf("`", i + 1);
-                    // skip to next loop iteration
-                    continue;
+                // console.log("<<<<<<<<<<<<<<<<<<<<<<", i, char);
 
-                } else if (char === "@" && is_mode_selector) { // atrule
+                if (char === "@") { // atrule
 
                     // get the forward index
                     var findex = forward(i, string, /[^a-z\-]/i);
                     // get the fastforwarded string
-                    var atrule = string.substring(i, findex);
-
-                    var prefix = "";
-                    // check for possible browser prefix
-                    if (atrule.charAt(1) === "-") {
-                        // get the second hyphen index
-                        var hyphen_index = atrule.indexOf("-", 2);
-                        // get/set the prefix
-                        prefix = atrule.substring(2, hyphen_index);
-                        // reset the atrule
-                        atrule = "@" + atrule.substring(hyphen_index + 1, atrule.length);
-                        // check if atrule is valid...if not reset back to empty
-                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
-                            prefix = "";
-                            atrule = ""; // purposely invalidate atrule
-                        }
-                    }
-
-                    // check if string is in allowed atrules
-                    if (-~atrules.indexOf(atrule.slice(1).toLowerCase())) {
-
-                        // if a prefix is present...reset atrule back to normal
-                        if (prefix) atrule = ("@-" + prefix + "-" + atrule.slice(1));
-
-                        // add to array
-                        flags.parts.push([atrule, "atrule"]);
-                        // placehold function
-                        string = placehold(i, string, atrule);
-                        // reset length and index
-                        i = i + counter_to_string();
-                        l = string.length;
-
-                    }
-
-                } else if (char === "(") { // function
-
-                    // get the reverse index
-                    var rindex = reverse(i, string, /[^a-z-]/i);
-                    // get the fastforwarded string
-                    var fn = string.substring(rindex, i);
-
-                    var prefix = "";
-                    // check for possible browser prefix
-                    if (fn.charAt(0) === "-") {
-                        // get the second hyphen index
-                        var hyphen_index = fn.indexOf("-", 1);
-                        // get/set the prefix
-                        prefix = fn.substring(1, hyphen_index);
-                        // reset the fn
-                        fn = fn.substring(hyphen_index + 1, fn.length);
-                        // check if fn is valid...if not reset back to empty
-                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
-                            prefix = "";
-                            fn = ""; // purposely invalidate fn
-                        }
-                    }
-
-                    // check if string is in allowed functions
-                    if (-~functions.indexOf(fn.replace(/\($/, "").toLowerCase())) {
-
-                        // if a prefix is present...reset fn back to normal
-                        if (prefix) fn = ("-" + prefix + "-" + fn);
-
-                        // add to array
-                        flags.parts.push([fn, "function"]);
-                        // placehold function
-                        string = placehold(rindex, string, fn);
-                        // reset length and index
-                        i = rindex + counter_to_string();
-                        l = string.length;
-
-                    }
-
-                } else if (char === ":") { // keywords
-
-                    // if the next char after the current colon is anything
-                    // but a letter it must be skipped. this is done to cover
-                    // the use of double colons like ::after. the keyword "after"
-                    // will get picked up on the next iteration.
-                    if (/[^a-z\-]/i.test(next_char)) continue;
-
-                    // get the forward index
-                    var findex = forward(i, string, /[^a-z\-]/i);
-                    // get the fastforwarded string
-                    var keyword = string.substring(i, findex);
-
-                    var prefix = "";
-                    // check for possible browser prefix
-                    if (keyword.charAt(1) === "-") {
-                        // get the second hyphen index
-                        var hyphen_index = keyword.indexOf("-", 2);
-                        // get/set the prefix
-                        prefix = keyword.substring(2, hyphen_index);
-                        // reset the keyword
-                        keyword = ":" + keyword.substring(hyphen_index + 1, keyword.length);
-                        // check if keyword is valid...if not reset back to empty
-                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
-                            prefix = "";
-                            keyword = ""; // purposely invalidate keyword
-                        }
-                    }
-
-                    // check if string is in allowed keywords
-                    if (-~keywords.indexOf(keyword.toLowerCase())) {
-
-                        // if a prefix is present...reset keyword back to normal
-                        if (prefix) keyword = (":-" + prefix + "-" + keyword.slice(1));
-
-                        i++; // increase index to not include the starting colon
-                        // remove starting colon if present
-                        keyword = keyword.replace(/^:/g, "");
-
-                        // add to array
-                        flags.parts.push([keyword, "keyword"]);
-                        // placehold keyword
-                        string = placehold(i, string, keyword);
-                        // reset length and index
-                        i = i + counter_to_string();
-                        l = string.length;
-
-                    }
-
-                } else if (-~operators.indexOf(char)) { // operators
-
-                    // check if the next character is an equal sign
-                    var operator = string.substring(i, (i + ((next_char === "=") ? 2 : 1)));
-
-                    // only add to list if operator is in list
-                    if (-~operators.indexOf(char)) {
-
-                        // add the string to array
-                        flags.parts.push([operator, "operator"]);
-                        // placehold operator
-                        string = placehold(i, string, operator);
-                        // reset length and index
-                        i = ((i - 1) + counter_to_string());
-                        l = string.length;
-
-                    }
-
-                } else if (/[0-9]/.test(char)) { // numbers(doubles, integers, floats, units)
-
-                    var unit = null;
-                    // look ahead and only get the numbers
-                    for (var j = i + 1; j < l; j++) {
-                        var fchar = string.charAt(j);
-                        // if anything else than a number..check for potential unit
-                        if (/[^0-9]/.test(fchar)) {
-                            // now search for the unit if there...
-                            for (var k = j + 1; k < l; k++) {
-                                var ffchar = string.charAt(k);
-                                if (/[^a-z]/i.test(ffchar)) {
-                                    // get the unit
-                                    unit = string.substring(j, k);
-                                    // check if unit is allowed..else set to null
-                                    if (!-~units.indexOf(unit)) unit = null;
-                                    break;
-                                }
-                            }
-                            // continue on the dot character as the number is a double (decimal)
-                            if (fchar !== ".") break; // anything but a number breaks loop
-                        }
-                    }
-
-                    // check for negative sign(s)...max 2 negative signs w/ number
-                    var negative_index = reverse(i, string, /[^\-]/);
-                    if (i !== negative_index) { // negative number found
-                        // needs to be cut off after 2 negative signs
-                        if ((i - negative_index) > 2) {
-                            // reset negative_index index to only 2 negative signs
-                            negative_index = (i - 2);
-                        }
-                        // reset the index to negative sign index...this will include the
-                        // negative sign as part of the number
-                        i = negative_index;
-                    }
-
-                    // if the is_decimal flag is set, set during the class,id if check block,
-                    // the index needs to be set back by 1 position to include the dot with the
-                    // number. this will, in turn, get the decimal number.
-                    var decimal_sub = (is_decimal ? 1 : 0);
-                    // is_decimal flag no longer needed, only needed for previous check
-                    if (is_decimal) is_decimal = false;
-
-                    // get the number
-                    var number = string.substring(i - decimal_sub, j);
-
+                    var atrule = string.substring(i, (findex + include_last_char));
                     // add to array
-                    flags.parts.push([number, "number"]);
-                    // placehold number
-                    string = placehold((i - decimal_sub), string, number);
-                    // reset length and index
-                    i = (i + counter_to_string());
+                    flags.parts.push([atrule, "atrule"]);
+                    // placehold atrule
+                    string = placehold(i, string, atrule);
+                    // reset the index
+                    i = new_index(i);
                     l = string.length;
-
-                    // if there is a unit add it to array, placehold, and reset index
-                    if (unit) {
-
-                        // add to array
-                        flags.parts.push([unit, "unit"]);
-                        // placehold unit
-                        string = placehold(i, string, unit);
-                        // reset length and index
-                        i = (i + counter_to_string());
-                        l = string.length;
-
-                    }
-
-                } else if ((char === "#" || char === ".") && is_mode_selector) { // class,id
-
-                    // get the forward index
-                    var findex = forward(i, string, /[^a-z0-9\-_]/);
-                    // get the fastforwarded string
-                    var selector = string.substring(i, findex);
-
-                    // http://stackoverflow.com/questions/2812072/allowed-characters-for-css-identifiers/2812097#2812097
-                    // selector cannot start with a number or hyphen then number
-                    if (/[0-9]/.test(selector.charAt(1))) continue;
-                    // selector cannot start with hyphen then number
-                    if (selector.charAt(1) === "_" && /[0-9]/.test(selector.charAt(2))) continue;
-
-                    // if the first character after the dot or hash is number skip
-                    // the current iteration and set is_decimal flag. this will cause
-                    // the next iteration to pick up with the number and run the number
-                    // if check logic block.
-                    if (char === "." && /[0-9]/.test(selector.charAt(1))) {
-                        // set flag. flag is used in conjunction with the number if check
-                        is_decimal = true;
-                        continue;
-                    }
-
-                    // because classes and ids are variable and cannot check if they are
-                    // in a list just check that the string is not empty
-                    if (selector.slice(1) !== "") {
-
-                        // add to array
-                        flags.parts.push([selector, ((char === "#") ? "id" : "class")]);
-                        // placehold selector
-                        string = placehold(i, string, selector);
-                        // reset length and index
-                        i = ((i - 1) + counter_to_string());
-                        l = string.length;
-
-                    }
-
-                } else if (char === "#" && !is_mode_selector) { // hexcolors
-
-                    // get the forward index
-                    var findex = forward(i, string, /[^a-f0-9]/i);
-                    // get the fastforwarded string
-                    var hexcolor = string.substring(i, findex);
-
-                    // hexcolor must be either 3, 6, 8 hexadecimal characters in length
-                    if (-~[3, 6, 8].indexOf(hexcolor.length - 1)) {
-
-                        // add to array
-                        flags.parts.push([hexcolor, "hexcolor"]);
-                        // placehold hexcolor
-                        string = placehold(i, string, hexcolor);
-                        // reset length and index
-                        i = ((i - 1) + counter_to_string());
-                        l = string.length;
-
-                    }
-
-                } else if (/[a-z\-_]/i.test(char) && is_mode_selector) { // tags
-
-                    // get the forward index
-                    var findex = forward(i, string, /[^a-z\-_]/i);
-                    // get the fastforwarded string
-                    var str = string.substring(i, findex);
-
-                    // 1: check that if the previous character is not a letter
-                    // for example, in the word "this" the letter s will be
-                    // considered a tag element. this will prevent this case.
-                    // likewise, for the property "-webkit-box" the x will be
-                    // detected but because it is part of a word we must skip it
-                    // 2, 3: skip if word is an attribute or a function
-                    // attributes are left default color (black) and functions
-                    // are handled in their own if check
-                    if ( /*1,2*/ /[^\s\}]/i.test(prev_char) || /*3*/ string.charAt(findex) === "(") {
-                        // reset the index
-                        i = findex - 1;
-                        continue;
-                    }
-
-                    // only add to list if tag is in list
-                    if (-~tags.indexOf(str)) {
-
-                        // add to array
-                        flags.parts.push([str, "tag"]);
-                        // placehold str
-                        string = placehold(i, string, str);
-                        // reset length and index
-                        i = ((i - 1) + counter_to_string());
-                        l = string.length;
-
-                    }
-
-                } else if (/[a-z\-_]/i.test(char) && !is_mode_selector) { // properties,colornames
-
-                    // get the forward index
-                    var findex = forward(i, string, /[^a-z\-_]/i);
-                    // get the fastforwarded string
-                    var str = string.substring(i, findex);
-
-                    // 1: check that if the previous character is not a letter
-                    // for example, in the word "this" the letter s will be
-                    // considered a tag element. this will prevent this case.
-                    // likewise, for the property "-webkit-box" the x will be
-                    // detected but because it is part of a word we must skip it
-                    // 2, 3: skip if word is an attribute or a function
-                    // attributes are left default color (black) and functions
-                    // are handled in their own if check
-                    if ( /*1,2*/ /[^\s\}]/i.test(prev_char) || /*3*/ string.charAt(findex) === "(") {
-                        // reset the index
-                        i = findex - 1;
-                        continue;
-                    }
-
-                    var type = null;
-                    // check what if string is a property or colorname
-                    var is_prefixed = (str.charAt(0) === "-");
-                    if (is_prefixed || (!is_prefixed && -~properties.indexOf(str))) {
-
-                        // non prefixed property is valid
-                        type = "property";
-                        // if prefixed validate prefix
-                        if (is_prefixed) {
-                            // prefix present..check if valid
-                            var hyphen_index = str.indexOf("-", 1);
-                            var prefix = str.substring(1, hyphen_index);
-                            var property = str.substring(hyphen_index + 1, str.length);
-                            // check whether prefix and property is valid
-                            if (!-~prefixes.indexOf(prefix) || !-~properties.indexOf(property)) {
-                                // did not pass validation
-                                type = null;
-                            }
-                        }
-
-                        // finally, property name must be followed by a colon
-                        // get the forward index
-                        var ffindex = forward(findex, string, /[^\:\s]/);
-                        // get the fastforwarded string
-                        var colon = string.substring(findex, ffindex).trim();
-
-                        // purposely invalidate
-                        if (colon !== ":") type = null;
-
-                    } else if (-~colornames.indexOf(str)) {
-                        type = "colorname";
-                    }
-
-                    // only add if it is a colorname or property
-                    if (type) {
-
-                        // add to array
-                        flags.parts.push([str, type]);
-                        // placehold str
-                        string = placehold(i, string, str);
-                        // reset length and index
-                        i = ((i - 1) + counter_to_string());
-                        l = string.length;
-
-                    }
 
                 }
 
             }
 
-            // return the parsed string
-            return string;
+            // return string without the added initial padding
+            return string.replace(/^\s{1}|\s{1}$/g, "");;
+        }
 
+        function new_index(index) {
+            var new_position = (index + (flags.counter.toString().length + 2));
+            // however, it needs to be decreased by 1 as it naturally gets
+            // incremented after every iteration. therefore, leaving it as it
+            // would forward it one position, or character.
+            return (new_position - 1);
         }
 
         function counter_to_string() {
             return (flags.counter.toString().length + 2);
         }
 
-        function placehold(index, string, str) {
-            var start = string.substring(0, index);
+        function placehold(index, string, str, is_comment) {
+            var start = string.substring(0, (!is_comment ? index : (index - 1)));
             var placeholder = "`" + (++flags.counter) + "`";
-            var end = string.substring((index + str.length), string.length);
+            var end = string.substring((index + (!is_comment ? str.length : (str.length - 1))), string.length);
             // reset the string with the placeholder
             return (start + placeholder + end);
         }
@@ -777,27 +430,20 @@ document.onreadystatechange = function() {
         function forward(index, string, pattern) {
             // fastforward until anything pattern is false
             for (var i = index + 1; i < string.length; i++) {
-                if (pattern.test(string.charAt(i))) return i;
+                // remove 1 from index to not include the character that
+                // broke the pattern. we do not want that character
+                if (pattern.test(string.charAt(i))) return i - 1;
             }
             // else return the provided index
             return index;
         }
-
+        console.log("string: \"" + string + "\"");
         // remove place holders with HTML
         return string.replace(/`\d+`/g, function() {
             var info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
             var type = info[1]
             var string;
-            // console.log(type);
-            if (type === "block") {
-                // parse the string with mode=block
-                string = parser(info[0], "code_blocks", flags).replace(/`\d+`/g, function() {
-                    var block_info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
-                    return "<span class=\"lang-css-" + block_info[1] + "\">" + block_info[0] + "</span>";
-                });
-            } else {
-                string = "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
-            }
+            string = "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
             return string;
         });
 
