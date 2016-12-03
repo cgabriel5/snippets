@@ -11,9 +11,9 @@ document.onreadystatechange = function() {
     function colorizer(string) {
 
         // universal: strings, comments
-        // selector: selectors(class, id, tags), numbers, units, atrules, functions?, keywords
+        // selector: selectors(class, id, tags), numbers, units, atrules, functions?, pseudos
         // property: properties
-        // value: hexcolors, numbers, units, functions, keywords, colornames
+        // value: hexcolors, numbers, units, functions, pseudos, colornames
 
         var flags = {
             ////////////////////
@@ -147,6 +147,9 @@ document.onreadystatechange = function() {
 
         // distinguish between selectors and code blocks
         for (var i = 0, l = string.length; i < l; i++) {
+
+            if (i === -1) break; // used to stop infinite loop while debugging
+
             // cache the current character in loop
             var char = string.charAt(i),
                 char_code = char.charCodeAt(0);
@@ -160,7 +163,6 @@ document.onreadystatechange = function() {
             if (char === "`") {
                 i = string.indexOf("`", i + 1);
                 continue;
-                // if (i === -1) break; // used to stop infinite loop while debugging
             }
 
             // check for atsigns
@@ -187,11 +189,8 @@ document.onreadystatechange = function() {
                     // get the index of the opening brace + set the brace_open flag
                     flags.open.brace = string.indexOf("{", (i + 1));
 
-                    if (flags.open.brace === -1) {
-                        // prevent an infinite loop
-                        // console.log("no open brace!!");
-                        continue;
-                    }
+                    // there is no open brace...prevent an infinite loop and continue;
+                    if (flags.open.brace === -1) continue;
 
                     // set the atsign flag
                     flags.atsign = i;
@@ -345,22 +344,35 @@ document.onreadystatechange = function() {
         var functions = ["alpha", "annotation", "attr", "blur", "brightness", "calc", "character-variant", "circle", "contrast", "counter", "cross-fade", "cubic-bezier", "drop-shadow", "element", "ellipse", "fit-content", "format", "grayscale", "hsl", "hsla", "hue-rotate", "image", "image-set", "inset", "invert", "leader", "linear-gradient", "local", "matrix", "matrix3d", "minmax", "opacity", "ornaments", "perspective", "polygon", "radial-gradient", "rect", "repeat", "repeating-linear-gradient", "repeating-radial-gradient", "rgb", "rgba", "rotate", "rotate3d", "rotatex", "rotatey", "rotatez", "saturate", "scale", "scale3d", "scalex", "scaley", "scalez", "sepia", "skew", "skewx", "skewy", "steps", "styleset", "stylistic", "swash", "symbols", "target-counter", "target-counters", "target-text", "translate", "translate3d", "translatex", "translatey", "translatez", "url", "var", "dir", "lang", "not", "nth-child", "nth-last-child", "nth-last-of-type", "nth-of-type"];
         var tags = ["body", "html", "img", "base", "head", "link", "meta", "style", "title", "address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4", "h5", "h6", "hgroup", "nav", "section", "dd", "div", "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre", "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn", "em", "i", "kbd", "mark", "q", "rp", "rt", "rtc", "ruby", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", "area", "audio", "map", "track", "video", "embed", "object", "param", "source", "canvas", "noscript", "script", "del", "ins", "caption", "col", "colgroup", "table", "tbody", "td", "tfoot", "th", "thead", "tr", "button", "datalist", "fieldset", "form", "input", "label", "legend", "meter", "optgroup", "option", "output", "progress", "select", "textarea", "details", "dialog", "menu", "menuitem", "summary", "content", "element", "shadow", "template", "acronym", "applet", "basefont", "big", "blink", "center", "command", "content", "dir", "font", "frame", "frameset", "isindex", "keygen", "listing", "marquee", "multicol", "nextid", "noembed", "plaintext", "spacer", "strike", "tt", "xmp"];
         // https://developer.mozilla.org/en-US/docs/Web/CSS/time
-        var units = ["em", "ex", "%", "px", "cm", "mm", "in", "pt", "pc", "ch", "rem", "vh", "vw", "vmin", "vmax", "s", "ms"];
+        var units = ["deg", "em", "ex", "%", "px", "cm", "mm", "in", "pt", "pc", "ch", "rem", "vh", "vw", "vmin", "vmax", "s", "ms"];
         // @-rules https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule
         var atrules = ["charset", "import", "namespace", "media", "supports", "document", "page", "font-face", "keyframes", "viewport", "counter-style", "font-feature-values", "swash", "ornaments", "annotation", "stylistic", "styleset", "character-variant"];
         // http://www.w3schools.com/cssref/css_selectors.asp
-        var operators = ["~", "*", "=", ">", "+", "|", "^", "$", "~=", "|=", "^=", "$=", "*="];
-        var keywords = ["!important", ":active", ":after", ":before", ":checked", ":disabled", ":empty", ":enabled", ":first-child", ":first-letter", ":first-line", ":first-of-type", ":focus", ":hover", ":in-range", ":invalid", ":last-child", ":last-of-type", ":link", ":only-of-type", ":only-child", ":optional", ":out-of-range", ":read-only", ":read-write", ":required", ":root", ":selection", ":target", ":valid", ":visited"];
+        var operators = ["~", "*", "=", ">", "+", "|", "^", "$", "~=", "|=", "^=", "$=", "*="];;
+        // unique array: http://stackoverflow.com/questions/1960473/unique-values-in-an-array/39272981#39272981
+        // a = a.filter(function (x, i, a_) { return a_.indexOf(x) == i; });
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
+        var pseudos = ["!important", ":active", ":after", ":before", ":checked", ":disabled", ":empty", ":enabled", ":first-child", ":first-letter", ":first-line", ":first-of-type", ":focus", ":hover", ":in-range", ":invalid", ":last-child", ":last-of-type", ":link", ":only-of-type", ":only-child", ":optional", ":out-of-range", ":read-only", ":read-write", ":required", ":root", ":selection", ":target", ":valid", ":visited", ":any", ":default", ":first", ":fullscreen", ":indeterminate", ":left", ":right", ":scope"];
         // css property list: http://www.blooberry.com/indexdot/css/propindex/all.htm
         // unique array: http://stackoverflow.com/questions/6940103/how-do-i-make-an-array-with-unique-elements-i-e-remove-duplicates/23282067#23282067
         var properties = ["accelerator", "azimuth", "background", "background-attachment", "background-color", "background-image", "background-position", "background-position-x", "background-position-y", "background-repeat", "behavior", "border", "border-bottom", "border-bottom-color", "border-bottom-style", "border-bottom-width", "border-collapse", "border-color", "border-left", "border-left-color", "border-left-style", "border-left-width", "border-right", "border-right-color", "border-right-style", "border-right-width", "border-spacing", "border-style", "border-top", "border-top-color", "border-top-style", "border-top-width", "border-width", "bottom", "caption-side", "clear", "clip", "color", "content", "counter-increment", "counter-reset", "cue", "cue-after", "cue-before", "cursor", "direction", "display", "elevation", "empty-cells", "filter", "float", "font", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "height", "ime-mode", "include-source", "layer-background-color", "layer-background-image", "layout-flow", "layout-grid", "layout-grid-char", "layout-grid-char-spacing", "layout-grid-line", "layout-grid-mode", "layout-grid-type", "left", "letter-spacing", "line-break", "line-height", "list-style", "list-style-image", "list-style-position", "list-style-type", "margin", "margin-bottom", "margin-left", "margin-right", "margin-top", "marker-offset", "marks", "max-height", "max-width", "min-height", "min-width", "-moz-binding", "-moz-border-radius", "-moz-border-radius-topleft", "-moz-border-radius-topright", "-moz-border-radius-bottomright", "-moz-border-radius-bottomleft", "-moz-border-top-colors", "-moz-border-right-colors", "-moz-border-bottom-colors", "-moz-border-left-colors", "-moz-opacity", "-moz-outline", "-moz-outline-color", "-moz-outline-style", "-moz-outline-width", "-moz-user-focus", "-moz-user-input", "-moz-user-modify", "-moz-user-select", "orphans", "outline", "outline-color", "outline-style", "outline-width", "overflow", "overflow-X", "overflow-Y", "padding", "padding-bottom", "padding-left", "padding-right", "padding-top", "page", "page-break-after", "page-break-before", "page-break-inside", "pause", "pause-after", "pause-before", "pitch", "pitch-range", "play-during", "position", "quotes", "-replace", "richness", "right", "ruby-align", "ruby-overhang", "ruby-position", "-set-link-source", "size", "speak", "speak-header", "speak-numeral", "speak-punctuation", "speech-rate", "stress", "scrollbar-arrow-color", "scrollbar-base-color", "scrollbar-dark-shadow-color", "scrollbar-face-color", "scrollbar-highlight-color", "scrollbar-shadow-color", "scrollbar-3d-light-color", "scrollbar-track-color", "table-layout", "text-align", "text-align-last", "text-decoration", "text-indent", "text-justify", "text-overflow", "text-shadow", "text-transform", "text-autospace", "text-kashida-space", "text-underline-position", "top", "unicode-bidi", "-use-link-source", "vertical-align", "visibility", "voice-family", "volume", "white-space", "widows", "width", "word-break", "word-spacing", "word-wrap", "writing-mode", "z-index", "zoom", "animation-delay", "animation-direction", "animation-duration", "animation-fill-mode", "animation-iteration-count", "animation-name", "animation-play-state", "animation-timing-function", "background-blend-mode", "background-clip", "background-origin", "background-size", "border-radius", "border-bottom-left-radius", "border-bottom-right-radius", "border-image-outset", "border-image-repeat", "border-image-slice", "border-image-source", "border-image-width", "border-top-left-radius", "border-top-right-radius", "box-shadow", "box-sizing", "break-after", "break-before", "break-inside", "font-kerning", "font-variant-ligatures", "font-variant-caps", "font-variant-numeric", "image-rendering", "isolation", "mix-blend-mode", "motion-offset", "motion-path", "motion-rotation", "object-fit", "object-position", "opacity", "outline-offset", "overflow-wrap", "overflow-x", "overflow-y", "pointer-events", "resize", "tab-size", "text-rendering", "text-size-adjust", "touch-action", "transition-delay", "transition-duration", "transition-property", "transition-timing-function", "will-change", "appearance", "backface-visibility", "border-horizontal-spacing", "border-image", "border-vertical-spacing", "box-align", "box-decoration-break", "box-direction", "box-flex", "box-flex-group", "box-lines", "box-ordinal-group", "box-orient", "box-pack", "box-reflect", "clip-path", "column-count", "column-gap", "column-rule-color", "column-rule-style", "column-rule-width", "column-span", "column-width", "align-content", "align-items", "align-self", "flex-flow", "flex-basis", "flex-grow", "flex-shrink", "flex-direction", "flex-wrap", "flex-pack", "flex-line-pack", "flex-align", "flex-order", "justify-content", "font-smoothing", "highlight", "hyphens", "hyphenate-character", "line-clamp", "locale", "margin-before-collapse", "margin-after-collapse", "mask-box-image", "mask-box-image-outset", "mask-box-image-repeat", "mask-box-image-slice", "mask-box-image-source", "mask-box-image-width", "mask-clip", "mask-composite", "mask-image", "mask-origin", "mask-position", "mask-repeat", "mask-size", "order", "perspective", "perspective-origin", "print-color-adjust", "rtl-ordering", "shape-outside", "shape-image-threshold", "shape-margin", "tap-highlight-color", "text-combine", "text-decorations-in-effect", "text-emphasis-color", "text-emphasis-position", "text-emphasis-style", "text-fill-color", "text-orientation", "text-security", "text-stroke-color", "text-stroke-width", "transform", "transform-origin", "transform-style", "user-drag", "user-modify", "user-select", "app-region", "buffered-rendering", "clip-rule", "mask", "flood-color", "flood-opacity", "lighting-color", "stop-color", "stop-opacity", "color-interpolation", "color-interpolation-filters", "color-rendering", "fill", "fill-opacity", "fill-rule", "marker-end", "marker-mid", "marker-start", "mask-type", "shape-rendering", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "alignment-baseline", "baseline-shift", "dominant-baseline", "text-anchor", "vector-effect", "paint-order", "d", "cx", "cy", "x", "y", "r", "rx", "ry", "touch-callout"];
+        // http://www.w3schools.com/cssref/css_websafe_fonts.asp
+        // https://www.granneman.com/webdev/coding/css/fonts-and-formatting/web-browser-font-defaults/
+        var fonts = ["Georgia", "Times", "serif", "sans-serif", "Arial", "Helvetica", "cursive", "Impact", "Tahoma", "Verdana", "Courier", "monospace"];
+        // http://www.w3schools.com/cssref/css3_pr_mediaquery.asp
+        var media_types = ["all", "aural", "braille", "embossed", "handheld", "print", "projection", "screen", "speech", "tty", "tv"];
+        var media_features = ["aspect-ratio", "color", "color-index", "device-aspect-ratio", "device-height", "device-width", "grid", "height", "max-aspect-ratio", "max-color", "max-color-index", "max-device-aspect-ratio", "max-device-height", "max-device-width", "max-height", "max-monochrome", "max-resolution", "max-width", "min-aspect-ratio", "min-color", "min-color-index", "min-device-aspect-ratio", "min-device-width", "min-device-height", "min-height", "min-monochrome", "min-resolution", "min-width", "monochrome", "orientation", "overflow-block", "overflow-inline", "resolution", "scan", "update-frequency", "width"];
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries
+        var media_logicals = ["and", "not", "only"];
 
-        // console.log(">>>", string);
-        string = parser(string, "selectors", flags);
-
-        // string = parser(string, "code_blocks");
+        // parse string only highliting the selectors
+        string = parser(string, "selector", flags);
 
         function parser(string, mode, flags) {
+
+            // modes=selector|property|x-property-value
+
+            // console.log("parsing: ", string);
 
             // loop over string
             for (var i = 0, l = string.length; i < l; i++) {
@@ -370,46 +382,580 @@ document.onreadystatechange = function() {
                     prev_char = string.charAt(i - 1),
                     next_char = string.charAt(i + 1);
 
-                console.log("<<<<<<<<<<<<<<<<<<<<<<", i, char);
+                // console.log(mode, string, "<<<<<<<<<<<<<<<<<<<<<<", i, char);
 
-                if (char === "@") { // atrule
+                // skip current iteration on these characters
+                if (-~["`", " ", "\"", "'", "{", "}"].indexOf(char)) {
+                    // fast forward index on ticks, as they are the placeholders
+                    // theresore...set loop index to character after the ending tick
+                    if (char === "`") i = string.indexOf("`", i + 1);
+                    // skip to next loop iteration
+                    continue;
+
+                } else if (char === "@" && -~["selector"].indexOf(mode)) { // atrules
 
                     // get the forward index
                     var findex = forward(i, string, /[^a-z\-]/i);
                     // get the fastforwarded string
                     var atrule = string.substring(i, (findex + include_last_char));
-                    // add to array
-                    flags.parts.push([atrule, "atrule"]);
-                    // placehold atrule
-                    string = placehold(i, string, atrule);
-                    // reset the index
-                    i = new_index(i);
-                    l = string.length;
 
-                } else if (char === "(") { // function
+                    var prefix = "";
+                    // check for possible browser prefix
+                    if (atrule.charAt(1) === "-") {
+                        // get the second hyphen index
+                        var hyphen_index = atrule.indexOf("-", 2);
+                        // get/set the prefix
+                        prefix = atrule.substring(2, hyphen_index);
+                        // reset the atrule
+                        atrule = "@" + atrule.substring(hyphen_index + 1, atrule.length);
+                        // check if atrule is valid...if not reset back to empty
+                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                            prefix = "";
+                            atrule = ""; // purposely invalidate atrule
+                        }
+                    }
+
+                    // check if string is in allowed atrules
+                    if (-~atrules.indexOf(atrule.slice(1).toLowerCase())) {
+
+                        // if a prefix is present...reset atrule back to normal
+                        if (prefix) atrule = ("@-" + prefix + "-" + atrule.slice(1));
+
+                        // add to array
+                        flags.parts.push([atrule, "atrule"]);
+                        // placehold atrule
+                        string = placehold(i, string, atrule);
+                        // reset the index
+                        i = new_index(i);
+                        l = string.length;
+
+                    }
+
+                } else if (char === "(" && -~["selector", "x-property-value"].indexOf(mode)) { // functions
 
                     // get the reverse index
                     var rindex = reverse(i, string, /[^a-z-]/i);
                     // get the fastforwarded string
                     var fn = string.substring(rindex, i);
-                    // add to array
-                    flags.parts.push([fn, "function"]);
-                    // placehold function
-                    string = placehold(rindex, string, fn);
-                    // reset the index
-                    // add 1 to rindex to pick up after the open parenthesis
-                    // not adding 1 will cause an infinite loop as it starts
-                    // on the open parenthesis...triggering the function if
-                    // check again and again...
-                    i = new_index(rindex + 1);
-                    l = string.length;
+
+                    // console.log("????????", fn);
+
+                    var prefix = "";
+                    // check for possible browser prefix
+                    if (fn.charAt(0) === "-") {
+                        // console.log("???pre");
+                        // get the second hyphen index
+                        var hyphen_index = fn.indexOf("-", 1);
+                        // get/set the prefix
+                        prefix = fn.substring(1, hyphen_index);
+                        // reset the fn
+                        fn = fn.substring(hyphen_index + 1, fn.length);
+                        // check if fn is valid...if not reset back to empty
+                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                            prefix = "";
+                            fn = ""; // purposely invalidate fn
+                        }
+                    }
+
+                    // console.log("????????", fn, prefix);
+
+                    // check if string is in allowed functions
+                    if (-~functions.indexOf(fn.replace(/\($/, "").toLowerCase())) {
+
+                        // if a prefix is present...reset fn back to normal
+                        if (prefix) fn = ("-" + prefix + "-" + fn);
+
+                        // add to array
+                        flags.parts.push([fn, "function"]);
+                        // placehold function
+                        string = placehold(rindex, string, fn);
+                        // reset the index
+                        // add 1 to rindex to pick up after the open parenthesis
+                        // not adding 1 will cause an infinite loop as it starts
+                        // on the open parenthesis...triggering the function if
+                        // check again and again...
+                        i = new_index(rindex + 1);
+                        l = string.length;
+
+                    }
+
+                } else if (char === ":" && -~["selector", "x-property-value"].indexOf(mode)) { // pseudos
+
+                    // if the next char after the current colon is anything
+                    // but a letter it must be skipped. this is done to cover
+                    // the use of double colons like ::after. the pseudo "after"
+                    // will get picked up on the next iteration.
+                    if (/[^a-z\-]/i.test(next_char)) continue;
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z\-]/i);
+                    // get the fastforwarded string
+                    var pseudo = string.substring(i, (findex + include_last_char));
+
+                    var prefix = "";
+                    // check for possible browser prefix
+                    if (pseudo.charAt(1) === "-") {
+                        // get the second hyphen index
+                        var hyphen_index = pseudo.indexOf("-", 2);
+                        // get/set the prefix
+                        prefix = pseudo.substring(2, hyphen_index);
+                        // reset the pseudo
+                        pseudo = ":" + pseudo.substring(hyphen_index + 1, pseudo.length);
+                        // check if pseudo is valid...if not reset back to empty
+                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                            prefix = "";
+                            pseudo = ""; // purposely invalidate pseudo
+                        }
+                    }
+
+                    // check if string is in allowed pseudos
+                    if (-~pseudos.indexOf(pseudo.toLowerCase())) {
+
+                        // if a prefix is present...reset pseudo back to normal
+                        if (prefix) pseudo = (":-" + prefix + "-" + pseudo.slice(1));
+
+                        i++; // increase index to not include the starting colon
+                        // remove starting colon if present
+                        pseudo = pseudo.replace(/^:/g, "");
+
+                        // add to array
+                        flags.parts.push([pseudo, "pseudo"]);
+                        // placehold pseudo
+                        string = placehold(i, string, pseudo);
+                        // reset the index
+                        i = new_index(i);
+                        l = string.length;
+
+                    }
+
+                } else if (-~operators.indexOf(char) && -~["selector", "x-property-value"].indexOf(mode)) { // operators
+
+                    // check if the next character is an equal sign
+                    var operator = string.substring(i, (i + ((next_char === "=") ? 2 : 1)));
+
+                    // check if double operator is valid...
+                    // if not reset it back to a single operator
+                    if (operator.length === 2) {
+                        // check if operator is allowed
+                        if (!-~operators.indexOf(operator)) {
+                            // if not reset it back to the single operator
+                            operator = string.substring(i, (i + 1));
+                        }
+                    }
+
+                    // only add to list if operator is in list
+                    if (-~operators.indexOf(operator)) {
+
+                        // add the string to array
+                        flags.parts.push([operator, "operator"]);
+                        // placehold operator
+                        string = placehold(i, string, operator);
+                        // reset length and index
+                        i = new_index(i);
+                        l = string.length;
+
+                    }
+
+                } else if (char === "-" && -~["selector", "x-property-value"].indexOf(mode)) { // potential number/prefixed property
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^0-9\.\-]/i);
+                    // get the fastforwarded string
+                    var str = string.substring(i, (findex + include_last_char));
+
+                    // potential number
+                    if (str && str.length > 1 && /[^a-z]/i.test(str.charAt(1))) {
+
+                        // console.log("????????????????????????????---", str);
+
+                        var minus_count = str.split("-").length - 1;
+                        // skip if more than 2 consecutive minus signs in a row
+                        if (minus_count > 2) continue;
+                        var dot_count = str.split(".").length - 1;
+                        // skip if more than 2 consecutive minus signs in a row
+                        if (dot_count > 1) {
+                            // cut string off at second dot
+                            var parts = str.split(".");
+                            // only want the first 2 parts
+                            str = parts[0] + "." + parts[1];
+                        }
+                        // skip if no numbers are contained
+                        if (!/[0-9]/.test(str)) continue;
+
+                        // add to array
+                        flags.parts.push([str, "number"]);
+                        // placehold number
+                        string = placehold(i, string, str);
+                        // reset the index
+                        i = new_index(i);
+                        l = string.length;
+
+                        // increase the index to the next iteration character
+                        // to check for possible unit
+                        i++;
+
+                        // get the forward index
+                        var findex = forward((i), string, /[^a-z]/i);
+                        // get the fastforwarded string
+                        var unit = string.substring((i), (findex + include_last_char));
+
+                        if (-~units.indexOf(unit)) {
+
+                            // add to array
+                            flags.parts.push([unit, "unit"]);
+                            // placehold unit
+                            string = placehold(i, string, unit);
+                            // reset the index
+                            i = new_index(i);
+                            l = string.length;
+
+                        } else {
+                            // if no unit found move index back prior to check
+                            i--;
+                        }
+
+                    } else if (mode === "x-property-value") {
+
+                        // get the forward index
+                        var findex = forward(i, string, /[^a-z\-]/i);
+                        // get the fastforwarded string
+                        var str = string.substring(i, (findex + include_last_char));
+
+                        var prefix = "";
+                        // check for possible browser prefix
+                        if (str.charAt(0) === "-") {
+                            // get the second hyphen index
+                            var hyphen_index = str.indexOf("-", 1);
+                            // get/set the prefix
+                            prefix = str.substring(1, hyphen_index);
+                            // reset the str
+                            str = str.substring(hyphen_index + 1, str.length);
+                            // check if str is valid...if not reset back to empty
+                            if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                                prefix = "";
+                                str = ""; // purposely invalidate str
+                            }
+                        }
+
+                        // skip if word is an attribute or a function
+                        // attributes are left default color (black) and functions
+                        // are handled in their own if check
+                        // ** check for function prefix also???
+                        if ((string.charAt(findex + include_last_char) === "(" && -~functions.indexOf(str.toLowerCase()))) {
+                            // reset the index so that the next iteration it starts at the parenthesis
+                            // character so that it triggers the if function logic check
+                            // console.log("function");
+                            i = findex;
+                            continue;
+                        }
+
+                        // console.log("????????????????????????????---", str, prefix);
+
+                        // check if string is in allowed strs
+                        if (str.length > 1) {
+
+                            // if a prefix is present...reset str back to normal
+                            if (prefix) str = ("-" + prefix + "-" + str);
+
+                            // add to array
+                            flags.parts.push([str, "x-property-value"]);
+                            // placehold str
+                            string = placehold(i, string, str);
+                            // reset the index
+                            i = new_index(i);
+                            l = string.length;
+
+                        }
+
+                    }
+
+                } else if (char === "-" && -~["property"].indexOf(mode)) { // prefixed property/word
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z\-]/i);
+                    // get the fastforwarded string
+                    var str = string.substring(i, (findex + include_last_char));
+
+                    var prefix = "";
+                    // check for possible browser prefix
+                    if (str.charAt(0) === "-") {
+                        // get the second hyphen index
+                        var hyphen_index = str.indexOf("-", 1);
+                        // get/set the prefix
+                        prefix = str.substring(1, hyphen_index);
+                        // reset the str
+                        str = str.substring(hyphen_index + 1, str.length);
+                        // check if str is valid...if not reset back to empty
+                        if (!-~prefixes.indexOf(prefix.toLowerCase())) {
+                            prefix = "";
+                            str = ""; // purposely invalidate str
+                        }
+                    }
+
+                    // check if string is in allowed strs
+                    if (-~properties.indexOf(str)) {
+
+                        // if a prefix is present...reset str back to normal
+                        if (prefix) str = ("-" + prefix + "-" + str);
+
+                        // add to array
+                        flags.parts.push([str, "property"]);
+                        // placehold str
+                        string = placehold(i, string, str);
+                        // reset the index
+                        i = new_index(i);
+                        l = string.length;
+
+                    }
+
+                } else if (char === "." && -~["selector", "x-property-value"].indexOf(mode)) { // potential number/class
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^0-9]/i);
+                    // get the fastforwarded string
+                    var str = string.substring(i, (findex + include_last_char));
+
+                    // potential number
+                    // has to be more than the dot
+                    if (str.length > 1) {
+
+                        // add to array
+                        flags.parts.push([str, "number"]);
+                        // placehold number
+                        string = placehold(i, string, str);
+                        // reset the index
+                        i = new_index(i);
+                        l = string.length;
+
+                        // increase the index to the next iteration character
+                        // to check for possible unit
+                        i++;
+
+                        // get the forward index
+                        var findex = forward((i), string, /[^a-z]/i);
+                        // get the fastforwarded string
+                        var unit = string.substring((i), (findex + include_last_char));
+
+                        if (-~units.indexOf(unit)) {
+
+                            // add to array
+                            flags.parts.push([unit, "unit"]);
+                            // placehold unit
+                            string = placehold(i, string, unit);
+                            // reset the index
+                            i = new_index(i);
+                            l = string.length;
+
+                        } else {
+                            // if no unit found move index back prior to check
+                            i--;
+                        }
+
+                    } else { // potential class
+
+                        // get the forward index
+                        var findex = forward(i, string, /[^a-z0-9\-_]/);
+                        // get the fastforwarded string
+                        var selector = string.substring(i, (findex + include_last_char));
+
+                        // http://stackoverflow.com/questions/2812072/allowed-characters-for-css-identifiers/2812097#2812097
+                        // selector cannot start with a number or hyphen then number
+                        if (/[0-9]/.test(selector.charAt(1))) continue;
+                        // selector cannot start with hyphen then number
+                        if (selector.charAt(1) === "_" && /[0-9]/.test(selector.charAt(2))) continue;
+
+                        // if the first character after the dot or hash is number skip
+                        // the current iteration and set is_decimal flag. this will cause
+                        // the next iteration to pick up with the number and run the number
+                        // if check logic block.
+                        if (char === "." && /[0-9]/.test(selector.charAt(1))) continue;
+
+                        // check if string is in allowed ids
+                        if (selector.length > 1) {
+
+                            // add to array
+                            flags.parts.push([selector, "class"]);
+                            // placehold selector
+                            string = placehold(i, string, selector);
+                            // reset the index
+                            i = new_index(i);
+                            l = string.length;
+
+                        }
+
+                    }
+
+                } else if (/[0-9]/.test(char) && -~["selector", "x-property-value"].indexOf(mode)) { // potential number([negative] doubles, integers, floats, units)
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^0-9\.]/i);
+                    // get the fastforwarded string
+                    var str = string.substring(i, (findex + include_last_char));
+
+                    // potential number
+                    if (str) {
+
+                        var dot_count = str.split(".").length - 1;
+                        // skip if more than 2 consecutive minus signs in a row
+                        if (dot_count > 1) continue;
+                        // skip if no numbers are contained
+                        if (!/[0-9]/.test(str)) continue;
+
+                        // add to array
+                        flags.parts.push([str, "number"]);
+                        // placehold number
+                        string = placehold(i, string, str);
+                        // reset the index
+                        i = new_index(i);
+                        l = string.length;
+
+                        // increase the index to the next iteration character
+                        // to check for possible unit
+                        i++;
+
+                        // get the forward index
+                        var findex = forward((i), string, /[^a-z]/i);
+                        // get the fastforwarded string
+                        var unit = string.substring((i), (findex + include_last_char));
+
+                        if (-~units.indexOf(unit)) {
+
+                            // add to array
+                            flags.parts.push([unit, "unit"]);
+                            // placehold unit
+                            string = placehold(i, string, unit);
+                            // reset the index
+                            i = new_index(i);
+                            l = string.length;
+
+                        } else {
+                            // if no unit found move index back prior to check
+                            i--;
+                        }
+
+                    }
+
+                } else if (char === "#" && -~["selector", "x-property-value"].indexOf(mode)) { // ids/hexcolors
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z0-9\-_]/);
+                    // get the fastforwarded string
+                    var str = string.substring(i, (findex + include_last_char));
+
+                    // // if the first character after the dot or hash is number skip
+                    // // the current iteration and set is_decimal flag. this will cause
+                    // // the next iteration to pick up with the number and run the number
+                    // // if check logic block.
+                    // if (char === "." && /[0-9]/.test(str.charAt(1))) continue;
+
+                    // check if string is in allowed ids
+                    if (str.length > 1) {
+
+                        // hexcolor must be either 3, 6, 8 hexadecimal characters in length
+                        if (!/[^a-f0-9]/.test(str.slice(1)) && -~[3, 6, 8].indexOf(str.length - 1)) {
+
+                            // add to array
+                            flags.parts.push([str, "hexcolor"]);
+                            // placehold str
+                            string = placehold(i, string, str);
+                            // reset the index
+                            i = new_index(i);
+                            l = string.length;
+
+                        } else { // else the string is a hex
+
+                            // http://stackoverflow.com/questions/2812072/allowed-characters-for-css-identifiers/2812097#2812097
+                            // str cannot start with a number or hyphen then number
+                            if (/[0-9]/.test(str.charAt(1))) continue;
+                            // str cannot start with hyphen then number
+                            if (str.charAt(1) === "_" && /[0-9]/.test(str.charAt(2))) continue;
+
+                            // add to array
+                            flags.parts.push([str, "id"]);
+                            // placehold str
+                            string = placehold(i, string, str);
+                            // reset the index
+                            i = new_index(i);
+                            l = string.length;
+                        }
+
+                    }
+
+                } else if (/[a-z]/i.test(char) && -~["selector", "property", "x-property-value"].indexOf(mode)) { // tags
+
+                    // get the forward index
+                    var findex = forward(i, string, /[^a-z0-9\-]/i);
+                    // get the fastforwarded string
+                    var str = string.substring(i, (findex + include_last_char));
+
+                    // the word must be a type, determined below, to by highlighted
+                    var type = null;
+
+                    // skip if word is an attribute or a function
+                    // attributes are left default color (black) and functions
+                    // are handled in their own if check
+                    if ((string.charAt(findex + include_last_char) === "(" && -~functions.indexOf(str.toLowerCase()))) {
+                        // reset the index so that the next iteration it starts at the parenthesis
+                        // character so that it triggers the if function logic check
+                        i = findex;
+                        continue;
+                    }
+
+                    // check if string is in allowed tags
+                    // check that if the previous character is not a letter
+                    // for example, in the word "this" the letter s will be
+                    // considered a tag element. this will prevent this case.
+                    // likewise, for the property "-webkit-box" the x will be
+                    // detected but because it is part of a word we must skip it
+                    if (-~tags.indexOf(str) && /[^a-z]/i.test(prev_char) && mode === "selector") {
+                        type = "tag";
+                        // check for colornames, fonts, media-types|features|logcials,
+                        // properties...all of which do not have any numbers
+                    } else if (/[^0-9]/.test(str)) {
+                        if (mode === "property") {
+                            if (-~properties.indexOf(str) && mode === "property") {
+                                type = "property";
+                                // console.log("is a property>>>>>>>>>>", str);
+
+                            }
+                        } else {
+                            if (-~fonts.indexOf(str)) {
+                                type = "font";
+                            } else if (-~colornames.indexOf(str)) {
+                                type = "colorname";
+                            } else if (-~media_types.indexOf(str)) {
+                                type = "media-type";
+                            } else if (-~media_features.indexOf(str)) {
+                                type = "media-feature";
+                            } else if (-~media_logicals.indexOf(str)) {
+                                type = "media-logical";
+                            } else if (mode === "x-property-value") {
+                                type = "x-property-value";
+                            }
+                        }
+                    }
+
+                    if (type) {
+
+                        // add to array
+                        flags.parts.push([str, type]);
+                        // placehold tag
+                        string = placehold(i, string, str);
+                        // reset the index
+                        i = new_index(i);
+                        l = string.length;
+
+                    }
 
                 }
 
             }
 
+            // console.log("parts", flags.parts);
+
             // return string without the added initial padding
-            return string.replace(/^\s{1}|\s{1}$/g, "");;
+            return string.replace(/^\s{1}|\s{1}$/g, "");
+
         }
 
         function new_index(index) {
@@ -455,15 +1001,72 @@ document.onreadystatechange = function() {
             // else return the provided index
             return index;
         }
-        console.log("string: \"" + string + "\"");
+
         // remove place holders with HTML
         return string.replace(/`\d+`/g, function() {
             var info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
             var type = info[1]
             var string;
-            string = "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
+            // console.log(type);
+            if (type === "block") {
+
+                // string = "";
+                // get the code block
+                var block = info[0];
+
+                // count the number of semicolons
+                var semicolon_count = block.split(";").length - 1;
+
+                // split into declarations
+                var declarations = block.split(";");
+
+                // var has_last_semicolon = (declarations[declarations.length - 1]).trim() === "";
+                // console.log(">>count", semicolon_count, declarations.length, declarations, has_last_semicolon);
+                // console.log("has last semicolon", has_last_semicolon);
+
+                var build = [];
+
+                // loop over declarations
+                for (var i = 0, l = declarations.length; i < l; i++) {
+                    // cache each declaration
+                    var declaration = declarations[i];
+                    // split into property and value
+                    var colon_index = declaration.indexOf(":");
+                    var prop = declaration.substring(0, colon_index + 1);
+                    var value = declaration.substring(colon_index + 1, declaration.length);
+
+                    // add terminator to all except the last one
+                    if (i !== (l - 1)) value += ";";
+
+                    build.push(parser((" " + prop + " "), "property", flags) + parser((" " + value + " "), "x-property-value", flags));
+
+                }
+
+                string = build.join("").replace(/`\d+`/g, function() {
+                    var block_info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
+                    return "<span class=\"lang-css-" + block_info[1] + "\">" + block_info[0] + "</span>";
+                });
+
+                // console.log(string);
+
+                // string = parser(block, "code_blocks", flags).replace(/`\d+`/g, function() {
+                //     var block_info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
+                //     return "<span class=\"lang-css-" + block_info[1] + "\">" + block_info[0] + "</span>";
+                // });
+            } else {
+                string = "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
+            }
             return string;
         });
+
+        // // console.log("string: \"" + string + "\"");
+        // // return string;
+        // // remove place holders with HTML
+        // return string.replace(/`\d+`/g, function() {
+        //     var info = flags.parts[(arguments[0].replace(/`/g, "") * 1)];
+        //     var type = info[1]
+        //     return "<span class=\"lang-css-" + info[1] + "\">" + info[0] + "</span>";
+        // });
 
     }
 
