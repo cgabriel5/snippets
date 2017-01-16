@@ -1,26 +1,56 @@
 // contain app frame within an IIFE
 (function(window) {
 
-    // set the global variable
-    window.app = {};
+    // lay the app frame
+    // set the global var
+    window.app = {
+        // DOM elements
+        "$$": {},
+        // app event handlers
+        "events": {},
+        // global variables container
+        "globals": {
+            "flags": {},
+            "CONSTANTS": {}
+        },
+        "libs": {},
+        "queue": [],
+        // reusable app functions/methods
+        "utils": {}
+    };
 
-    // set the ready function
-    app.ready = function(fn, mode) {
+    // cache the app global
+    var app = window.app;
 
-        // set the main function to run later
-        app.main = (fn || undefined);
-        // set the app run mode
-        app.mode = (mode || "complete");
+    // add a module to load
+    app.module = function(module_name, module, mode) {
+
+        // add the module to the queue
+        app.queue.push([module_name, module, (mode || "complete")]);
+
+    };
+
+    // app module invoker
+    app.invoke = function(mode) {
+
+        // loop over modules
+        app.queue.forEach(function(module) {
+
+            // run the module if the mode matches
+            if (module[2] === mode) module[1].call(app, app, (app[module[0] || undefined]));
+
+        });
 
     };
 
     // cleanup the app variable
     app.cleanup = function() {
 
-        // remove unneeded properties
-        delete app.main;
-        delete app.mode;
-        delete app.ready;
+        // remove unneeded properties once
+        // the app has loaded
+        delete app.queue;
+        delete app.module;
+        delete app.invoke;
         delete app.cleanup;
 
     };
@@ -49,53 +79,19 @@
         // user is able to interact with page.
         if (document.readyState === "interactive") {
 
-            // lay the app frame
-
-            // global variables container
-            app.globals = {
-                "flags": {},
-                "CONSTANTS": {}
-            };
-
-            // reusable app functions/methods
-            app.utils = {};
-
-            // DOM elements
-            app.$$ = {
-                "doc": document,
-                "body": document.body
-            };
-
-            // app event handlers
-            app.events = {};
-
-            // set the app var to the global scope
-            app = app;
-
-            // init the app if mode set to interactive
-            if (app.main && app.mode === "interactive") {
-
-                // init the app
-                app.main.call(app, app);
-                // cleanup app var
-                app.cleanup();
-
-            }
+            // invoke the modules set to mode interactive
+            app.invoke("interactive");
 
         }
 
         // all resources have loaded (document + subresources)
         if (document.readyState === "complete") {
 
-            // init the app if mode set to complete
-            if (app.main && app.mode === "complete") {
+            // invoke the modules set to mode complete
+            app.invoke("complete");
 
-                // init the app
-                app.main.call(app, app);
-                // cleanup app var
-                app.cleanup();
-
-            }
+            // cleanup app var once everything is loaded
+            app.cleanup();
 
         }
 
