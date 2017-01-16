@@ -12,7 +12,7 @@ function dtype(object, comparative) {
         .replace(/(\[object |\])/g, "")
         .toLowerCase();
     return (!comparative) ? check : (check === comparative.toLowerCase());
-};
+}
 
 // usage
 dtype("this is a string"); // string
