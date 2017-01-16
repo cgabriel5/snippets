@@ -1,7 +1,7 @@
 /**
  * @description [A class wrapper. Creates a class based on provided object containing class constructor__ and methods__.
  *               If class needs to extend another, provide it under the extend__ property.]
- * @param  {Object} cobject [The class object containg three properties: constructor__, methods__, and extend__.
+ * @param  {Object} cobject [The class object containing three properties: constructor__, methods__, and extend__.
  *                           .constructor__ {Function}       [The class constructor]
  *                           .methods__     {Object}         [Object containing class methods.]
  *                           .extend__      {Boolean|Object} [Set to false if does not need to extend. Otherwise, provide the
