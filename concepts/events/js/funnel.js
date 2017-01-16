@@ -1,4 +1,5 @@
 (function() {
+
     "use strict";
 
     var funneljs = (function() {
@@ -38,6 +39,21 @@
             // loop through ALO and pushing items into true_array
             for (var i = 0, l = alo.length; i < l; i++) true_array.push(alo[i]);
             return true_array;
+        }
+        /**
+         * @description [Returns the data type of the object passed or compares against the data type
+         *               if provided.]
+         * @param  {Any} object         [The object to check.]
+         * @param  {String} comparative [The data type to compare against. This parameter is optional.]
+         * @return {String|Boolean}     [The data type of the object as a string. Or a boolean
+         *                               indicating the state of the comparison.]
+         */
+        function dtype(object, comparative) {
+            // will always return something like "[object {type}]"
+            var check = Object.prototype.toString.call(object)
+                .replace(/(\[object |\])/g, "")
+                .toLowerCase();
+            return (!comparative) ? check : (check === comparative.toLowerCase());
         }
         /**
          * @description [Checks if the supplied arrays have any items in common, or intersect.]
@@ -230,22 +246,26 @@
                 // this, the next time around, puts the arguments inside an array and therefore the following
                 // time the arguments are accesses they are messed up. This check looks to find whether the
                 // new keyword was recursively used. If so, the true arguments are reset to args[1].
-                var is_recursive = (args[0] === true && Object.prototype.toString.call(args[1]) === "[object Arguments]");
+                var is_recursive = (args[0] === true && dtype(args[1], "arguments"));
 
                 // get elements from source points
                 var points = to_array(is_recursive ? args[1] : args),
                     elements = [],
+                    data_type,
                     point, parts, cid;
 
-                if (Object.prototype.toString.call(points) === "[object Array]") {
-                    // reset the elements
-                    elements = points;
-                } else {
+                // loop over all source points, get descendants is :all is supplied
+                for (var i = 0, l = points.length; i < l; i++) {
 
-                    // loop over all source points, get descendants is :all is supplied
-                    for (var i = 0, l = points.length; i < l; i++) {
-                        // cache the current source point, i.e. -> #red:all
-                        point = points[i].trim();
+                    // cache the current source point, i.e. -> #red:all or DOMElement
+                    point = points[i];
+                    // get the data type of the point
+                    data_type = dtype(point);
+
+                    // check whether the point is a string or an element
+                    if (data_type === "string") {
+
+                        point = point.trim();
                         parts = point.split(":"); // -> ["#red", "all"]
                         cid = document.getElementById(parts[0].replace(/^\#/, ""));
                         if (!cid) continue; // no element with ID found...skip iteration
@@ -254,6 +274,18 @@
                         if (!parts[1]) elements = elements.concat([cid]);
                         // else apply the filter and add all returned (filtered) elements to array
                         else elements = elements.concat(to_array(this[parts[1]]([cid]))); // i.e. -> this.all()
+
+                    } else if (/^html/.test(data_type)) { // the point is a DOMElement
+
+                        // **Note: the selector can also take in raw element nodes (elements)
+                        // it can take N amount of DOM nodes. for example, using
+                        // Google Chrome's console this is a valid use case:
+                        // var a = funneljs($0, $1); Where $<number> represents an element from
+                        // the DOM. what is $0? => {https://willd.me/posts/0-in-chrome-dev-tools}
+
+                        // add the element point to the elements array
+                        elements = elements.concat([point]);
+
                     }
                 }
                 // add object properties
@@ -923,7 +955,7 @@
 
         });
 
-        // return selector to add to glocal scope later...
+        // return selector to add to global scope later...
         return Selector;
 
     })();
