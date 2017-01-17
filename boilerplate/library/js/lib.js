@@ -93,6 +93,8 @@
 
         }
 
+        // =============================== Core Library Functions
+
         // =============================== Library Class
 
         var Library = class__({
