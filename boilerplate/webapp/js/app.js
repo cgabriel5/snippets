@@ -20,12 +20,20 @@ document.onreadystatechange = function() {
 
     // document loaded and parsed. however, still loading subresources
     // user is able to interact with page.
-    if (document.readyState == "interactive") init_app();
+    if (document.readyState == "interactive") {
+
+        // app logic...
+
+    }
 
     // or...
 
     // all resources have loaded (document + subresources)
-    if (document.readyState == "complete") init_app();
+    if (document.readyState == "complete") {
+
+        // app logic...
+
+    }
 
     // good explanation with images:
     // https://varvy.com/performance/document-ready-state.html
