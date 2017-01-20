@@ -2,7 +2,7 @@
 
     "use strict";
 
-    var libraryjs = (function() {
+    var library = (function() {
 
         // =============================== Helper Functions
 
@@ -124,7 +124,17 @@
 
     })();
 
+    // =============================== Global Library Functions/Methods/Vars
+
+    // =============================== Attach Library To Global Scope
+
     // add to global scope for ease of use
-    window.libraryjs = libraryjs;
+    // use global app var or create it if not present
+    var app = (window.app || (window.app = {}));
+    // get the libs object from within the app object
+    // if it does not exist create it
+    var libs = (app.libs || (app.libs = {}));
+    // add the library to the libs object
+    libs.YOUR_LIB_NAME = library;
 
 })();
