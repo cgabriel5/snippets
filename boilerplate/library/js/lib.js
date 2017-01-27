@@ -50,20 +50,43 @@
             return true_array;
         }
         /**
-         * @description [Returns the data type of the object passed or compares against the data type
-         *               if provided.]
-         * @param  {Any} object         [The object to check.]
-         * @param  {String} comparative [The data type to compare against. This parameter is optional.]
-         * @return {String|Boolean}     [The data type of the object as a string. Or a boolean
-         *                               indicating the state of the comparison.]
+         * @description [Returns the data type of the provided object.]
+         * @param  {Any} object [The object to check.]
+         * @return {String}    [The data type of the checked object.]
          */
-        function dtype(object, comparative) {
+        var dtype = function(object) {
             // will always return something like "[object {type}]"
-            var check = Object.prototype.toString.call(object)
+            return Object.prototype.toString.call(object)
                 .replace(/(\[object |\])/g, "")
                 .toLowerCase();
-            return (!comparative) ? check : (check === comparative.toLowerCase());
-        }
+        };
+        /**
+         * @description [Check if the provided object is of the provided data types.]
+         * @param  {Any} object [The object to check.]
+         * @param  {String}  types  [The allowed data type the object may be.]
+         * @return {Boolean}        [Boolean indicating whether the object is of the
+         *                           allowed data types.]
+         */
+        dtype.is = function(object, types) {
+            // get the object type
+            var type = this(object);
+            // prepare the types
+            types = "|" + types.toLowerCase().trim() + "|";
+            // check if the object's type is in the list
+            return Boolean((-~types.indexOf("|" + type + "|")));
+        };
+        /**
+         * @description [Check if the provided object is not of the provided data types.]
+         * @param  {Any} object [The object to check.]
+         * @param  {String}  types  [The prohibited data types.]
+         * @return {Boolean}        [Boolean indicating whether the object is not of the
+         *                           allowed data types.]
+         */
+        dtype.isnot = function(object, types) {
+            // get the object type
+            var type = this(object);
+            return !(this.is(object, types));
+        };
         /**
          * @description [A class wrapper. Creates a class based on provided object containing class constructor__ and methods__.
          *               If class needs to extend another, provide it under the extend__ property.]
