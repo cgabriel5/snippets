@@ -32,8 +32,7 @@ dtype.is = function(object, types) {
  *                           allowed data types.]
  */
 dtype.isnot = function(object, types) {
-    // get the object type
-    var type = this(object);
+    // return the inverse of the is method
     return !(this.is(object, types));
 };
 
