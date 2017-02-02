@@ -22,7 +22,7 @@ function debounce(func, time, scope, run_immediately) {
                 func.apply(context, args);
             }
             timeout = null;
-        };
+        }
         if (timeout) {
             clearTimeout(timeout);
         } else if (run_immediately) {
