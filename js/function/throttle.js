@@ -7,12 +7,11 @@
  * @source {https://remysharp.com/2010/07/21/throttling-function-calls}
  */
 function throttle(func, time, scope) {
-    time || (time = 250);
-    var last,
-        deferTimer;
+    time = (time || 250);
+    var last, deferTimer;
     return function() {
-        var context = (scope || this);
-        var now = +new Date,
+        var context = (scope || this),
+            now = +new Date(),
             args = arguments;
         if (last && now < last + time) {
             // hold on to it
