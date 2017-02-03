@@ -37,6 +37,14 @@
             return -~index(iterable, value);
         }
         /**
+         * @description [Checks if the provided index exists.]
+         * @param  {Number} index [The index (number) to check.]
+         * @return {Boolean}       [False if -1. Otherwise, true.]
+         */
+        function indexed(index) {
+            return (-~index ? true : false);
+        }
+        /**
          * @description [Makes an Array from an array like object (ALO). ALO must have a length property
          *               for it to work.]
          * @param  {ALO} alo [The ALO.]
