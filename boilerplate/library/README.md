@@ -10,8 +10,10 @@ Library description.
 ##### Table of Contents
 
 [What It Does](#what-it-does)  
+[What It Does Not Do](#what-it-does-not-do)  
 [Add To Project](#add-to-project)  
 [Access Library](#access-library)  
+[How It Works](#how-it-works)  
 [Instance Creation](#instance-creation)  
 [API](#api)  
 * [Global](#global-api)
@@ -32,6 +34,11 @@ Library description.
 
 * What the library does.
 
+<a name="what-it-does-not-do"></a>
+### What It Does Not Do
+
+* The library does not...
+
 <a name="add-to-project"></a>
 ### Add To Project
 
@@ -45,6 +52,11 @@ Library description.
 ```js
 var Library = window.app.libs.Library;
 ```
+
+<a name="how-it-works"></a>
+### How It Works
+
+Library works by...
 
 <a name="instance-creation"></a>
 ### Instance Creation
