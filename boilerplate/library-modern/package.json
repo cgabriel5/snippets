@@ -1,0 +1,30 @@
+{
+    "name": "library-name",
+    "version": "1.0.0",
+    "description": "Library description...",
+    "main": "index.html",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/{{GIT_USER_ID}}/portfolio.git"
+    },
+    "author": "{{FULL_NAME}} <{{EMAIL}}> (https://github.com/{{GIT_USER_ID}})",
+    "license": "UNLICENSED",
+    "bugs": {
+        "url": "https://github.com/{{GIT_USER_ID}}/portfolio/issues"
+    },
+    "homepage": "https://github.com/{{GIT_USER_ID}}/portfolio#readme",
+    "private": true,
+    "devDependencies": {
+        "autoprefixer": "^6.7.7",
+        "grunt": "^1.0.1",
+        "grunt-contrib-concat": "^1.0.1",
+        "grunt-contrib-copy": "^1.0.0",
+        "grunt-contrib-cssmin": "^2.0.0",
+        "grunt-contrib-uglify": "^2.3.0",
+        "grunt-contrib-watch": "^1.0.0",
+        "grunt-postcss": "^0.8.0"
+    }
+}
