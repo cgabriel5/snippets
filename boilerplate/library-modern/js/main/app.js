@@ -2,9 +2,7 @@
 // the readystatechange event is fired when the readyState attribute of a
 // document has changed
 document.onreadystatechange = function() {
-
     "use strict";
-
     /* [functions.utils] */
 
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
@@ -21,21 +19,16 @@ document.onreadystatechange = function() {
     // document loaded and parsed. however, still loading subresources
     // user is able to interact with page.
     if (document.readyState == "interactive") {
-
         // app logic...
-
     }
 
     // or...
 
     // all resources have loaded (document + subresources)
     if (document.readyState == "complete") {
-
         // app logic...
-
     }
 
     // good explanation with images:
     // https://varvy.com/performance/document-ready-state.html
-
 };

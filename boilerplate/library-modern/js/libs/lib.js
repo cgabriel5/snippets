@@ -1,9 +1,6 @@
 (function() {
-
     "use strict";
-
     var library = (function() {
-
         // =============================== Helper Functions
 
         /**
@@ -42,7 +39,7 @@
          * @return {Boolean}       [False if -1. Otherwise, true.]
          */
         function indexed(index) {
-            return (-~index ? true : false);
+            return -~index ? true : false;
         }
         /**
          * @description [Makes an Array from an array like object (ALO). ALO must have a length property
@@ -54,7 +51,8 @@
             // vars
             var true_array = [];
             // loop through ALO and pushing items into true_array
-            for (var i = 0, l = alo.length; i < l; i++) true_array.push(alo[i]);
+            for (var i = 0, l = alo.length; i < l; i++)
+                true_array.push(alo[i]);
             return true_array;
         }
         /**
@@ -64,7 +62,8 @@
          */
         var dtype = function(object) {
             // will always return something like "[object {type}]"
-            return Object.prototype.toString.call(object)
+            return Object.prototype.toString
+                .call(object)
                 .replace(/(\[object |\])/g, "")
                 .toLowerCase();
         };
@@ -81,7 +80,7 @@
             // prepare the types
             types = "|" + types.toLowerCase().trim() + "|";
             // check if the object's type is in the list
-            return Boolean((-~types.indexOf("|" + type + "|")));
+            return Boolean(-~types.indexOf("|" + type + "|"));
         };
         /**
          * @description [Check if the provided object is not of the provided data types.]
@@ -92,7 +91,7 @@
          */
         dtype.isnot = function(object, types) {
             // return the inverse of the is method
-            return !(this.is(object, types));
+            return !this.is(object, types);
         };
         /**
          * @description [A class wrapper. Creates a class based on provided object containing class constructor__ and methods__.
@@ -106,7 +105,6 @@
          * @return {Function}         [Returns class constructor.]
          */
         function class__(cobject) {
-
             // cache class data
             var constructor = cobject.constructor__,
                 methods = cobject.methods__,
@@ -129,7 +127,6 @@
             }
 
             return constructor;
-
         }
 
         // =============================== Core Library Functions
@@ -137,30 +134,25 @@
         // =============================== Library Class
 
         var Library = class__({
-
             // class constructor
-            "constructor__": function() {
-
+            constructor__: function() {
                 // cache arguments object
                 var args = arguments;
 
                 // if user does not invoke library with new keyword we use it for them by
                 // returning a new instance of the library with the new keyword.
                 if (!(this instanceof Library)) return new Library();
-
             },
 
             // class methods
-            "methods__": {},
+            methods__: {},
 
             // class to extend
-            "extend__": false
-
+            extend__: false
         });
 
         // return library to add to global scope later...
         return Library;
-
     })();
 
     // =============================== Global Library Functions/Methods/Vars
@@ -169,11 +161,10 @@
 
     // add to global scope for ease of use
     // use global app var or create it if not present
-    var app = (window.app || (window.app = {}));
+    var app = window.app || (window.app = {});
     // get the libs object from within the app object
     // if it does not exist create it
-    var libs = (app.libs || (app.libs = {}));
+    var libs = app.libs || (app.libs = {});
     // add the library to the libs object
     libs.YOUR_LIB_NAME = library;
-
 })();
