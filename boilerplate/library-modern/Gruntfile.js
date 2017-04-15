@@ -8,6 +8,43 @@ module.exports = function(grunt) {
     // read the package.json file
     var pkg = require("./package.json");
 
+    /**
+     * @description [Replaces substrings in index.html.]
+     * @param  {String} content [The content of index.html.]
+     * @param  {Object} pkg     [Object containing package.json info.]
+     * @param  {String} type    [String denoting whether it's the main or dist replacement.]
+     * @return {String}         [The string with new replacements.]
+     */
+    function indexhtml_text_replacements(content, pkg, type) {
+        // replace source paths
+        var base_dict = {
+            "{{APPLICATION_TITLE}}": pkg.name,
+            "{{APPLICATION_DESCRIPTION}}": pkg.description
+        },
+            main_dict = {
+                "css/main/app.css": "css/min/app.min.css",
+                "js/libs/main/lib.dev-build.js": "js/libs/main/lib.min.js",
+                "js/main/app.js": "js/main/app.min.js"
+            };
+        // merge dictionaries when the type is `dist`
+        if (type === "dist") {
+            base_dict = Object.assign(base_dict, main_dict);
+        }
+        // build the regexp
+        var regexp_string = [];
+        for (var path in base_dict) {
+            if (base_dict.hasOwnProperty(path)) {
+                regexp_string.push(path);
+            }
+        }
+        regexp_string = regexp_string.join("|");
+        var patterns = new RegExp(regexp_string, "gm");
+        return content.replace(patterns, function(match) {
+            var replacement = base_dict[match];
+            return replacement ? replacement : match;
+        });
+    }
+
     // 1. Configuration
     grunt.initConfig({
         // help: [https://docs.npmjs.com/files/package.json]
@@ -16,32 +53,29 @@ module.exports = function(grunt) {
         // copy [https://www.npmjs.com/package/grunt-contrib-copy]
         // $ npm install grunt-contrib-copy --save-dev
         copy: {
-            index: {
+            indexmain: {
+                src: "index.html",
+                dest: "index.html",
+                options: {
+                    process: function(content, srcpath) {
+                        return indexhtml_text_replacements(
+                            content,
+                            pkg,
+                            "main"
+                        );
+                    }
+                }
+            },
+            indexdist: {
                 src: "index.html",
                 dest: "dist/",
                 options: {
                     process: function(content, srcpath) {
-                        // replace source paths
-                        var lookup = {
-                            "css/main/app.css": "css/min/app.min.css",
-                            "js/libs/main/lib.dev-build.js": "js/libs/main/lib.min.js",
-                            "js/main/app.js": "js/main/app.min.js",
-                            "{{APPLICATION_TITLE}}": pkg.name,
-                            "{{APPLICATION_DESCRIPTION}}": pkg.description
-                        };
-                        // build the regexp
-                        var regexp_string = [];
-                        for (var path in lookup) {
-                            if (lookup.hasOwnProperty(path)) {
-                                regexp_string.push(path);
-                            }
-                        }
-                        regexp_string = regexp_string.join("|");
-                        var patterns = new RegExp(regexp_string, "gm");
-                        return content.replace(patterns, function(match) {
-                            var replacement = lookup[match];
-                            return replacement ? replacement : match;
-                        });
+                        return indexhtml_text_replacements(
+                            content,
+                            pkg,
+                            "dist"
+                        );
                     }
                 }
             },
@@ -204,7 +238,12 @@ module.exports = function(grunt) {
     // grunt.loadNpmTasks("grunt-newer");
 
     // 3. Register Task(s)
-    grunt.registerTask("dist", ["copy:index", "copy:cssimg", "copy:js"]);
+    grunt.registerTask("dist", [
+        "copy:indexmain",
+        "copy:indexdist",
+        "copy:cssimg",
+        "copy:js"
+    ]);
     grunt.registerTask("autoprefix", ["postcss:dist"]);
     grunt.registerTask("cssminify", ["cssmin"]);
     grunt.registerTask("concat-css", [
