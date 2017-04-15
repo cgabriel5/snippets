@@ -154,7 +154,6 @@
         // return library to add to global scope later...
         return Library;
     })();
-
     // =============================== Global Library Functions/Methods/Vars
 
     // =============================== Attach Library To Global Scope

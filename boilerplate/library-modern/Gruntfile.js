@@ -5,6 +5,8 @@ module.exports = function(grunt) {
     // [https://github.com/sindresorhus/time-grunt]
     // npm install time-grunt --save-dev
     require("time-grunt")(grunt);
+    // read the package.json file
+    var pkg = require("./package.json");
 
     // 1. Configuration
     grunt.initConfig({
@@ -14,22 +16,55 @@ module.exports = function(grunt) {
         // copy [https://www.npmjs.com/package/grunt-contrib-copy]
         // $ npm install grunt-contrib-copy --save-dev
         copy: {
-            main: {
-                files: [
-                    // copy root files
-                    {
-                        expand: true,
-                        src: ["index.html"],
-                        dest: "dist/",
-                        filter: "isFile"
-                    },
-                    // copy css
-                    {
-                        expand: true,
-                        src: ["css/**", "js/**", "img/**"],
-                        dest: "dist/"
+            index: {
+                src: "index.html",
+                dest: "dist/",
+                options: {
+                    process: function(content, srcpath) {
+                        // replace source paths
+                        var lookup = {
+                            "css/main/app.css": "css/min/app.min.css",
+                            "js/libs/main/lib.dev-build.js": "js/libs/main/lib.min.js",
+                            "js/main/app.js": "js/main/app.min.js",
+                            "{{APPLICATION_TITLE}}": pkg.name,
+                            "{{APPLICATION_DESCRIPTION}}": pkg.description
+                        };
+                        // build the regexp
+                        var regexp_string = [];
+                        for (var path in lookup) {
+                            if (lookup.hasOwnProperty(path)) {
+                                regexp_string.push(path);
+                            }
+                        }
+                        regexp_string = regexp_string.join("|");
+                        var patterns = new RegExp(regexp_string, "gm");
+                        return content.replace(patterns, function(match) {
+                            var replacement = lookup[match];
+                            return replacement ? replacement : match;
+                        });
                     }
-                ]
+                }
+            },
+            // copy folders
+            cssimg: {
+                expand: true,
+                src: ["css/**", "img/**"],
+                dest: "dist/"
+            },
+            // copy js folder
+            js: {
+                expand: true,
+                src: ["js/**", "!js/libs/main/parts/**"],
+                dest: "dist/",
+                rename: function(dest, src) {
+                    // [https://fettblog.eu/blog/2014/05/27/undocumented-features-rename/]
+                    // rename the build
+                    var name = dest + src;
+                    if (/dev-build.js$/.test(src)) {
+                        name = dest + src.replace(/.dev-build/, "");
+                    }
+                    return name;
+                }
             }
         },
         // autoprefix via postcss [https://github.com/nDmitry/grunt-postcss]
@@ -60,15 +95,6 @@ module.exports = function(grunt) {
                 ]
             }
         },
-        // minify js [https://www.npmjs.com/package/grunt-contrib-uglify]
-        // $ npm install grunt-contrib-uglify --save-dev
-        uglify: {
-            target: {
-                files: {
-                    "dist/js/main/app.min.js": ["dist/js/main/app.js"]
-                }
-            }
-        },
         // minify html [https://github.com/gruntjs/grunt-contrib-htmlmin]
         // $ npm install grunt-contrib-htmlmin --save-dev
         htmlmin: {
@@ -82,13 +108,21 @@ module.exports = function(grunt) {
                 },
                 files: {
                     // Dictionary of files
-                    "dist/index.html": "index.html"
+                    "dist/index.html": "dist/index.html"
                 }
             }
         },
         // concat js/css files: [https://www.npmjs.com/package/grunt-contrib-concat]
         // $ npm install grunt-contrib-concat --save-dev
         concat: {
+            devappmain: {
+                src: [
+                    "css/main/normalize.css",
+                    "css/main/base.css",
+                    "css/main/styles.css"
+                ],
+                dest: "css/main/app.css"
+            },
             appmain: {
                 src: [
                     "dist/css/main/normalize.css",
@@ -104,7 +138,38 @@ module.exports = function(grunt) {
                     "dist/css/min/styles.min.css"
                 ],
                 dest: "dist/css/min/app.min.css"
+            },
+            libjs: {
+                src: [
+                    "js/libs/main/parts/top.js",
+                    "js/libs/main/parts/functions.helpers.js",
+                    "js/libs/main/parts/functions.core.js",
+                    "js/libs/main/parts/constructor.js",
+                    "js/libs/main/parts/library.end.js",
+                    "js/libs/main/parts/globals.js",
+                    "js/libs/main/parts/bottom.js"
+                ],
+                dest: "js/libs/main/lib.dev-build.js"
+            },
+            libjsdist: {
+                src: ["js/libs/main/lib.dev-build.js"],
+                dest: "dist/js/libs/main/lib.js"
             }
+        },
+        // minify js [https://www.npmjs.com/package/grunt-contrib-uglify]
+        // $ npm install grunt-contrib-uglify --save-dev
+        uglify: {
+            target: {
+                files: {
+                    "dist/js/main/app.min.js": ["dist/js/main/app.js"],
+                    "dist/js/libs/main/lib.min.js": ["dist/js/libs/main/lib.js"]
+                }
+            }
+        },
+        // jsbeautify [https://www.npmjs.com/package/grunt-jsbeautifier]
+        // $ npm install grunt-jsbeautifier --save-dev
+        jsbeautifier: {
+            files: ["js/libs/main/lib.dev-build.js", "dist/js/libs/main/lib.js"]
         },
         // // watch for file changes [https://www.youtube.com/watch?v=qtP5xbwMcDQ]
         // // $ npm install grunt-contrib-watch --save-dev
@@ -118,7 +183,7 @@ module.exports = function(grunt) {
             default: {
                 options: {
                     title: "Build Complete", // optional
-                    message: "Distribution build complete!" //required
+                    message: "Done building the dist/ directory." //required
                 }
             }
         }
@@ -132,17 +197,24 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-htmlmin");
     grunt.loadNpmTasks("grunt-contrib-concat");
     grunt.loadNpmTasks("grunt-contrib-watch");
+    grunt.loadNpmTasks("grunt-jsbeautifier");
     grunt.loadNpmTasks("grunt-notify");
     // github newer [https://github.com/tschaub/grunt-newer]
     // $ npm install grunt-newer --save-dev
     // grunt.loadNpmTasks("grunt-newer");
 
     // 3. Register Task(s)
-    grunt.registerTask("dist", ["copy:main"]);
+    grunt.registerTask("dist", ["copy:index", "copy:cssimg", "copy:js"]);
     grunt.registerTask("autoprefix", ["postcss:dist"]);
     grunt.registerTask("cssminify", ["cssmin"]);
-    grunt.registerTask("concat-css", ["concat:appmain", "concat:minappmain"]);
-    grunt.registerTask("jsminify", ["uglify"]);
+    grunt.registerTask("concat-css", [
+        "concat:devappmain",
+        "concat:appmain",
+        "concat:minappmain"
+    ]);
+    grunt.registerTask("concat-js", ["concat:libjs", "concat:libjsdist"]);
+    grunt.registerTask("jsminify", ["uglify:target"]);
+    grunt.registerTask("jsbeautify", ["jsbeautifier"]);
     grunt.registerTask("htmlminify", ["htmlmin"]);
     grunt.registerTask("notify-build", ["notify:default"]);
     // grunt.registerTask("js-all", ["jsminify"]);
@@ -152,7 +224,9 @@ module.exports = function(grunt) {
         "autoprefix",
         "cssminify",
         "concat-css",
+        "concat-js",
         "jsminify",
+        "jsbeautify",
         "htmlminify",
         "notify-build"
     ]);
