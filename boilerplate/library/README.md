@@ -1,7 +1,19 @@
 # Read Before Use
-```html
-MAKE SURE TO REMOVE .GITIGNORE FILE FROM THE IMG/ DIRECTORY BEFORE USING.
-```
+1. Make sure to remove the `.gitignore` file from the `img/` directory before using.
+2. Only modify the `css/main/styles.css` file. Grunt tasks will handle auto-prefixing, minifying, and concatenation.
+3. Run `npm install` in the terminal to install the modules specified in `package.json`.
+4. Modify `package.json` `{{****}}` with updated information. Or with `npm init`.
+5. Run `grunt` in the terminal to build the `dist/` directory.
+5. Run `grunt watch` in the terminal to watch for any development changes.
+    * Look in `Gruntfile.js` to see the names of individual tasks if needed to run individually. 
+    * Modify `Gruntfile.js` as needed.
+6. Remove this section (`Read Before Use`) from the `README` after reading this.
+#### Quick CLI Setup
+1. Run the following commands in the following order:
+    1. **`npm init`**
+    2. **`npm install`**
+    3. **`grunt`** to build the `dist/` directory
+    4. **`grunt watch`** to watch for any development changes
 
 # library name (libraryjs)
 
