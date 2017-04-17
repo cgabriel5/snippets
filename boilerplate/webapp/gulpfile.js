@@ -1,12 +1,46 @@
 // plugins
 var gulp = require("gulp");
 var plugins = require("gulp-load-plugins")({ pattern: ["gulp-*"] });
-var notifier = require("node-notifier");
+var notifier = require("node-notifier"); // .NotifySend;
 var path = require("path");
 var sequence = require("run-sequence");
 var bs = require("browser-sync").create(); // create a browser-sync instance.
 var file_exists = require("file-exists");
 var pkg = require("./package.json");
+
+/**
+ * @description [Builds the localhost URL dynamically.]
+ * @param  {String} path [The gulpfile's file path.]
+ * @return {String}      [The localhost URL.]
+ */
+var get_url = function(path) {
+    // remove everything until /htdocs/
+    path = path.replace(/^.+\/htdocs\//, "localhost:80/");
+    // remove the filename and append `index.html`
+    var parts = path.split("/");
+    parts.pop();
+    return parts.join("/") + "/index.html";
+};
+
+/**
+ * @description [Create a OS notification.]
+ * @param  {String} message [The notification message.]
+ */
+var notify = function(message) {
+    // ubuntu
+    // var notification = new notifier();
+    // notification.notify({
+
+    // OS agnostic
+    notifier.notify({
+        title: "Gulp Notification",
+        message: message,
+        icon: path.join(__dirname, "assets/node-notifier/gulp.png"),
+        time: 1000,
+        urgency: "critical",
+        sound: true
+    });
+};
 
 // tasks
 gulp.task("browser-sync", function() {
@@ -16,7 +50,7 @@ gulp.task("browser-sync", function() {
         },
         // server: { baseDir: "./", index: "index.html" }
         proxy: {
-            target: "localhost:80/projects/snippets/code_snippets/boilerplate/webapp/index.html"
+            target: get_url(__filename)
         }
     });
 });
@@ -161,17 +195,6 @@ gulp.task("watch", function() {
     ]);
     gulp.watch(["img/*"], options, ["img"]);
 });
-
-// notification function
-var notify = function(message) {
-    notifier.notify({
-        title: "Gulp Notification",
-        message: message,
-        icon: path.join(__dirname, "assets/node-notifier/gulp.png"),
-        time: 1,
-        sound: true
-    });
-};
 
 // gulp notifications
 gulp.task("notify-build", function() {
