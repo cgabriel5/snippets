@@ -1,11 +1,11 @@
 // plugins
 var gulp = require("gulp");
-var plugins = require("gulp-load-plugins")({ pattern: ["gulp-*"] });
+var $ = require("gulp-load-plugins")({ pattern: ["gulp-*"] });
 var notifier = require("node-notifier"); // .NotifySend;
 var path = require("path");
 var sequence = require("run-sequence");
 var bs = require("browser-sync").create(); // create a browser-sync instance.
-var file_exists = require("file-exists");
+var reload = bs.reload;
 var pkg = require("./package.json");
 
 /**
@@ -13,7 +13,7 @@ var pkg = require("./package.json");
  * @param  {String} path [The gulpfile's file path.]
  * @return {String}      [The localhost URL.]
  */
-var get_url = function(path) {
+var start_url = function(path) {
     // remove everything until /htdocs/
     path = path.replace(/^.+\/htdocs\//, "localhost:80/");
     // remove the filename and append `index.html`
@@ -29,7 +29,7 @@ var get_url = function(path) {
 var notify = function(message) {
     // ubuntu
     // var notification = new notifier();
-    // notification.notify({
+    // notification.notify({});
 
     // OS agnostic
     notifier.notify({
@@ -50,7 +50,7 @@ gulp.task("browser-sync", function() {
         },
         // server: { baseDir: "./", index: "index.html" }
         proxy: {
-            target: get_url(__filename)
+            target: start_url(__filename)
         }
     });
 });
@@ -58,56 +58,46 @@ gulp.task("browser-sync", function() {
 // remove the dist/ directory
 gulp.task("remove-dist", function() {
     // remove the dist directory
-    return gulp.src(["dist/", "js/*.js", "css/*.js"]).pipe(plugins.clean());
-});
-
-// reset HTML meta tags
-gulp.task("reset-indexhtml", function() {
-    // remove the dist directory
     return gulp
-        .src(["./index.html"])
-        .pipe(
-            plugins.replace(
-                /\<meta name\="description" content\="(.*?)"\>/,
-                '<meta name="description" content="{{APPLICATION_DESCRIPTION}}">'
-            )
-        )
-        .pipe(
-            plugins.replace(
-                /\<title\>(.*?)\<\/title\>/,
-                "<title>{{APPLICATION_TITLE}}</title>"
-            )
-        )
-        .pipe(plugins.htmlBeautify({ preserve_newlines: false }))
-        .pipe(gulp.dest("./"));
+        .src(["dist/", "js/*.js", "css/*.js", "./index.html"])
+        .pipe($.clean());
 });
 
 // init HTML files + minify
 gulp.task("html", function() {
-    return (gulp
-            .src("./index.html")
-            // check if any libs are used
-            .pipe(
-                plugins.replace(
-                    /\{\{.*?\}\}|\<script src\=\"js\/libs.js\"\>\<\/script\>/g,
-                    function(match) {
-                        // index text replacements
-                        var replacements = {
-                            "{{APPLICATION_TITLE}}": pkg.name,
-                            "{{APPLICATION_DESCRIPTION}}": pkg.description
-                        };
-                        if (/^\<script/.test(match)) {
-                            if (!file_exists.sync("js/libs.js")) return "";
-                        }
-                        return replacements[match] || match;
-                    }
-                )
-            )
-            .pipe(plugins.htmlBeautify({ preserve_newlines: false }))
-            .pipe(gulp.dest("./"))
-            .pipe(plugins.minifyHtml())
-            .pipe(gulp.dest("dist/"))
-            .pipe(bs.reload({ stream: true })) );
+    return gulp
+        .src([
+            "html/source/index.top.html",
+            "html/source/index.head.start.html",
+            "html/source/index.head.meta.html",
+            "html/source/index.head.css.html",
+            "html/source/index.head.js.html",
+            "html/source/index.head.end.html",
+            "html/source/index.body.start.html",
+            "html/source/index.body.content.html",
+            "html/source/index.body.js.html",
+            "html/source/index.body.end.html",
+            "html/source/index.end.html"
+        ])
+        .pipe($.concat("index.html"))
+        .pipe(
+            $.jsbeautifier({
+                brace_style: "collapse",
+                end_with_newline: false,
+                indent_char: " ",
+                indent_handlebars: false,
+                indent_inner_html: false,
+                indent_scripts: "keep",
+                indent_size: 4,
+                max_preserve_newlines: 0,
+                preserve_newlines: true,
+                wrap_line_length: 0
+            })
+        )
+        .pipe(gulp.dest("./"))
+        .pipe($.minifyHtml())
+        .pipe(gulp.dest("dist/"))
+        .pipe(reload({ stream: true }));
 });
 
 // build app.css + autoprefix + minify
@@ -118,17 +108,28 @@ gulp.task("css", function() {
             "css/source/base.css",
             "css/source/styles.css"
         ])
-        .pipe(plugins.concat("app.css"))
+        .pipe($.concat("app.css"))
         .pipe(gulp.dest("css/")) // dump into development folder
         .pipe(
-            plugins.autoprefixer({
-                browsers: ["last 5 versions"],
+            $.autoprefixer({
+                // from google web starter ki
+                browsers: [
+                    "ie >= 10",
+                    "ie_mob >= 10",
+                    "ff >= 30",
+                    "chrome >= 34",
+                    "safari >= 7",
+                    "opera >= 23",
+                    "ios >= 7",
+                    "android >= 4.4",
+                    "bb >= 10"
+                ],
                 cascade: false
             })
         )
-        .pipe(plugins.minifyCss()) // minify for production
+        .pipe($.minifyCss()) // minify for production
         .pipe(gulp.dest("dist/css/")) // dump in dist/ folder
-        .pipe(bs.reload({ stream: true }));
+        .pipe(reload({ stream: true }));
 });
 
 // build app.js + minify + beautify
@@ -145,12 +146,12 @@ gulp.task("jsapp", function() {
             "js/source/app.main.js",
             "js/source/app.init.end.js"
         ])
-        .pipe(plugins.concat("app.js"))
-        .pipe(plugins.jsbeautifier())
+        .pipe($.concat("app.js"))
+        .pipe($.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
-        .pipe(plugins.uglify()) // minify for production
+        .pipe($.uglify()) // minify for production
         .pipe(gulp.dest("dist/js/")) // dump in dist/ folder
-        .pipe(bs.reload({ stream: true }));
+        .pipe(reload({ stream: true }));
 });
 
 // build libs.js + minify + beautify
@@ -163,12 +164,12 @@ gulp.task("jslibs", function() {
                 // "js/libs/modernizr.js"
             ]
         )
-        .pipe(plugins.concat("libs.js"))
-        .pipe(plugins.jsbeautifier())
+        .pipe($.concat("libs.js"))
+        .pipe($.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
-        .pipe(plugins.uglify()) // minify for production
+        .pipe($.uglify()) // minify for production
         .pipe(gulp.dest("dist/js/")) // dump in dist/ folder
-        .pipe(bs.reload({ stream: true }));
+        .pipe(reload({ stream: true }));
 });
 
 // copy img/ to dist/img/
@@ -177,7 +178,7 @@ gulp.task("img", function() {
     return gulp
         .src("img/**")
         .pipe(gulp.dest("dist/img/")) // dump in dist/ folder
-        .pipe(bs.reload({ stream: true }));
+        .pipe(reload({ stream: true }));
 });
 
 // watch changes to files
@@ -200,15 +201,15 @@ gulp.task("watch", function() {
 gulp.task("notify-build", function() {
     notify("Build complete");
     return gulp.src("");
-    // .pipe(plugins.notify({ message: "Build complete!", onLast: true }));
+    // .pipe($.notify({ message: "Build complete!", onLast: true }));
 });
 gulp.task("notify-reset", function() {
     notify("Reset complete");
-    return gulp.src("").pipe(bs.reload({ stream: true }));
+    return gulp.src("").pipe(reload({ stream: true }));
 });
 
 // command line gulp task names
-gulp.task("reset", ["remove-dist", "reset-indexhtml", "notify-reset"]);
+gulp.task("reset", ["remove-dist", "notify-reset"]);
 gulp.task("build", function(done) {
     sequence(
         "css",
