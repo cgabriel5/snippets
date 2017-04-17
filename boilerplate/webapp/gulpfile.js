@@ -4,13 +4,16 @@ var plugins = require("gulp-load-plugins")({ pattern: ["gulp-*"] });
 var notifier = require("node-notifier");
 var path = require("path");
 var sequence = require("run-sequence");
-var bs = require("browser-sync").create(); // create a browser sync instance.
+var bs = require("browser-sync").create(); // create a browser-sync instance.
 var file_exists = require("file-exists");
 var pkg = require("./package.json");
 
 // tasks
 gulp.task("browser-sync", function() {
     bs.init({
+        options: {
+            browser: ["google chrome"]
+        },
         // server: { baseDir: "./", index: "index.html" }
         proxy: {
             target: "localhost:80/projects/snippets/code_snippets/boilerplate/webapp/index.html"
@@ -48,7 +51,7 @@ gulp.task("reset-indexhtml", function() {
 // init HTML files + minify
 gulp.task("html", function() {
     return (gulp
-            .src("./index.html") // path to your files
+            .src("./index.html")
             // check if any libs are used
             .pipe(
                 plugins.replace(
@@ -81,7 +84,7 @@ gulp.task("css", function() {
             "css/source/base.css",
             "css/source/styles.css"
         ])
-        .pipe(plugins.concat("app.css")) // concat into `app.css`
+        .pipe(plugins.concat("app.css"))
         .pipe(gulp.dest("css/")) // dump into development folder
         .pipe(
             plugins.autoprefixer({
@@ -108,7 +111,7 @@ gulp.task("jsapp", function() {
             "js/source/app.main.js",
             "js/source/app.init.end.js"
         ])
-        .pipe(plugins.concat("app.js")) // concat into `app.js`
+        .pipe(plugins.concat("app.js"))
         .pipe(plugins.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
         .pipe(plugins.uglify()) // minify for production
@@ -123,9 +126,10 @@ gulp.task("jslibs", function() {
             [
                 // add any used js library paths here
                 // "js/libs/jquery.js"
+                // "js/libs/modernizr.js"
             ]
         )
-        .pipe(plugins.concat("libs.js")) // concat into `app.js`
+        .pipe(plugins.concat("libs.js"))
         .pipe(plugins.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
         .pipe(plugins.uglify()) // minify for production
@@ -158,31 +162,26 @@ gulp.task("watch", function() {
     gulp.watch(["img/*"], options, ["img"]);
 });
 
+// notification function
+var notify = function(message) {
+    notifier.notify({
+        title: "Gulp Notification",
+        message: message,
+        icon: path.join(__dirname, "assets/node-notifier/gulp.png"),
+        time: 1,
+        sound: true
+    });
+};
+
 // gulp notifications
 gulp.task("notify-build", function() {
-    // return gulp
-    // .src("")
+    notify("Build complete");
+    return gulp.src("");
     // .pipe(plugins.notify({ message: "Build complete!", onLast: true }));
-    notifier.notify({
-        title: "Gulp Notification",
-        message: "Build complete",
-        icon: path.join(__dirname, "assets/node-notifier/gulp.png"),
-        time: 1,
-        sound: true
-    });
 });
 gulp.task("notify-reset", function() {
-    // return gulp
-    // .src("")
-    // .pipe(plugins.notify({ message: "Reset complete!", onLast: true }))
-    // .pipe(bs.reload({ stream: true }));
-    notifier.notify({
-        title: "Gulp Notification",
-        message: "Reset complete",
-        icon: path.join(__dirname, "assets/node-notifier/gulp.png"),
-        time: 1,
-        sound: true
-    });
+    notify("Reset complete");
+    return gulp.src("").pipe(bs.reload({ stream: true }));
 });
 
 // command line gulp task names
