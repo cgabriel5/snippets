@@ -43,18 +43,6 @@ var notify = function(message) {
 };
 
 // tasks
-gulp.task("browser-sync", function() {
-    bs.init({
-        options: {
-            browser: ["google chrome"]
-        },
-        // server: { baseDir: "./", index: "index.html" }
-        proxy: {
-            target: start_url(__filename)
-        }
-    });
-});
-
 // remove the dist/ directory
 gulp.task("remove-dist", function() {
     // remove the dist directory
@@ -96,8 +84,7 @@ gulp.task("html", function() {
         )
         .pipe(gulp.dest("./"))
         .pipe($.minifyHtml())
-        .pipe(gulp.dest("dist/"))
-        .pipe(reload({ stream: true }));
+        .pipe(gulp.dest("dist/"));
 });
 
 // build app.css + autoprefix + minify
@@ -112,7 +99,7 @@ gulp.task("css", function() {
         .pipe(gulp.dest("css/")) // dump into development folder
         .pipe(
             $.autoprefixer({
-                // from google web starter ki
+                // from google web starter kit
                 browsers: [
                     "ie >= 10",
                     "ie_mob >= 10",
@@ -128,8 +115,7 @@ gulp.task("css", function() {
             })
         )
         .pipe($.minifyCss()) // minify for production
-        .pipe(gulp.dest("dist/css/")) // dump in dist/ folder
-        .pipe(reload({ stream: true }));
+        .pipe(gulp.dest("dist/css/")); // dump in dist/ folder
 });
 
 // build app.js + minify + beautify
@@ -150,8 +136,7 @@ gulp.task("jsapp", function() {
         .pipe($.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
         .pipe($.uglify()) // minify for production
-        .pipe(gulp.dest("dist/js/")) // dump in dist/ folder
-        .pipe(reload({ stream: true }));
+        .pipe(gulp.dest("dist/js/")); // dump in dist/ folder
 });
 
 // build libs.js + minify + beautify
@@ -168,60 +153,79 @@ gulp.task("jslibs", function() {
         .pipe($.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
         .pipe($.uglify()) // minify for production
-        .pipe(gulp.dest("dist/js/")) // dump in dist/ folder
-        .pipe(reload({ stream: true }));
+        .pipe(gulp.dest("dist/js/")); // dump in dist/ folder
 });
 
 // copy img/ to dist/img/
 gulp.task("img", function() {
     // deed to copy hidden files/folders? [https://github.com/klaascuvelier/gulp-copy/issues/5]
-    return gulp
-        .src("img/**")
-        .pipe(gulp.dest("dist/img/")) // dump in dist/ folder
-        .pipe(reload({ stream: true }));
+    return gulp.src("img/**").pipe(gulp.dest("dist/img/")); // dump in dist/ folder
+});
+
+gulp.task("reload", function(done) {
+    reload();
 });
 
 // watch changes to files
-gulp.task("watch", function() {
-    var options = {
-        debounceDelay: 2000,
-        awaitWriteFinish: true,
-        readDelay: 2000
-    };
-    gulp.watch(["./index.html"], options, ["html"]);
-    gulp.watch(["css/source/*.css"], options, ["css"]);
-    gulp.watch(["js/libs/*.js", "js/source/*.js"], options, [
-        "jsapp",
-        "jslibs"
-    ]);
-    gulp.watch(["img/*"], options, ["img"]);
-});
+gulp.task("watch", function(done) {
+    // start browser-sync
+    bs.init({
+        // server: { baseDir: "./", index: "index.html" }
+        browser: ["google-chrome"], //, "firefox"],
+        proxy: start_url(__filename),
+        // reloadDelay: 2000,
+        notify: false
+    });
 
-// gulp notifications
-gulp.task("notify-build", function() {
-    notify("Build complete");
-    return gulp.src("");
-    // .pipe($.notify({ message: "Build complete!", onLast: true }));
-});
-gulp.task("notify-reset", function() {
-    notify("Reset complete");
-    return gulp.src("").pipe(reload({ stream: true }));
+    // gulp.watch options
+    var options = { debounceDelay: 2000, cwd: "./" };
+
+    gulp.watch(["html/source/i*.html"], options, function() {
+        return sequence("html", function() {
+            reload();
+        });
+    });
+    gulp.watch(["css/source/*.css"], options, function() {
+        return sequence("css", function() {
+            reload();
+        });
+    });
+    gulp.watch(["js/libs/*.js", "js/source/*.js"], options, function() {
+        return sequence("jsapp", "jslibs", function() {
+            reload();
+        });
+    });
+    gulp.watch(["img/*"], options, function() {
+        return sequence("img", function() {
+            reload();
+        });
+    });
 });
 
 // command line gulp task names
-gulp.task("reset", ["remove-dist", "notify-reset"]);
-gulp.task("build", function(done) {
-    sequence(
-        "css",
-        "jsapp",
-        "jslibs",
-        "img",
-        "html",
-        "notify-build",
-        function() {
-            done();
-        }
-    );
+
+// remove the dist/ folder
+gulp.task("reset", function(done) {
+    return sequence("remove-dist", function() {
+        notify("Reset complete");
+        reload();
+        done();
+    });
 });
-gulp.task("sync", ["browser-sync"]);
-gulp.task("default", ["build", "watch"]);
+
+// build the dist/ folder
+gulp.task("build", function(done) {
+    return sequence("css", "jsapp", "jslibs", "img", "html", function() {
+        notify("Build complete");
+        reload();
+        done();
+    });
+});
+
+// gulps default task is set to rum the build + watch + browser-sync
+gulp.task("default", function(done) {
+    return sequence("build", function() {
+        sequence("watch");
+        done();
+    });
+});
