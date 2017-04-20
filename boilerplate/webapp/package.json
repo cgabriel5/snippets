@@ -33,7 +33,9 @@
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-uglify": "^2.1.2",
+    "markdown-styles": "^3.1.9",
     "node-notifier": "^5.1.2",
+    "opn": "^4.0.2",
     "run-sequence": "^1.2.2"
   },
   "dependencies": {}

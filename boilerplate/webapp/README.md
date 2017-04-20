@@ -1,19 +1,25 @@
-# Read Before Use
-1. Make sure to remove the `.gitignore` file from the `img/` directory before using.
-2. Only modify the `css/main/styles.css` file. Grunt tasks will handle auto-prefixing, minifying, and concatenation.
-3. Run `npm install` in the terminal to install the modules specified in `package.json`.
-4. Modify `package.json` `{{****}}` with updated information. Or with `npm init`.
-5. Run `grunt` in the terminal to build the `dist/` directory.
-5. Run `grunt watch` in the terminal to watch for any development changes.
-    * Look in `Gruntfile.js` to see the names of individual tasks if needed to run individually. 
-    * Modify `Gruntfile.js` as needed.
-6. Remove this section (`Read Before Use`) from the `README` after reading this.
-#### Quick CLI Setup
-1. Run the following commands in the following order:
-    1. **`npm init`**
-    2. **`npm install`**
-    3. **`grunt`** to build the `dist/` directory
-    4. **`grunt watch`** to watch for any development changes
+## § Read Before Use
+1. Make sure to remove the `.gitignore` file from the `img/` directory before using. The file is used as a placeholder to include the otherwise empty folder with `Git`.
+2. Remove setup sections (§) from the `README` after reading and fully understanding what to do.
+3. Boilerplate uses `NodeJS` and `Gulp`. *Please make sure they are installed*.
+
+## § NPM Setup
+Run the following commands in the following order:
+1. **`$ npm init`** &mdash; Update `package.json` as needed.
+2. **`$ npm install`** &mdash; Install `npm` modules.
+
+## § Using Gulp
+1. **`$ gulp`** &mdash; Builds `dist/`, starts `browser-sync` servers, & watches project for file changes.  
+2. **`$ gulp reset`** &mdash; Resets project to like when it was downloaded. It removes the `dist/` directory and any other changes made to the project.
+2. **`$ gulp open-index`** &mdash; Open `index.html` in the browser.
+2. **`$ gulp open-md`** &mdash; Converts `README.md` to `HTML` to give a GitHub Markdown Preview in the browser.
+3. **Modify** `gulpfile.js` as desired.
+
+## § Files To Modify
+1. **CSS** &mdash; Modify `css/source/styles.css`. `Gulp` will handle auto-prefixing, minifying, and concatenation.
+2. **JS-App** &mdash; Modify `js/source/*.js` files. `Gulp` will handle file concatenation, minifying, and beautification.
+3. **JS-Libs** &mdash; Add third-party libraries to `js/libs/`. Then make sure to update the `jslibs` `Gulp` task by adding the library path file to the src array. `Gulp` will handle file concatenation, minifying, and beautification.
+4. **HTML** &mdash; Modify `html/source/i*.html` files. `Gulp` will handle file concatenation, minifying, and beautification.
 
 # webapp-name
 

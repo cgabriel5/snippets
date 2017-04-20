@@ -1,25 +1,37 @@
-// plugins
-var gulp = require("gulp");
-var $ = require("gulp-load-plugins")({ pattern: ["gulp-*"] });
-var notifier = require("node-notifier"); // .NotifySend;
-var path = require("path");
-var sequence = require("run-sequence");
-var bs = require("browser-sync").create(); // create a browser-sync instance.
-var reload = bs.reload;
-var pkg = require("./package.json");
+// nodejs included plugins
+var os = require("os"), path = require("path");
+
+// third-party plugins
+var $ = require("gulp-load-plugins")({
+    pattern: ["*"],
+    rename: { autoprefixer: "ap" }
+}),
+    gulp = $.gulp,
+    sequence = $.runSequence,
+    mds = $.markdownStyles,
+    open = $.opn;
+
+// create the browser-sync servers
+var bs1 = $.browserSync.create("localhost"),
+    bs2 = $.browserSync.create("readme"),
+    port1 = 3000,
+    port2 = 3002;
 
 /**
  * @description [Builds the localhost URL dynamically.]
  * @param  {String} path [The gulpfile's file path.]
  * @return {String}      [The localhost URL.]
  */
-var start_url = function(path) {
-    // remove everything until /htdocs/
-    path = path.replace(/^.+\/htdocs\//, "localhost:80/");
-    // remove the filename and append `index.html`
-    var parts = path.split("/");
-    parts.pop();
-    return parts.join("/") + "/index.html";
+var uri = function(filename, port) {
+    // remove everything until /htdocs/, append the provided filename, & return
+    return (
+        "http://" +
+        __dirname.replace(
+            /^.+\/htdocs\//,
+            "localhost" + (port ? ":" + port : "") + "/"
+        ) +
+        (filename ? "/" + filename : "")
+    );
 };
 
 /**
@@ -32,7 +44,7 @@ var notify = function(message) {
     // notification.notify({});
 
     // OS agnostic
-    notifier.notify({
+    $.nodeNotifier.notify({
         title: "Gulp Notification",
         message: message,
         icon: path.join(__dirname, "assets/node-notifier/gulp.png"),
@@ -43,14 +55,6 @@ var notify = function(message) {
 };
 
 // tasks
-// remove the dist/ directory
-gulp.task("remove-dist", function() {
-    // remove the dist directory
-    return gulp
-        .src(["dist/", "js/*.js", "css/*.js", "./index.html"])
-        .pipe($.clean());
-});
-
 // init HTML files + minify
 gulp.task("html", function() {
     return gulp
@@ -84,7 +88,8 @@ gulp.task("html", function() {
         )
         .pipe(gulp.dest("./"))
         .pipe($.minifyHtml())
-        .pipe(gulp.dest("dist/"));
+        .pipe(gulp.dest("dist/"))
+        .pipe(bs1.stream());
 });
 
 // build app.css + autoprefix + minify
@@ -115,7 +120,8 @@ gulp.task("css", function() {
             })
         )
         .pipe($.minifyCss()) // minify for production
-        .pipe(gulp.dest("dist/css/")); // dump in dist/ folder
+        .pipe(gulp.dest("dist/css/")) // dump in dist/ folder
+        .pipe(bs1.stream());
 });
 
 // build app.js + minify + beautify
@@ -136,7 +142,8 @@ gulp.task("jsapp", function() {
         .pipe($.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
         .pipe($.uglify()) // minify for production
-        .pipe(gulp.dest("dist/js/")); // dump in dist/ folder
+        .pipe(gulp.dest("dist/js/")) // dump in dist/ folder
+        .pipe(bs1.stream());
 });
 
 // build libs.js + minify + beautify
@@ -153,73 +160,124 @@ gulp.task("jslibs", function() {
         .pipe($.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
         .pipe($.uglify()) // minify for production
-        .pipe(gulp.dest("dist/js/")); // dump in dist/ folder
+        .pipe(gulp.dest("dist/js/")) // dump in dist/ folder
+        .pipe(bs1.stream());
 });
 
 // copy img/ to dist/img/
 gulp.task("img", function() {
     // deed to copy hidden files/folders? [https://github.com/klaascuvelier/gulp-copy/issues/5]
-    return gulp.src("img/**").pipe(gulp.dest("dist/img/")); // dump in dist/ folder
+    return gulp
+        .src("img/**")
+        .pipe(gulp.dest("dist/img/")) // dump in dist/ folder
+        .pipe(bs1.stream());
 });
 
-gulp.task("reload", function(done) {
-    reload();
+// remove the dist/ directory
+gulp.task("remove-dist", function() {
+    // remove the dist directory
+    return gulp
+        .src(["dist/", "markdown/", "js/*.js", "css/*.js", "./index.html"])
+        .pipe($.clean());
+});
+
+// open index.html in browser
+gulp.task("open-index", function(done) {
+    open(uri(null, port1), {
+        app: ["google-chrome"]
+    }).then(function() {});
+    done();
+});
+
+// open README.md HTML preview in browser
+gulp.task("open-md", function(done) {
+    open(uri("markdown/README.html", port2), {
+        app: ["google-chrome"]
+    }).then(function() {});
+    done();
+});
+
+// markdown to html (wwith github style/layout)
+gulp.task("readme", function() {
+    mds.render(
+        mds.resolveArgs({
+            input: path.normalize(process.cwd() + "/README.md"),
+            output: path.normalize(process.cwd() + "/markdown"),
+            layout: path.normalize(
+                process.cwd() + "/node_modules/markdown-styles/layouts/github"
+            )
+        }),
+        function() {}
+    );
 });
 
 // watch changes to files
 gulp.task("watch", function(done) {
-    // start browser-sync
-    bs.init({
+    // start browser-syncs
+    bs1.init({
         // server: { baseDir: "./", index: "index.html" }
         browser: ["google-chrome"], //, "firefox"],
-        proxy: start_url(__filename),
-        // reloadDelay: 2000,
+        proxy: uri(),
+        port: port1,
+        ui: { port: port1 + 1 },
         notify: false
+    });
+    bs2.init({
+        browser: ["google-chrome"],
+        proxy: uri("markdown/README.html"),
+        port: port2,
+        ui: {
+            port: port2 + 1
+        },
+        notify: false,
+        open: false
     });
 
     // gulp.watch options
-    var options = { debounceDelay: 2000, cwd: "./" };
+    var options = { /*debounceDelay: 2000,*/ cwd: "./" };
 
     gulp.watch(["html/source/i*.html"], options, function() {
-        return sequence("html", function() {
-            reload();
-        });
+        return sequence("html");
     });
     gulp.watch(["css/source/*.css"], options, function() {
-        return sequence("css", function() {
-            reload();
-        });
+        return sequence("css");
     });
     gulp.watch(["js/libs/*.js", "js/source/*.js"], options, function() {
-        return sequence("jsapp", "jslibs", function() {
-            reload();
-        });
+        return sequence("jsapp", "jslibs");
     });
     gulp.watch(["img/*"], options, function() {
-        return sequence("img", function() {
-            reload();
+        return sequence("img");
+    });
+    gulp.watch(["./README.md"], options, function() {
+        return sequence("readme", function() {
+            bs2.reload();
         });
     });
 });
 
 // command line gulp task names
-
 // remove the dist/ folder
 gulp.task("reset", function(done) {
     return sequence("remove-dist", function() {
         notify("Reset complete");
-        reload();
         done();
     });
 });
 
 // build the dist/ folder
 gulp.task("build", function(done) {
-    return sequence("css", "jsapp", "jslibs", "img", "html", function() {
-        notify("Build complete");
-        reload();
-        done();
-    });
+    return sequence(
+        "css",
+        "jsapp",
+        "jslibs",
+        "img",
+        "html",
+        "readme",
+        function() {
+            notify("Build complete");
+            done();
+        }
+    );
 });
 
 // gulps default task is set to rum the build + watch + browser-sync
