@@ -125,7 +125,7 @@ gulp.task("css", function() {
                 cascade: false
             })
         )
-        .pipe($.minifyCss()) // minify for production
+        .pipe($.cleanCss()) // minify for production
         .pipe(gulp.dest("dist/css/")) // dump in dist/ folder
         .pipe(bs1.stream());
 });
