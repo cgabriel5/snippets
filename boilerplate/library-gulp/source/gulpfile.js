@@ -10,13 +10,17 @@ var $ = require("gulp-load-plugins")({
     sequence = $.runSequence,
     mds = $.markdownStyles,
     open = $.opn,
-    del = $.del;
+    del = $.del,
+    bs = $.browserSync;
 
 // create the browser-sync servers
-var bs1 = $.browserSync.create("localhost"),
-    bs2 = $.browserSync.create("readme"),
+var bs1 = bs.create("localhost"),
+    bs2 = bs.create("readme"),
     port1 = 3000,
     port2 = 3002;
+
+// browsers to open index.html/markdown preview in
+var browsers = ["google-chrome"]; // , "firefox"];
 
 /**
  * @description [Builds the localhost URL dynamically.]
@@ -36,7 +40,7 @@ var uri = function(filename, port) {
 };
 
 /**
- * @description [Create a OS notification.]
+ * @description [Create an OS notification.]
  * @param  {String} message [The notification message.]
  */
 var notify = function(message) {
@@ -59,19 +63,22 @@ var notify = function(message) {
 // init HTML files + minify
 gulp.task("html", function() {
     return gulp
-        .src([
-            "html/source/index.top.html",
-            "html/source/index.head.start.html",
-            "html/source/index.head.meta.html",
-            "html/source/index.head.css.html",
-            "html/source/index.head.js.html",
-            "html/source/index.head.end.html",
-            "html/source/index.body.start.html",
-            "html/source/index.body.content.html",
-            "html/source/index.body.js.html",
-            "html/source/index.body.end.html",
-            "html/source/index.end.html"
-        ])
+        .src(
+            [
+                "index.top.html",
+                "index.head.start.html",
+                "index.head.meta.html",
+                "index.head.css.html",
+                "index.head.js.html",
+                "index.head.end.html",
+                "index.body.start.html",
+                "index.body.content.html",
+                "index.body.js.html",
+                "index.body.end.html",
+                "index.end.html"
+            ],
+            { cwd: "html/source/" }
+        )
         .pipe($.concat("index.html"))
         .pipe(
             $.jsbeautifier({
@@ -96,11 +103,9 @@ gulp.task("html", function() {
 // build app.css + autoprefix + minify
 gulp.task("css", function() {
     return gulp
-        .src([
-            "css/source/normalize.css",
-            "css/source/base.css",
-            "css/source/styles.css"
-        ])
+        .src(["normalize.css", "base.css", "styles.css"], {
+            cwd: "css/source/"
+        })
         .pipe($.concat("app.css"))
         .pipe(gulp.dest("css/")) // dump into development folder
         .pipe(
@@ -128,17 +133,20 @@ gulp.task("css", function() {
 // build app.js + minify + beautify
 gulp.task("jsapp", function() {
     return gulp
-        .src([
-            // get all the source build files
-            "js/source/lib.top.js",
-            "js/source/lib.functions.helpers.js",
-            "js/source/lib.functions.core.js",
-            "js/source/lib.constructor.js",
-            "js/source/lib.end.js",
-            "js/source/lib.globals.js",
-            "js/source/lib.bottom.js",
-            "js/source/app.js"
-        ])
+        .src(
+            [
+                // get all the source build files
+                "lib.top.js",
+                "lib.functions.helpers.js",
+                "lib.functions.core.js",
+                "lib.constructor.js",
+                "lib.end.js",
+                "lib.globals.js",
+                "lib.bottom.js",
+                "app.js"
+            ],
+            { cwd: "js/source/" }
+        )
         .pipe($.concat("app.js"))
         .pipe($.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
@@ -179,9 +187,10 @@ gulp.task("readme", function() {
     mds.render(
         mds.resolveArgs({
             input: path.normalize(process.cwd() + "/README.md"),
-            output: path.normalize(process.cwd() + "/markdown"),
+            output: path.normalize(process.cwd() + "/markdown/preview"),
             layout: path.normalize(
-                process.cwd() + "/node_modules/markdown-styles/layouts/github"
+                process.cwd() + "/markdown/source"
+                // process.cwd() + "/node_modules/markdown-styles/layouts/github"
             )
         })
         // function() {} // potential callback
@@ -192,16 +201,15 @@ gulp.task("readme", function() {
 gulp.task("watch", function(done) {
     // start browser-syncs
     bs1.init({
-        // server: { baseDir: "./", index: "index.html" }
-        browser: ["google-chrome"], //, "firefox"],
+        browser: browsers,
         proxy: uri(),
         port: port1,
         ui: { port: port1 + 1 },
         notify: false
     });
     bs2.init({
-        browser: ["google-chrome"],
-        proxy: uri("markdown/README.html"),
+        browser: browsers,
+        proxy: uri("markdown/preview/README.html"),
         port: port2,
         ui: { port: port2 + 1 },
         notify: false,
@@ -235,15 +243,15 @@ gulp.task("watch", function(done) {
 // open index.html in browser
 gulp.task("open-index", function(done) {
     open(uri(null, port1), {
-        app: ["google-chrome"]
+        app: browsers
     }); // .then(function() {});
     done();
 });
 
 // open README.md HTML preview in browser
 gulp.task("open-md", function(done) {
-    open(uri("markdown/README.html", port2), {
-        app: ["google-chrome"]
+    open(uri("markdown/preview/README.html", port2), {
+        app: browsers
     }); // .then(function() {});
     done();
 });
