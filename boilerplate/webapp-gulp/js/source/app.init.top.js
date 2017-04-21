@@ -21,9 +21,9 @@
     var app = window.app;
 
     // add a module to load
-    app.module = function(module_name, module, mode) {
+    app.module = function(module_name, fn, mode) {
         // add the module to the queue
-        app.queue.push([module_name, module, mode || "complete"]);
+        app.queue.push([module_name, fn, mode || "complete"]);
     };
 
     // app module invoker
@@ -31,8 +31,9 @@
         // loop over modules
         app.queue.forEach(function(module) {
             // run the module if the mode matches
-            if (module[2] === mode)
-                module[1].call(app, app, app[module[0] || undefined]);
+            if (module[2] === mode) {
+                module[1].call(app, (module[0].toUpperCase() || undefined));
+            }
         });
     };
 

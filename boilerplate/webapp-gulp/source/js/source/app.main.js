@@ -1,5 +1,5 @@
-app.module("main", function(app, module) {
+app.module("main", function(name) {
     // app logic
-    console.log("Loaded the main module!");
+    console.log("Loaded the " + name + " module!");
     console.log("My app has loaded!");
 });

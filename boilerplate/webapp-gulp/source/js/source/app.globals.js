@@ -1,3 +1,3 @@
-app.module("globals", function(app, module) {
-    console.log("Loaded the globals module!");
+app.module("globals", function(name) {
+    console.log("Loaded the " + name + " module!");
 });

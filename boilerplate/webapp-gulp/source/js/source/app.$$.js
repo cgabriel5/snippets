@@ -1,3 +1,3 @@
-app.module("$$", function(app, module) {
-    console.log("Loaded the $$ module!");
+app.module("$$", function(name) {
+    console.log("Loaded the " + name + " module!");
 });

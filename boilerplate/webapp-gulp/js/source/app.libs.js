@@ -1,3 +1,3 @@
-app.module("libs", function(app, module) {
-    console.log("Loaded the libs module!");
+app.module("libs", function(name) {
+    console.log("Loaded the " + name + " module!");
 });

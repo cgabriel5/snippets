@@ -1,3 +1,3 @@
-app.module("events", function(app, module) {
-    console.log("Loaded the events module!");
+app.module("events", function(name) {
+    console.log("Loaded the " + name + " module!");
 });
