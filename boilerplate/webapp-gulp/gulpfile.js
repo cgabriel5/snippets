@@ -174,7 +174,7 @@ gulp.task("img", function() {
         .pipe(bs1.stream());
 });
 
-// markdown to html (wwith github style/layout)
+// markdown to html (with github style/layout)
 gulp.task("readme", function() {
     mds.render(
         mds.resolveArgs({
@@ -203,9 +203,7 @@ gulp.task("watch", function(done) {
         browser: ["google-chrome"],
         proxy: uri("markdown/README.html"),
         port: port2,
-        ui: {
-            port: port2 + 1
-        },
+        ui: { port: port2 + 1 },
         notify: false,
         open: false
     });
@@ -238,7 +236,7 @@ gulp.task("watch", function(done) {
 gulp.task("open-index", function(done) {
     open(uri(null, port1), {
         app: ["google-chrome"]
-    }).then(function() {});
+    }); // .then(function() {});
     done();
 });
 
@@ -246,7 +244,7 @@ gulp.task("open-index", function(done) {
 gulp.task("open-md", function(done) {
     open(uri("markdown/README.html", port2), {
         app: ["google-chrome"]
-    }).then(function() {});
+    }); // .then(function() {});
     done();
 });
 
@@ -272,9 +270,9 @@ gulp.task("reset", function() {
         }
     )
         .then(function(paths) {
-            // // once everything but the source/ and node_modules/ directories
-            // // are deleted we copy the source/ folder contents into the root
-            // // directory.
+            // once everything but the source/ and node_modules/ directories
+            // are deleted we copy the source/ folder contents into the root
+            // directory.
             return gulp
                 .src(["./source/**"], {
                     dot: true // copy dot files as well
