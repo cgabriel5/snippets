@@ -11,7 +11,8 @@ var $ = require("gulp-load-plugins")({
     mds = $.markdownStyles,
     open = $.opn,
     del = $.del,
-    bs = $.browserSync;
+    bs = $.browserSync,
+    plumber = $.plumber;
 
 // create the browser-sync servers
 var bs1 = bs.create("localhost"),
@@ -43,16 +44,19 @@ var uri = function(filename, port) {
  * @description [Create an OS notification.]
  * @param  {String} message [The notification message.]
  */
-var notify = function(message) {
+var notify = function(message, error) {
     // ubuntu
     // var notification = new notifier();
     // notification.notify({});
 
+    // determine what image to show
+    var image = (!error ? "success" : "error") + "_256.png";
+
     // OS agnostic
     $.nodeNotifier.notify({
-        title: "Gulp Notification",
+        title: "Gulp",
         message: message,
-        icon: path.join(__dirname, "source/assets/node-notifier/gulp.png"),
+        icon: path.join(__dirname, "source/assets/node-notifier/" + image),
         // time: 1000,
         // urgency: "critical",
         sound: true
@@ -61,7 +65,7 @@ var notify = function(message) {
 
 // tasks
 // init HTML files + minify
-gulp.task("html", function() {
+gulp.task("html", function(done) {
     return gulp
         .src(
             [
@@ -78,6 +82,17 @@ gulp.task("html", function() {
                 "index.end.html"
             ],
             { cwd: "html/source/" }
+        )
+        .pipe(
+            plumber({
+                errorHandler: function(error) {
+                    // [https://scotch.io/tutorials/prevent-errors-from-crashing-gulp-watch]
+                    // [https://cameronspear.com/blog/how-to-handle-gulp-watch-errors-with-plumber/]
+                    // [http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/]
+                    notify("Error with `HTML` task.", true);
+                    this.emit("end");
+                }
+            })
         )
         .pipe($.concat("index.html"))
         .pipe(
@@ -101,11 +116,22 @@ gulp.task("html", function() {
 });
 
 // build app.css + autoprefix + minify
-gulp.task("css", function() {
+gulp.task("css", function(done) {
     return gulp
         .src(["normalize.css", "base.css", "styles.css"], {
             cwd: "css/source/"
         })
+        .pipe(
+            plumber({
+                errorHandler: function(error) {
+                    // [https://scotch.io/tutorials/prevent-errors-from-crashing-gulp-watch]
+                    // [https://cameronspear.com/blog/how-to-handle-gulp-watch-errors-with-plumber/]
+                    // [http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/]
+                    notify("Error with `CSS` task.", true);
+                    this.emit("end");
+                }
+            })
+        )
         .pipe($.concat("app.css"))
         .pipe(gulp.dest("css/")) // dump into development folder
         .pipe(
@@ -131,7 +157,7 @@ gulp.task("css", function() {
 });
 
 // build app.js + minify + beautify
-gulp.task("jsapp", function() {
+gulp.task("jsapp", function(done) {
     return gulp
         .src(
             [
@@ -147,6 +173,17 @@ gulp.task("jsapp", function() {
             ],
             { cwd: "js/source/" }
         )
+        .pipe(
+            plumber({
+                errorHandler: function(error) {
+                    // [https://scotch.io/tutorials/prevent-errors-from-crashing-gulp-watch]
+                    // [https://cameronspear.com/blog/how-to-handle-gulp-watch-errors-with-plumber/]
+                    // [http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/]
+                    notify("Error with `JSAPP` task.", true);
+                    this.emit("end");
+                }
+            })
+        )
         .pipe($.concat("app.js"))
         .pipe($.jsbeautifier())
         .pipe(gulp.dest("js/")) // dump into development folder
@@ -156,7 +193,7 @@ gulp.task("jsapp", function() {
 });
 
 // build libs.js + minify + beautify
-gulp.task("jslibs", function() {
+gulp.task("jslibs", function(done) {
     return gulp
         .src(
             [
@@ -164,6 +201,17 @@ gulp.task("jslibs", function() {
                 // "js/libs/jquery.js"
                 // "js/libs/modernizr.js"
             ]
+        )
+        .pipe(
+            plumber({
+                errorHandler: function(error) {
+                    // [https://scotch.io/tutorials/prevent-errors-from-crashing-gulp-watch]
+                    // [https://cameronspear.com/blog/how-to-handle-gulp-watch-errors-with-plumber/]
+                    // [http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/]
+                    notify("Error with `JSLIBS` task.", true);
+                    this.emit("end");
+                }
+            })
         )
         .pipe($.concat("libs.js"))
         .pipe($.jsbeautifier())
@@ -174,10 +222,21 @@ gulp.task("jslibs", function() {
 });
 
 // copy img/ to dist/img/
-gulp.task("img", function() {
+gulp.task("img", function(done) {
     // deed to copy hidden files/folders? [https://github.com/klaascuvelier/gulp-copy/issues/5]
     return gulp
         .src("img/**")
+        .pipe(
+            plumber({
+                errorHandler: function(error) {
+                    // [https://scotch.io/tutorials/prevent-errors-from-crashing-gulp-watch]
+                    // [https://cameronspear.com/blog/how-to-handle-gulp-watch-errors-with-plumber/]
+                    // [http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/]
+                    notify("Error with `IMG` task.", true);
+                    this.emit("end");
+                }
+            })
+        )
         .pipe(gulp.dest("dist/img/")) // dump in dist/ folder
         .pipe(bs1.stream());
 });
@@ -257,7 +316,7 @@ gulp.task("open-md", function(done) {
 });
 
 // reset the parent folder to its original status
-gulp.task("reset", function() {
+gulp.task("reset", function(done) {
     // remove the dist directory
     return del(
         [
@@ -285,6 +344,17 @@ gulp.task("reset", function() {
                 .src(["./source/**"], {
                     dot: true // copy dot files as well
                 })
+                .pipe(
+                    plumber({
+                        errorHandler: function(error) {
+                            // [https://scotch.io/tutorials/prevent-errors-from-crashing-gulp-watch]
+                            // [https://cameronspear.com/blog/how-to-handle-gulp-watch-errors-with-plumber/]
+                            // [http://blog.ibangspacebar.com/handling-errors-with-gulp-watch-and-gulp-plumber/]
+                            notify("Error with `RESET` task.", true);
+                            this.emit("end");
+                        }
+                    })
+                )
                 .pipe(gulp.dest("./"));
         })
         .then(function() {
