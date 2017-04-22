@@ -162,14 +162,18 @@ gulp.task("jsapp", function(done) {
         .src(
             [
                 // get all the source build files
-                "app.init.top.js",
-                "app.libs.js",
-                "app.globals.js",
-                "app.utils.js",
-                "app.$$.js",
-                "app.events.js",
-                "app.main.js",
-                "app.init.end.js"
+                "app.iife.top.js",
+                "app.init.js",
+                // start: app modules loaded in the
+                // sequence they are provided
+                "modules/libs.js",
+                "modules/globals.js",
+                "modules/utils.js",
+                "modules/$$.js",
+                "modules/events.js",
+                "modules/main.js",
+                // end: app modules
+                "app.iife.end.js"
             ],
             { cwd: "js/source/" }
         )
@@ -284,9 +288,13 @@ gulp.task("watch", function(done) {
     gulp.watch(["css/source/*.css"], options, function() {
         return sequence("css");
     });
-    gulp.watch(["js/libs/*.js", "js/source/*.js"], options, function() {
-        return sequence("jsapp", "jslibs");
-    });
+    gulp.watch(
+        ["js/libs/*.js", "js/source/*.js", "js/source/modules/*.js"],
+        options,
+        function() {
+            return sequence("jsapp", "jslibs");
+        }
+    );
     gulp.watch(["img/*"], options, function() {
         return sequence("img");
     });
