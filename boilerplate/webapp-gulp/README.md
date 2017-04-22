@@ -18,7 +18,7 @@ Run the following commands in the following order:
 
 ## § Files To Modify
 1. **CSS** &mdash; Modify `css/source/styles.css`. `Gulp` will handle auto-prefixing, minifying, and concatenation.
-2. **JS-App** &mdash; Modify `js/source/*.js` files. `Gulp` will handle file concatenation, minifying, and beautification.
+2. **JS-App** &mdash; Modify `js/source/modules/*.js` files. `Gulp` will handle file concatenation, minifying, and beautification.
 3. **JS-Libs** &mdash; Add third-party libraries to `js/libs/`. Then make sure to update the `jslibs` `Gulp` task by adding the library path file to the `src` array. `Gulp` will handle file concatenation, minifying, and beautification.
 4. **HTML** &mdash; Modify `html/source/i*.html` files. `Gulp` will handle file concatenation, minifying, and beautification.
 
