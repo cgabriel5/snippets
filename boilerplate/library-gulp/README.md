@@ -9,16 +9,18 @@ Run the following commands in the following order:
 2. **`$ npm install`** &mdash; Installs needed `npm` modules.
 
 ## § Using Gulp
-1. **`$ gulp`** &mdash; Creates needed folders/files, starts `browser-sync` servers, & watches project for file changes.  
-2. **`$ gulp reset`** &mdash; Resets project to like when it was downloaded, to its original state.
-3. **`$ gulp open-index`** &mdash; Opens `index.html` in the browser.
-4. **`$ gulp open-md`** &mdash; Opens `README.md` `HTML` preview in the browser.
-5. **Modify** `gulpfile.js` as desired.
-6. **Note** &mdash; The `$ gulp reset` command uses the `source/` directory to reset the project to its original state. Changes made to this folder will be transferred over when the command is used.
+1. **`$ gulp`** &mdash; Runs the `default` command. This command runs the `build` and `watch` commands. Creating the needed folders/files, starts `browser-sync` servers, & watches project for file changes.
+2. **`$ gulp build`** &mdash; Builds the needed folders/files for the app.
+3. **`$ gulp watch`** &mdash; Watches project for file changes. Running the needed tasks to rebuild files.
+4. **`$ gulp reset`** &mdash; Resets project to like when it was downloaded, to its original state.
+5. **`$ gulp open-index`** &mdash; Opens `index.html` in the browser.
+6. **`$ gulp open-md`** &mdash; Opens `README.md` `HTML` preview in the browser.
+7. **Modify** `gulpfile.js` as desired.
+8. **Note** &mdash; The `$ gulp reset` command uses the `source/` directory to reset the project to its original state. Changes made to this folder will be transferred over when the command is used.
 
 ## § Files To Modify
 1. **CSS** &mdash; Modify `css/source/styles.css`. `Gulp` will handle auto-prefixing, minifying, and concatenation.
-2. **JS-App** &mdash; Modify `js/source/*.js` files. `Gulp` will handle file concatenation, minifying, and beautification.
+2. **JS-App** &mdash; Modify `js/source/modules/*.js` files. `Gulp` will handle file concatenation, minifying, and beautification.
 3. **JS-Libs** &mdash; Add third-party libraries to `js/libs/`. Then make sure to update the `jslibs` `Gulp` task by adding the library path file to the `src` array. `Gulp` will handle file concatenation, minifying, and beautification.
 4. **HTML** &mdash; Modify `html/source/i*.html` files. `Gulp` will handle file concatenation, minifying, and beautification.
 

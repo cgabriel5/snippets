@@ -162,13 +162,20 @@ gulp.task("jsapp", function(done) {
         .src(
             [
                 // get all the source build files
-                "lib.top.js",
-                "lib.functions.helpers.js",
-                "lib.functions.core.js",
-                "lib.constructor.js",
-                "lib.end.js",
-                "lib.globals.js",
-                "lib.bottom.js",
+                "lib.iife.top.js",
+                "lib.library.top.js",
+                // start: app modules loaded in the
+                // sequence they are provided
+                "modules/fn.helpers.js",
+                "modules/fn.core.js",
+                "modules/constructor.js",
+                // close the library (not a module file)
+                "lib.library.end.js",
+                // resume: modules
+                "modules/globals.js",
+                "modules/bottom.js",
+                // end: app modules
+                "lib.iife.end.js",
                 "app.js"
             ],
             { cwd: "js/source/" }
@@ -284,9 +291,13 @@ gulp.task("watch", function(done) {
     gulp.watch(["css/source/*.css"], options, function() {
         return sequence("css");
     });
-    gulp.watch(["js/libs/*.js", "js/source/*.js"], options, function() {
-        return sequence("jsapp", "jslibs");
-    });
+    gulp.watch(
+        ["js/libs/*.js", "js/source/*.js", "js/source/modules/*.js"],
+        options,
+        function() {
+            return sequence("jsapp", "jslibs");
+        }
+    );
     gulp.watch(["img/*"], options, function() {
         return sequence("img");
     });
