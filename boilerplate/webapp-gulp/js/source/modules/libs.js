@@ -1,7 +1,6 @@
 app.module(
     "libs",
-    function(name) {
-        console.log("Loaded the " + name + " module!");
-    },
+    function(modules, name) {},
+    "complete",
     "module handles third-party laibraries"
 );

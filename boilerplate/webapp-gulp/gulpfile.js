@@ -170,6 +170,7 @@ gulp.task("jsapp", function(done) {
                 "modules/globals.js",
                 "modules/utils.js",
                 "modules/$$.js",
+                "modules/core.js",
                 "modules/events.js",
                 "modules/main.js",
                 // end: app modules
