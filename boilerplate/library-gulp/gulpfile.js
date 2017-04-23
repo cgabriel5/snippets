@@ -70,15 +70,15 @@ gulp.task("html", function(done) {
         .src(
             [
                 "index.top.html",
-                "index.head.start.html",
-                "index.head.meta.html",
-                "index.head.css.html",
-                "index.head.js.html",
-                "index.head.end.html",
-                "index.body.start.html",
-                "index.body.content.html",
-                "index.body.js.html",
-                "index.body.end.html",
+                "head/start.html",
+                "head/meta.html",
+                "head/css.html",
+                "head/js.html",
+                "head/end.html",
+                "body/start.html",
+                "body/content.html",
+                "body/js.html",
+                "body/end.html",
                 "index.end.html"
             ],
             { cwd: "html/source/" }
@@ -285,23 +285,27 @@ gulp.task("watch", function(done) {
     // gulp.watch options
     var options = { /*debounceDelay: 2000,*/ cwd: "./" };
 
-    gulp.watch(["html/source/i*.html"], options, function() {
-        return sequence("html");
-    });
+    gulp.watch(
+        ["i*.html", "head/*.html", "body/*.html"],
+        { cwd: "html/source/" },
+        function() {
+            return sequence("html");
+        }
+    );
     gulp.watch(["css/source/*.css"], options, function() {
         return sequence("css");
     });
     gulp.watch(
-        ["js/libs/*.js", "js/source/*.js", "js/source/modules/*.js"],
-        options,
+        ["libs/*.js", "source/*.js", "source/modules/*.js"],
+        { cwd: "js/" },
         function() {
             return sequence("jsapp", "jslibs");
         }
     );
-    gulp.watch(["img/*"], options, function() {
+    gulp.watch(["img/**"], options, function() {
         return sequence("img");
     });
-    gulp.watch(["./README.md"], options, function() {
+    gulp.watch(["README.md"], options, function() {
         return sequence("readme", function() {
             bs2.reload();
         });
