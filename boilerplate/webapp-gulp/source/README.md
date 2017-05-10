@@ -1,7 +1,7 @@
 ## § Read Before Use
 1. Make sure to remove the `.gitignore` file from the `img/` directory before using. The file is used as a placeholder to include the otherwise empty folder with `Git`.
 2. Remove setup sections (§) from the `README` after reading and fully understanding what to do.
-3. Boilerplate uses `NodeJS` and `Gulp`. *Please make sure they are installed*.
+3. Boilerplate uses `NodeJS`, `Gulp`, and `Yarn`. *Please make sure they are installed*.
 
 ## § Yarn Setup
 Run the following commands in the following order:
