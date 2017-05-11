@@ -18,29 +18,31 @@
 <h2 id="§-yarn-setup">§ Yarn Setup</h2>
 <p>Run the following commands in the following order:</p>
 <ol class="list">
-<li><strong><code>$ yarn init</code></strong> &mdash; Update <code>package.json</code> as needed.</li>
-<li><strong><code>$ yarn install</code></strong> &mdash; Installs needed <code>package.json</code> modules.</li>
+<li><code>$ yarn init</code> &mdash; Update <code>package.json</code> as needed.</li>
+<li><code>$ yarn install</code> &mdash; Installs needed <code>package.json</code> modules.</li>
 </ol>
 <h2 id="§-using-gulp">§ Using Gulp</h2>
 <ol class="list">
-<li><strong><code>$ gulp</code></strong> &mdash; Runs the <code>default</code> command. This command runs the <code>build</code> and <code>watch</code> commands. Creating the needed folders/files, starts <code>browser-sync</code> servers, &amp; watches project for file changes.</li>
-<li><strong><code>$ gulp build</code></strong> &mdash; Builds the needed folders/files for the app.</li>
-<li><strong><code>$ gulp watch</code></strong> &mdash; Watches project for file changes. Running the needed tasks to rebuild files.</li>
-<li><strong><code>$ gulp reset</code></strong> &mdash; Resets project to its original, downloaded &quot;factory&quot; state.</li>
-<li><strong><code>$ gulp open -p/--port [num] -f/--file [str]</code></strong> &mdash; Will open the given file at the given port in browser. <ul class="list">
-<li><strong><code>$ gulp open -p 3000 -f index.html</code></strong> Will open <code>index.html</code> at port <code>3000</code>.</li>
-<li><strong><code>$ gulp open -p 3002 -f readme.md</code></strong> Will open <code>index.html</code> at port <code>3002</code>.</li>
+<li><code>$ gulp</code> &mdash; Runs the <code>default</code> command. This command runs the <code>build</code> and <code>watch</code> commands. Creating the needed folders/files, starts <code>browser-sync</code> servers, &amp; watches project for file changes.</li>
+<li><code>$ gulp build</code> &mdash; Builds the needed folders/files for the app.</li>
+<li><code>$ gulp watch</code> &mdash; Watches project for file changes. Running the needed tasks to rebuild files.</li>
+<li><code>$ gulp reset -t/--type [req:str]</code> &mdash; Resets project to its original, downloaded &quot;factory&quot; state.<ul class="list">
+<li><code>$ gulp open -t main</code> &mdash; Resets the main directory, <code>/.</code>, using the <code>source/</code> directory as its source of files.</li>
+<li><code>$ gulp open -t backup</code> &mdash; Resets the <code>source/</code> directory using the <code>./</code> as its source of files.</li>
 </ul>
 </li>
-<li><p><strong><code>$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only]</code></strong> &mdash; Will purify CSS of any unused CSS. </p>
-<ul class="list">
-<li><strong><code>$ gulp purify</code></strong> Will create <code>pure.css</code> and <strong>only</strong> scan for any unused CSS.</li>
-<li><strong><code>$ gulp purify -D</code></strong> Will delete <code>pure.css</code> file.</li>
-<li><strong><code>$ gulp purify --remove</code></strong> Will delete <code>pure.css</code> <strong>and</strong> remove unused CSS from <code>/css/source/styles.css</code>.</li>
+<li><code>$ gulp open -p/--port [req:num] -f/--file [req:str]</code> &mdash; Will open the given file at the given port in browser.<ul class="list">
+<li><code>$ gulp open -p 3000 -f index.html</code> &mdash; Will open <code>index.html</code> at port <code>3000</code>.</li>
+<li><code>$ gulp open -p 3002 -f readme.md</code> &mdash; Will open <code>index.html</code> at port <code>3002</code>.</li>
 </ul>
 </li>
-<li><p><strong>Modify</strong> <code>gulpfile.js</code> as desired.</p>
+<li><code>$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only]</code> &mdash; Will purify CSS of any unused CSS.<ul class="list">
+<li><code>$ gulp purify</code> &mdash; Will create <code>pure.css</code> and <strong>only</strong> scan for any unused CSS.</li>
+<li><code>$ gulp purify -D</code> &mdash; Will delete <code>pure.css</code> file.</li>
+<li><code>$ gulp purify --remove</code> &mdash; Will delete <code>pure.css</code> <strong>and</strong> remove unused CSS from <code>/css/source/styles.css</code>.</li>
+</ul>
 </li>
+<li><strong>Modify</strong> <code>gulpfile.js</code> as desired.</li>
 <li><strong>Note</strong> &mdash; The <code>$ gulp reset</code> command uses the <code>source/</code> directory to reset the project to its original state. Changes made to this folder will be transferred over when the command is used. Therefore, changes to <code>source/</code> are not recommended.</li>
 </ol>
 <h2 id="§-files-to-modify">§ Files To Modify</h2>

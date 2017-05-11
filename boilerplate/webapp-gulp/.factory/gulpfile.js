@@ -95,7 +95,7 @@ var notify = function(message, error) {
     $.nodeNotifier.notify({
         title: "Gulp",
         message: message,
-        icon: path.join(__dirname, "source/assets/node-notifier/" + image),
+        icon: path.join(__dirname, ".factory/.assets/node-notifier/" + image),
         // time: 1000,
         // urgency: "critical",
         sound: true
@@ -461,42 +461,121 @@ gulp.task("open", function(done) {
     done();
 });
 
-// reset the parent folder to its original status
+// resets the main (./) or .factory/ directory
 gulp.task("reset", function(done) {
-    // remove the dist directory
-    return del(
-        [
-            "./**", // select all files but keep the following...
-            "!.", // keep the parent directory
-            // keep the source/ and node_modules/ directories
-            // and the gulpfile + package.json files.
-            "!./source",
-            "!./source/**",
-            "!./node_modules",
-            "!./node_modules/**",
-            "!./gulpfile.js",
-            "!./package.json"
-        ],
-        {
-            force: true
-            // dryRun: true
-        }
-    )
-        .then(function(paths) {
-            // once everything but the source/ and node_modules/ directories
-            // are deleted we copy the source/ folder contents into the root
-            // directory.
-            return gulp
-                .src(["./source/**"], {
-                    dot: true // copy dot files as well
-                })
-                .pipe(plumber({ errorHandler: pipe_error.bind(this) }))
-                .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
-                .pipe(gulp.dest("./"));
-        })
-        .then(function() {
-            notify("Reset complete");
+    // get the command line arguments from yargs
+    var type = cli.t || cli.type || null;
+
+    if (!type) {
+        console.log(
+            'Type flag [-t/--type] is required. Possible values include "main" or "backup".'
+        );
+        console.log("$ gulp reset -t main;   # .factory/ --> ./");
+        console.log("$ gulp reset -t backup; # ./        --> .factory/");
+        return;
+    }
+
+    // resets the main therefore, .factory/ --> ./
+    if (type === "main") {
+        // remove the dist directory
+        return del(
+            [
+                "./**", // select all files but keep the following...
+                "!.", // keep the parent directory
+                // keep the .factory/ and node_modules/ directories
+                // and the gulpfile + package.json files.
+                "!./.factory",
+                "!./.factory/**",
+                "!./node_modules",
+                "!./node_modules/**",
+                "!./gulpfile.js",
+                "!./package.json"
+            ],
+            {
+                dot: true,
+                force: true
+                // dryRun: true
+            }
+        ).then(function(paths) {
+            // copy files to .factory/
+            return sequence("reset-main", function() {
+                notify("./ (main) directory backedup.");
+                // done();
+            });
         });
+
+        // resets the main therefore, ./ --> .factory/
+    } else if (type === "backup") {
+        // delete the .factory/ directory
+        del(
+            [
+                ".factory/**", // delete everything but the following...
+                "!.factory", // keep the .factory folder itseld
+                "!.factory/.assets", // keep .assesets folder
+                "!.factory/.assets/**" // and its contents
+            ],
+            {
+                cwd: "./",
+                dot: true
+                // dryRun: true
+            }
+        ).then(function(paths) {
+            // copy files to .factory/
+            return sequence("backup-src", function() {
+                notify(".factory/ directory backedup.");
+                done();
+            });
+        });
+    }
+});
+
+// resets the ./ (main) directory
+gulp.task("reset-main", function(done) {
+    // once everything but the .factory/ and node_modules/ directories
+    // are deleted we copy the .factory/ folder contents into the root
+    // directory.
+    return gulp
+        .src(
+            [
+                ".factory/**",
+                "!.factory/.assets/**/*.*",
+                "!.factory/.assets/**",
+                "!.factory/.assets/",
+                "!.factory/.assets"
+            ],
+            {
+                cwd: "./",
+                dot: true // copy dot files as well
+            }
+        )
+        .pipe(plumber({ errorHandler: pipe_error.bind(this) }))
+        .pipe(
+            pipe_error_stop({
+                errorCallback: pipe_error.bind(this)
+            })
+        )
+        .pipe(gulp.dest("./"));
+});
+
+// backups the .factory/ directory
+gulp.task("backup-src", function(done) {
+    return gulp
+        .src(
+            [
+                // get everything but the dist/, .factory/, and node_modules/ folders
+                "**/*.*", // <-- everything
+                "!dist/**/*.*",
+                "!.factory/**/*.*",
+                "!.factory",
+                "!node_modules/**/*.*"
+            ],
+            {
+                cwd: "./",
+                dot: true
+            }
+        )
+        .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
+        .pipe(gulp.dest("./.factory/"));
 });
 
 // remove the dist/ folder
