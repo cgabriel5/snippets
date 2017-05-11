@@ -461,22 +461,22 @@ gulp.task("open", function(done) {
     done();
 });
 
-// resets the main (./) or .factory/ directory
+// resets the app (./) or .factory/ directory
 gulp.task("reset", function(done) {
     // get the command line arguments from yargs
     var type = cli.t || cli.type || null;
 
-    if (!type) {
+    if (!type || !-~["app", "factory"].indexOf(type)) {
         console.log(
-            'Type flag [-t/--type] is required. Possible values include "main" or "backup".'
+            'Type flag [-t/--type] is required. Possible values include "app" or "factory".'
         );
-        console.log("$ gulp reset -t main;   # .factory/ --> ./");
-        console.log("$ gulp reset -t backup; # ./        --> .factory/");
+        console.log("$ gulp reset -t app;   # .factory/ --> ./");
+        console.log("$ gulp reset -t factory; # ./        --> .factory/");
         return;
     }
 
-    // resets the main therefore, .factory/ --> ./
-    if (type === "main") {
+    // resets the app therefore, .factory/ --> ./
+    if (type === "app") {
         // remove the dist directory
         return del(
             [
@@ -498,14 +498,14 @@ gulp.task("reset", function(done) {
             }
         ).then(function(paths) {
             // copy files to .factory/
-            return sequence("reset-main", function() {
-                notify("./ (main) directory backedup.");
+            return sequence("reset-app", function() {
+                notify("./ (app) directory backed up.");
                 // done();
             });
         });
 
-        // resets the main therefore, ./ --> .factory/
-    } else if (type === "backup") {
+        // resets the app therefore, ./ --> .factory/
+    } else if (type === "factory") {
         // delete the .factory/ directory
         del(
             [
@@ -521,16 +521,16 @@ gulp.task("reset", function(done) {
             }
         ).then(function(paths) {
             // copy files to .factory/
-            return sequence("backup-src", function() {
-                notify(".factory/ directory backedup.");
+            return sequence("reset-factory", function() {
+                notify(".factory/ directory backed up.");
                 done();
             });
         });
     }
 });
 
-// resets the ./ (main) directory
-gulp.task("reset-main", function(done) {
+// resets the ./ (app) directory
+gulp.task("reset-app", function(done) {
     // once everything but the .factory/ and node_modules/ directories
     // are deleted we copy the .factory/ folder contents into the root
     // directory.
@@ -557,8 +557,8 @@ gulp.task("reset-main", function(done) {
         .pipe(gulp.dest("./"));
 });
 
-// backups the .factory/ directory
-gulp.task("backup-src", function(done) {
+// backs up the .factory/ directory
+gulp.task("reset-factory", function(done) {
     return gulp
         .src(
             [
