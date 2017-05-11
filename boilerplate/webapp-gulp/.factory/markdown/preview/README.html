@@ -10,48 +10,96 @@
   </head>
   <body>
     <article class="markdown-body"><h2 id="§-read-before-use">§ Read Before Use</h2>
-<ol class="list">
+<ul class="list">
 <li>Make sure to remove the <code>.gitignore</code> file from the <code>img/</code> directory before using. The file is used as a placeholder to include the otherwise empty folder with <code>Git</code>.</li>
-<li>Remove setup sections (§) from the <code>README</code> after reading and fully understanding what to do.</li>
+<li>Remove setup sections <code>§</code> from the <code>README</code> after reading and fully understanding what to do.</li>
 <li>Boilerplate uses <code>NodeJS</code>, <code>Gulp</code>, and <code>Yarn</code>. <em>Please make sure they are installed</em>.</li>
-</ol>
+</ul>
 <h2 id="§-yarn-setup">§ Yarn Setup</h2>
 <p>Run the following commands in the following order:</p>
 <ol class="list">
-<li><code>$ yarn init</code> &mdash; Update <code>package.json</code> as needed.</li>
+<li><code>$ yarn init</code> &mdash; Create a <code>package.json</code> file. Update <code>package.json</code> as needed.</li>
 <li><code>$ yarn install</code> &mdash; Installs needed <code>package.json</code> modules.</li>
 </ol>
 <h2 id="§-using-gulp">§ Using Gulp</h2>
-<ol class="list">
-<li><code>$ gulp</code> &mdash; Runs the <code>default</code> command. This command runs the <code>build</code> and <code>watch</code> commands. Creating the needed folders/files, starts <code>browser-sync</code> servers, &amp; watches project for file changes.</li>
+<p>First and foremost, modify <code>gulpfile.js</code> as desired.</p>
+<ul class="list">
+<li><code>$ gulp</code> &mdash; Runs the <code>default</code> task which runs the <code>build</code> and <code>watch</code> tasks. This creates the needed folders/files, starts <code>browser-sync</code> servers, &amp; watches project for file changes.</li>
 <li><code>$ gulp build</code> &mdash; Builds the needed folders/files for the app.</li>
 <li><code>$ gulp watch</code> &mdash; Watches project for file changes. Running the needed tasks to rebuild files.</li>
-<li><code>$ gulp reset -t/--type [req:str]</code> &mdash; Resets project to its original, downloaded &quot;factory&quot; state.<ul class="list">
-<li><code>$ gulp open -t main</code> &mdash; Resets the main directory, <code>/.</code>, using the <code>source/</code> directory as its source of files.</li>
-<li><code>$ gulp open -t backup</code> &mdash; Resets the <code>source/</code> directory using the <code>./</code> as its source of files.</li>
+<li><code>$ gulp reset -t/--type [req:str]</code> &mdash; Resets project to its original, downloaded &quot;factory&quot; state.</li>
 </ul>
-</li>
-<li><code>$ gulp open -p/--port [req:num] -f/--file [req:str]</code> &mdash; Will open the given file at the given port in browser.<ul class="list">
-<li><code>$ gulp open -p 3000 -f index.html</code> &mdash; Will open <code>index.html</code> at port <code>3000</code>.</li>
-<li><code>$ gulp open -p 3002 -f readme.md</code> &mdash; Will open <code>index.html</code> at port <code>3002</code>.</li>
+<table>
+<thead>
+<tr>
+<th>Command <code>reset</code></th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$ gulp reset -t app</code></td>
+<td>Resets the app directory, <code>/.</code>, using the <code>.factory/</code> directory as its source of files.</td>
+</tr>
+<tr>
+<td><code>$ gulp reset -t factory</code></td>
+<td>Resets the <code>.factory/</code> directory using the <code>./</code>, app directory, as its source of files.</td>
+</tr>
+</tbody>
+</table>
+<ul class="list">
+<li><code>$ gulp open -p/--port [req:num] -f/--file [req:str]</code> &mdash; Will open the given file at the given port in browser.</li>
 </ul>
-</li>
-<li><code>$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only]</code> &mdash; Will purify CSS of any unused CSS.<ul class="list">
-<li><code>$ gulp purify</code> &mdash; Will create <code>pure.css</code> and <strong>only</strong> scan for any unused CSS.</li>
-<li><code>$ gulp purify -D</code> &mdash; Will delete <code>pure.css</code> file.</li>
-<li><code>$ gulp purify --remove</code> &mdash; Will delete <code>pure.css</code> <strong>and</strong> remove unused CSS from <code>/css/source/styles.css</code>.</li>
+<table>
+<thead>
+<tr>
+<th>Command <code>open</code></th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$ gulp open -p 3000 -f index.html</code></td>
+<td>Will open <code>index.html</code> at port <code>3000</code>.</td>
+</tr>
+<tr>
+<td><code>$ gulp open -p 3002 -f readme.md</code></td>
+<td>Will open <code>readme.md</code> at port <code>3002</code>.</td>
+</tr>
+</tbody>
+</table>
+<ul class="list">
+<li><code>$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only]</code> &mdash; Will purify CSS of any unused CSS.</li>
 </ul>
-</li>
-<li><strong>Modify</strong> <code>gulpfile.js</code> as desired.</li>
-<li><strong>Note</strong> &mdash; The <code>$ gulp reset</code> command uses the <code>source/</code> directory to reset the project to its original state. Changes made to this folder will be transferred over when the command is used. Therefore, changes to <code>source/</code> are not recommended.</li>
-</ol>
+<table>
+<thead>
+<tr>
+<th>Command <code>purify</code></th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$ gulp purify</code></td>
+<td>Will create <code>pure.css</code> <strong>and scan</strong> for any unused CSS.</td>
+</tr>
+<tr>
+<td><code>$ gulp purify -D</code></td>
+<td>Will delete <code>pure.css</code> file.</td>
+</tr>
+<tr>
+<td><code>$ gulp purify --remove</code></td>
+<td>Will delete <code>pure.css</code> <strong>and remove</strong> unused CSS from <code>/css/source/styles.css</code>.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="§-files-to-modify">§ Files To Modify</h2>
-<ol class="list">
+<ul class="list">
 <li><strong>CSS</strong> &mdash; Modify <code>css/source/styles.css</code>. <code>Gulp</code> will handle auto-prefixing, minifying, and concatenation.</li>
 <li><strong>JS-App</strong> &mdash; Modify <code>js/source/modules/*.js</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
 <li><strong>JS-Libs</strong> &mdash; Add third-party libraries to <code>js/libs/</code>. Then make sure to update the <code>jslibs</code> <code>Gulp</code> task by adding the library path file to the <code>src</code> array. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
 <li><strong>HTML</strong> &mdash; Modify <code>html/source/i*.html</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
-</ol>
+</ul>
 <h1 id="webapp-name">webapp-name</h1>
 <p>Webapp description.</p>
 <h3 id="purpose">Purpose</h3>
