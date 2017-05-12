@@ -362,7 +362,6 @@ gulp.task("purify", function() {
 gulp.task("jsapp", function(done) {
     // check if application is a library
     var is_library = __type__ === "library";
-    console.log("the app is a lib?", is_library);
 
     return gulp
         .src(flavor.jsapp[__type__], { cwd: "js/source/" })
