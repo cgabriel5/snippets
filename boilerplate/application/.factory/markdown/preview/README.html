@@ -17,84 +17,35 @@
 </ul>
 <h2 id="§-yarn-setup">§ Yarn Setup</h2>
 <p>Run the following commands in the following order:</p>
-<ol class="list">
-<li><code>$ yarn init</code> &mdash; Create a <code>package.json</code> file. Update <code>package.json</code> as needed.</li>
-<li><code>$ yarn install</code> &mdash; Installs needed <code>package.json</code> modules.</li>
-</ol>
-<h2 id="§-using-gulp">§ Using Gulp</h2>
+<pre class="hljs"><code>$ yarn init <span class="hljs-comment"># Create a package.json file. Update package.json as needed.</span>
+$ yarn install <span class="hljs-comment"># Installs needed package.json modules.</span></code></pre><h2 id="§-gulp-setup">§ Gulp Setup</h2>
 <p>First and foremost, <strong>make sure</strong> to initialize the project via <code>Gulp</code> before doing anything else!</p>
 <pre class="hljs"><code>$ gulp init -t webapp  <span class="hljs-comment"># init the project as a webapp</span>
-$ gulp init -t library <span class="hljs-comment"># init the project as a library</span></code></pre><ul class="list">
-<li><code>$ gulp</code> &mdash; Runs the <code>default</code> task which runs the <code>build</code> and <code>watch</code> tasks. This creates the needed folders/files, starts <code>browser-sync</code> servers, &amp; watches project for file changes.</li>
-<li><code>$ gulp build</code> &mdash; Builds the needed folders/files for the app.</li>
-<li><code>$ gulp watch</code> &mdash; Watches project for file changes. Running the needed tasks to rebuild files.</li>
-<li><code>$ gulp reset -t/--type [req:str]</code> &mdash; Resets project to its original, downloaded &quot;factory&quot; state.</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Command <code>reset</code></th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$ gulp reset -t app</code></td>
-<td>Resets the app directory, <code>/.</code>, using the <code>.factory/</code> directory as its source of files.</td>
-</tr>
-<tr>
-<td><code>$ gulp reset -t factory</code></td>
-<td>Resets the <code>.factory/</code> directory using the <code>./</code>, app directory, as its source of files.</td>
-</tr>
-</tbody>
-</table>
-<ul class="list">
-<li><code>$ gulp open -p/--port [req:num] -f/--file [req:str]</code> &mdash; Will open the given file at the given port in browser.</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Command <code>open</code></th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$ gulp open -p 3000 -f index.html</code></td>
-<td>Will open <code>index.html</code> at port <code>3000</code>.</td>
-</tr>
-<tr>
-<td><code>$ gulp open -p 3002 -f readme.md</code></td>
-<td>Will open <code>readme.md</code> at port <code>3002</code>.</td>
-</tr>
-</tbody>
-</table>
-<ul class="list">
-<li><code>$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only]</code> &mdash; Will purify CSS of any unused CSS.</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Command <code>purify</code></th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>$ gulp purify</code></td>
-<td>Will create <code>pure.css</code> <strong>and scan</strong> for any unused CSS.</td>
-</tr>
-<tr>
-<td><code>$ gulp purify -D</code></td>
-<td>Will delete <code>pure.css</code> file.</td>
-</tr>
-<tr>
-<td><code>$ gulp purify --remove</code></td>
-<td>Will delete <code>pure.css</code> <strong>and remove</strong> unused CSS from <code>/css/source/styles.css</code>.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="§-files-to-modify">§ Files To Modify</h2>
+$ gulp init -t library <span class="hljs-comment"># init the project as a library</span></code></pre><h2 id="§-using-gulp">§ Using Gulp</h2>
+<pre class="hljs"><code><span class="hljs-comment"># Runs the default task which runs the build and watch tasks. </span>
+<span class="hljs-comment"># This creates the needed folders/files, starts browser-sync servers, </span>
+<span class="hljs-comment"># &amp; watches project for file changes.</span>
+$ gulp 
+
+<span class="hljs-comment"># Builds the needed folders/files for the app.</span>
+$ gulp build 
+
+<span class="hljs-comment"># Watches project for file changes. Running the needed tasks to rebuild files.</span>
+$ gulp watch</code></pre><pre class="hljs"><code><span class="hljs-comment"># Resets project to its original, downloaded "factory" state.</span>
+$ gulp reset -t/--type [req:str] 
+
+<span class="hljs-comment"># Resets the app directory, /., using the .factory/ directory as its source of files</span>
+$ gulp reset -t app 
+<span class="hljs-comment"># Resets the .factory/ directory using the ./, app directory, as its source of files.</span>
+$ gulp reset -t factory</code></pre><pre class="hljs"><code><span class="hljs-comment"># Will open the given file at the given port in browser.</span>
+$ gulp open -p/--port [req:num] <span class="hljs-_">-f</span>/--file [req:str] 
+
+$ gulp open -p 3000 <span class="hljs-_">-f</span> index.html <span class="hljs-comment"># Will open index.html at port 3000.  </span>
+$ gulp open -p 3002 <span class="hljs-_">-f</span> readme.md <span class="hljs-comment"># Will open readme.md at port 3002.</span></code></pre><pre class="hljs"><code>$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only] <span class="hljs-comment"># Will purify CSS of any unused CSS.</span>
+
+$ gulp purify <span class="hljs-comment"># Create pure.css and scan for any unused CSS.</span>
+$ gulp purify -D <span class="hljs-comment"># Delete pure.css file.</span>
+$ gulp purify --remove <span class="hljs-comment"># Delete pure.css and remove unused CSS from /css/source/styles.css.</span></code></pre><h2 id="§-files-to-modify">§ Files To Modify</h2>
 <ul class="list">
 <li><strong>CSS</strong> &mdash; Modify <code>css/source/styles.css</code>. <code>Gulp</code> will handle auto-prefixing, minifying, and concatenation.</li>
 <li><strong>JS-App</strong> &mdash; Modify <code>js/source/modules/*.js</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
