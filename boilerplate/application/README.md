@@ -5,10 +5,13 @@
 
 ## § Yarn Setup
 Run the following commands in the following order:
-1. `$ yarn init` &mdash; Create a `package.json` file. Update `package.json` as needed.
-2. `$ yarn install` &mdash; Installs needed `package.json` modules.
 
-## § Using Gulp
+```bash
+$ yarn init # Create a package.json file. Update package.json as needed.
+$ yarn install # Installs needed package.json modules.
+```
+
+## § Gulp Setup
 
 First and foremost, **make sure** to initialize the project via `Gulp` before doing anything else!
 
@@ -17,30 +20,46 @@ $ gulp init -t webapp  # init the project as a webapp
 $ gulp init -t library # init the project as a library
 ```
 
-* `$ gulp` &mdash; Runs the `default` task which runs the `build` and `watch` tasks. This creates the needed folders/files, starts `browser-sync` servers, & watches project for file changes.
-* `$ gulp build` &mdash; Builds the needed folders/files for the app.
-* `$ gulp watch` &mdash; Watches project for file changes. Running the needed tasks to rebuild files.
-* `$ gulp reset -t/--type [req:str]` &mdash; Resets project to its original, downloaded "factory" state.
+## § Using Gulp
 
-| Command `reset` | Description |
-| --- | --- |
-| `$ gulp reset -t app` | Resets the app directory, `/.`, using the `.factory/` directory as its source of files. | 
-| `$ gulp reset -t factory` | Resets the `.factory/` directory using the `./`, app directory, as its source of files. |
+```bash
+# Runs the default task which runs the build and watch tasks. 
+# This creates the needed folders/files, starts browser-sync servers, 
+# & watches project for file changes.
+$ gulp 
 
-* `$ gulp open -p/--port [req:num] -f/--file [req:str]` &mdash; Will open the given file at the given port in browser.
+# Builds the needed folders/files for the app.
+$ gulp build 
 
-| Command `open` | Description |
-| --- | --- |
-| `$ gulp open -p 3000 -f index.html` | Will open `index.html` at port `3000`. | 
-| `$ gulp open -p 3002 -f readme.md` | Will open `readme.md` at port `3002`. |
+# Watches project for file changes. Running the needed tasks to rebuild files.
+$ gulp watch 
+```
 
-* `$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only]` &mdash; Will purify CSS of any unused CSS.
+```bash
+# Resets project to its original, downloaded "factory" state.
+$ gulp reset -t/--type [req:str] 
 
-| Command `purify` | Description |
-| --- | --- |
-| `$ gulp purify` | Will create `pure.css` **and scan** for any unused CSS. | 
-| `$ gulp purify -D` | Will delete `pure.css` file. |
-| `$ gulp purify --remove` | Will delete `pure.css` **and remove** unused CSS from `/css/source/styles.css`. |
+# Resets the app directory, /., using the .factory/ directory as its source of files
+$ gulp reset -t app 
+# Resets the .factory/ directory using the ./, app directory, as its source of files.
+$ gulp reset -t factory 
+```
+
+```bash
+# Will open the given file at the given port in browser.
+$ gulp open -p/--port [req:num] -f/--file [req:str] 
+
+$ gulp open -p 3000 -f index.html # Will open index.html at port 3000.  
+$ gulp open -p 3002 -f readme.md # Will open readme.md at port 3002.
+```
+
+```bash
+$ gulp purify -D/--del [?flag-only] -r/--remove [?flag-only] # Will purify CSS of any unused CSS.
+
+$ gulp purify # Create pure.css and scan for any unused CSS.
+$ gulp purify -D # Delete pure.css file.
+$ gulp purify --remove # Delete pure.css and remove unused CSS from /css/source/styles.css.
+```
 
 ## § Files To Modify
 * **CSS** &mdash; Modify `css/source/styles.css`. `Gulp` will handle auto-prefixing, minifying, and concatenation.
