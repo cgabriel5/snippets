@@ -10,7 +10,12 @@ Run the following commands in the following order:
 
 ## § Using Gulp
 
-First and foremost, modify `gulpfile.js` as desired.
+First and foremost, **make sure** to initialize the project via `Gulp` before doing anything else!
+
+```bash
+$ gulp init -t webapp  # init the project as a webapp
+$ gulp init -t library # init the project as a library
+```
 
 * `$ gulp` &mdash; Runs the `default` task which runs the `build` and `watch` tasks. This creates the needed folders/files, starts `browser-sync` servers, & watches project for file changes.
 * `$ gulp build` &mdash; Builds the needed folders/files for the app.

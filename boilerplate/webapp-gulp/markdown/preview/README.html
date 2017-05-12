@@ -22,8 +22,9 @@
 <li><code>$ yarn install</code> &mdash; Installs needed <code>package.json</code> modules.</li>
 </ol>
 <h2 id="§-using-gulp">§ Using Gulp</h2>
-<p>First and foremost, modify <code>gulpfile.js</code> as desired.</p>
-<ul class="list">
+<p>First and foremost, <strong>make sure</strong> to initialize the project via <code>Gulp</code> before doing anything else!</p>
+<pre class="hljs"><code>$ gulp init -t webapp  <span class="hljs-comment"># init the project as a webapp</span>
+$ gulp init -t library <span class="hljs-comment"># init the project as a library</span></code></pre><ul class="list">
 <li><code>$ gulp</code> &mdash; Runs the <code>default</code> task which runs the <code>build</code> and <code>watch</code> tasks. This creates the needed folders/files, starts <code>browser-sync</code> servers, &amp; watches project for file changes.</li>
 <li><code>$ gulp build</code> &mdash; Builds the needed folders/files for the app.</li>
 <li><code>$ gulp watch</code> &mdash; Watches project for file changes. Running the needed tasks to rebuild files.</li>
