@@ -4,7 +4,7 @@ var os = require("os"), path = require("path");
 // third-party plugins
 var $ = require("gulp-load-plugins")({
     pattern: ["*"],
-    rename: { autoprefixer: "ap" }
+    rename: { autoprefixer: "ap", prettier: "jsprettier" }
 }),
     gulp = $.gulp,
     sequence = $.runSequence,
@@ -23,7 +23,9 @@ var $ = require("gulp-load-plugins")({
     remember = $.remember,
     find_free_port = $.findFreePort,
     gulpif = $.if,
-    cli = $.yargs.argv;
+    cli = $.yargs.argv,
+    header = $.header,
+    prettier = $.prettier;
 
 // create the browser-sync servers
 var bs1 = bs.create("localhost"),
@@ -53,6 +55,97 @@ var autoprefixer_browsers = [
     "Samsung >= 4",
     "ChromeAndroid >= 56"
 ];
+
+// jsprettier options
+var jsprettier_options = {
+    // printWidth: 80,
+    // singleQuote: false,
+    // trailingComma: "none",
+    // bracketSpacing: true,
+    // jsxBracketSameLine: false,
+    // parser: "babylon",
+    // semi: true,
+    useTabs: true,
+    tabWidth: 4
+};
+
+// cssbeautifier options
+var cssbeautifier_options = {
+    end_with_newline: false,
+    indent_char: " ",
+    indent_size: 4,
+    newline_between_rules: true,
+    selector_separator: " ",
+    selector_separator_newline: true
+};
+
+// htmlbeautifier options
+var htmlbeautifier_options = {
+    brace_style: "collapse",
+    end_with_newline: false,
+    indent_char: " ",
+    indent_handlebars: false,
+    indent_inner_html: false,
+    indent_scripts: "keep",
+    indent_size: 4,
+    max_preserve_newlines: 0,
+    preserve_newlines: true,
+    wrap_line_length: 0
+};
+
+var flavor = {
+    jsapp: {
+        webapp: [
+            // get all the source build files
+            "app.iife.top.js",
+            "app.init.js",
+            // start: app modules loaded in the
+            // sequence they are provided
+            "modules/libs.js",
+            "modules/globals.js",
+            "modules/utils.js",
+            "modules/$$.js",
+            "modules/core.js",
+            "modules/events.js",
+            "modules/main.js",
+            // end: app modules
+            "app.iife.end.js"
+        ],
+        library: [
+            // get all the source build files
+            "lib.iife.top.js",
+            "lib.library.top.js",
+            // start: app modules loaded in the
+            // sequence they are provided
+            "modules/fn.helpers.js",
+            "modules/fn.core.js",
+            "modules/constructor.js",
+            // close the library (not a module file)
+            "lib.library.end.js",
+            // resume: modules
+            "modules/globals.js",
+            "modules/bottom.js",
+            // end: app modules
+            "lib.iife.end.js",
+            "app.js"
+        ]
+    },
+    jslibs: {
+        webapp: [
+            // add any used js library paths here
+            // "jquery.js"
+            // "modernizr.js"
+            "fastclick.js"
+        ],
+        library: [
+            // add any used js library paths here
+            // "jquery.js"
+            // "modernizr.js"
+            "fastclick.js",
+            "libs.init.js" // <-- must be added last as it initializes the libraries
+        ]
+    }
+};
 
 // Get the current task name inside task itself
 // [http://stackoverflow.com/a/27535245]
@@ -105,18 +198,20 @@ var notify = function(message, error) {
 /**
  * @description [Stream pipe error handler.]
  * @param  {Error} error [The error object.]
- * @return {Undefined}       [Nothins is returned.]
+ * @return {Undefined}       [Nothing is returned.]
  */
 var pipe_error = function(error) {
     notify("Error with `" + this.currentTask.name + "` task.", true);
     this.emit("end");
 };
 
+// @strip-start
 // // example gulpif condition check
 // var condition = function(file) {
 //     // check the file name
 //     return /styles.css$/.test(file.path);
 // };
+// @strip-end
 
 // tasks
 // init HTML files + minify
@@ -140,20 +235,7 @@ gulp.task("html", function(done) {
         )
         .pipe(plumber({ errorHandler: pipe_error.bind(this) }))
         .pipe($.concat("index.html"))
-        .pipe(
-            $.jsbeautifier({
-                brace_style: "collapse",
-                end_with_newline: false,
-                indent_char: " ",
-                indent_handlebars: false,
-                indent_inner_html: false,
-                indent_scripts: "keep",
-                indent_size: 4,
-                max_preserve_newlines: 0,
-                preserve_newlines: true,
-                wrap_line_length: 0
-            })
-        )
+        .pipe($.jsbeautifier(htmlbeautifier_options))
         .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
         .pipe(gulp.dest("./"))
         .pipe($.minifyHtml())
@@ -212,6 +294,7 @@ gulp.task("cssapp", ["precssapp-clean-styles"], function(done) {
             // .pipe(postcss([css_declaration_sorter({ order: "smacss" })]))
             .pipe(shorthand())
             .pipe($.concat("app.css"))
+            .pipe($.jsbeautifier(cssbeautifier_options))
             .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
             .pipe(gulp.dest("css/")) // dump into development folder
             .pipe($.cleanCss()) // minify for production
@@ -240,6 +323,7 @@ gulp.task("csslibs", function(done) {
             )
             // .pipe(postcss([css_declaration_sorter({ order: "smacss" })]))
             .pipe(shorthand())
+            .pipe($.jsbeautifier(cssbeautifier_options))
             .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
             .pipe(gulp.dest("css/")) // dump into development folder
             .pipe($.cleanCss()) // minify for production
@@ -269,58 +353,55 @@ gulp.task("purify", function() {
             })
         )
         .pipe(gulpif(!remove, rename("pure.css")))
+        .pipe($.jsbeautifier(cssbeautifier_options))
         .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
         .pipe(gulp.dest("./css/" + (remove ? "source/" : "")));
 });
 
 // build app.js + minify + beautify
 gulp.task("jsapp", function(done) {
+    // check if application is a library
+    var is_library = __type__ === "library";
+    console.log("the app is a lib?", is_library);
+
     return gulp
-        .src(
-            [
-                // get all the source build files
-                "app.iife.top.js",
-                "app.init.js",
-                // start: app modules loaded in the
-                // sequence they are provided
-                "modules/libs.js",
-                "modules/globals.js",
-                "modules/utils.js",
-                "modules/$$.js",
-                "modules/core.js",
-                "modules/events.js",
-                "modules/main.js",
-                // end: app modules
-                "app.iife.end.js"
-            ],
-            { cwd: "js/source/" }
-        )
+        .src(flavor.jsapp[__type__], { cwd: "js/source/" })
         .pipe(plumber({ errorHandler: pipe_error.bind(this) }))
         .pipe($.concat("app.js"))
-        .pipe($.jsbeautifier())
+        .pipe(prettier(jsprettier_options))
         .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
         .pipe(gulp.dest("js/")) // dump into development folder
+        .pipe(gulpif(is_library, rename("lib.js")))
+        .pipe(
+            gulpif(
+                is_library,
+                pipe_error_stop({ errorCallback: pipe_error.bind(this) })
+            )
+        )
+        .pipe(gulpif(is_library, gulp.dest("lib/"))) // dump into lib/ folder
+        .pipe(gulpif(is_library, rename("app.js")))
         .pipe($.uglify()) // minify for production
         .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
         .pipe(gulp.dest("dist/js/")) // dump in dist/ folder
+        .pipe(gulpif(is_library, rename("lib.min.js")))
+        .pipe(
+            gulpif(
+                is_library,
+                pipe_error_stop({ errorCallback: pipe_error.bind(this) })
+            )
+        )
+        .pipe(gulpif(is_library, gulp.dest("lib"))) // dump into lib/ folder
+        .pipe(gulpif(is_library, rename("app.js")))
         .pipe(bs1.stream());
 });
 
 // build libs.js + minify + beautify
 gulp.task("jslibs", function(done) {
     return gulp
-        .src(
-            [
-                // add any used js library paths here
-                // "jquery.js"
-                // "modernizr.js"
-                "fastclick.js"
-            ],
-            { cwd: "js/libs/" }
-        )
+        .src(flavor.jslibs[__type__], { cwd: "js/libs/" })
         .pipe(plumber({ errorHandler: pipe_error.bind(this) }))
         .pipe($.concat("libs.js"))
-        .pipe($.jsbeautifier())
+        .pipe(prettier(jsprettier_options))
         .pipe(pipe_error_stop({ errorCallback: pipe_error.bind(this) }))
         .pipe(gulp.dest("js/")) // dump into development folder
         .pipe($.uglify()) // minify for production
@@ -633,6 +714,73 @@ gulp.task("default", function(done) {
     });
 });
 
+// @strip-start
+
+var _t_;
+// initialize the project (1)
+gulp.task("init-1", function(done) {
+    // set the header
+    return gulp
+        .src("./gulpfile.js")
+        .pipe(
+            header(
+                "/**! applcation-type: " +
+                    _t_ +
+                    ' !**/\nvar __type__ = "' +
+                    _t_ +
+                    '";\n\n'
+            )
+        )
+        .pipe(gulp.dest("./"));
+});
+
+// initialize the project (2)
+gulp.task("init-2", function(done) {
+    // pick the js/ directory to use
+    return gulp
+        .src("./js/options/" + _t_ + "/**", { dot: true })
+        .pipe(gulp.dest("./js/"));
+});
+
+// initialize the project (3)
+gulp.task("init-3", function(done) {
+    // finally remove the js/source/ files
+    return gulp.src("js/options/", { read: false, cwd: "./" }).pipe(clean());
+});
+
+// initialize the project (4)
+gulp.task("init-4", function(done) {
+    // remove unneeded code after initialization
+    return gulp
+        .src("./gulpfile.js")
+        .pipe(replace(/(\/\/\s+)?\@strip\-start[\s\S]*?\@strip\-end/gi, ""))
+        .pipe(prettier(jsprettier_options))
+        .pipe(gulp.dest("./"));
+});
+
+// initialize the project
+gulp.task("init", function(done) {
+    // get the command line arguments from yargs
+    var type = cli.t || cli.type || null;
+
+    if (!type || !-~["webapp", "library"].indexOf(type)) {
+        console.log(
+            'Type flag [-t/--type] is required. Possible values include "webapp" or "library".'
+        );
+        console.log("$ gulp init -t webapp; # initializes as a webapp app");
+        console.log("$ gulp init -t library; # initializes as a library app");
+        return;
+    }
+
+    // set the type
+    _t_ = type;
+
+    return sequence("init-1", "init-2", "init-3", "init-4", function() {
+        notify("Hooray! Project initialized.");
+        done();
+    });
+});
+
 // Error Handling
 // [https://scotch.io/tutorials/prevent-errors-from-crashing-gulp-watch]
 // [https://cameronspear.com/blog/how-to-handle-gulp-watch-errors-with-plumber/]
@@ -640,3 +788,5 @@ gulp.task("default", function(done) {
 // [https://github.com/rbalicki2/pipe-error-stop]
 // [https://github.com/spalger/gulp-jshint/issues/91]
 // [https://artandlogic.com/2014/05/error-handling-in-gulp/]
+
+// @strip-end
