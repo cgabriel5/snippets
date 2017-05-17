@@ -1,5 +1,4 @@
 // =============================== Attach Library To Global Scope
-
 // add to global scope for ease of use
 // use global app var or create it if not present
 var app = window.app || (window.app = {});

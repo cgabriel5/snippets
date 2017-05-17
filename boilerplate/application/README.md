@@ -16,8 +16,7 @@ $ yarn install # Installs needed package.json modules.
 First and foremost, **make sure** to initialize the project via `Gulp` before doing anything else!
 
 ```bash
-$ gulp init -t webapp  # init the project as a webapp
-$ gulp init -t library # init the project as a library
+$ gulp init --silent # follow the prompt by entering project information.
 ```
 
 ## § Using Gulp
@@ -33,16 +32,6 @@ $ gulp build
 
 # Watches project for file changes. Running the needed tasks to rebuild files.
 $ gulp watch 
-```
-
-```bash
-# Resets project to its original, downloaded "factory" state.
-$ gulp reset -t/--type [req:str] 
-
-# Resets the app directory, /., using the .factory/ directory as its source of files
-$ gulp reset -t app 
-# Resets the .factory/ directory using the ./, app directory, as its source of files.
-$ gulp reset -t factory 
 ```
 
 ```bash
@@ -67,17 +56,17 @@ $ gulp purify --remove # Delete pure.css and remove unused CSS from /css/source/
 * **JS-Libs** &mdash; Add third-party libraries to `js/libs/`. Then make sure to update the `jslibs` `Gulp` task by adding the library path file to the `src` array. `Gulp` will handle file concatenation, minifying, and beautification.
 * **HTML** &mdash; Modify `html/source/i*.html` files. `Gulp` will handle file concatenation, minifying, and beautification.
 
-# webapp-name
+# {{#repo_name}}
 
-Webapp description.
+{{#description}}
 
 ### Purpose
 
-The purpose of webapp-name is to...
+The purpose of {{#repo_name}} is to...
 
 ### Live Demo
 
-Live demo can be accessed [here](https://cgabriel5.github.io/webapp-name/).
+Live demo can be accessed [here](https://{{#git_id}}.github.io/{{#repo_name}}/).
 
 ### How It Works
 
@@ -95,7 +84,7 @@ Take a look at...
 
 Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)
 
-See how to contribute [here](https://github.com/cgabriel5/webapp-name/blob/master/CONTRIBUTING.md).
+See how to contribute [here](https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/CONTRIBUTING.md).
 
 ### TODO
 
@@ -103,5 +92,5 @@ See how to contribute [here](https://github.com/cgabriel5/webapp-name/blob/maste
 
 ### License
 
-This project uses the [MIT License](https://github.com/cgabriel5/webapp-name/blob/master/LICENSE.txt).
+This project uses the [MIT License](https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/LICENSE.txt).
 

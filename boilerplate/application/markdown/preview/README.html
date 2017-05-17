@@ -1,14 +1,16 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <title>§ Read Before Use</title>
     <link type="text/css" rel="stylesheet" href="assets/css/github-markdown.css">
     <link type="text/css" rel="stylesheet" href="assets/css/pilcrow.css">
-    <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css"/>
-  </head>
-  <body>
+    <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css" />
+</head>
+
+<body>
     <article class="markdown-body"><h2 id="§-read-before-use">§ Read Before Use</h2>
 <ul class="list">
 <li>Make sure to remove the <code>.gitignore</code> file from the <code>img/</code> directory before using. The file is used as a placeholder to include the otherwise empty folder with <code>Git</code>.</li>
@@ -20,8 +22,7 @@
 <pre class="hljs"><code>$ yarn init <span class="hljs-comment"># Create a package.json file. Update package.json as needed.</span>
 $ yarn install <span class="hljs-comment"># Installs needed package.json modules.</span></code></pre><h2 id="§-gulp-setup">§ Gulp Setup</h2>
 <p>First and foremost, <strong>make sure</strong> to initialize the project via <code>Gulp</code> before doing anything else!</p>
-<pre class="hljs"><code>$ gulp init -t webapp  <span class="hljs-comment"># init the project as a webapp</span>
-$ gulp init -t library <span class="hljs-comment"># init the project as a library</span></code></pre><h2 id="§-using-gulp">§ Using Gulp</h2>
+<pre class="hljs"><code>$ gulp init --silent <span class="hljs-comment"># follow the prompt by entering project information.</span></code></pre><h2 id="§-using-gulp">§ Using Gulp</h2>
 <pre class="hljs"><code><span class="hljs-comment"># Runs the default task which runs the build and watch tasks. </span>
 <span class="hljs-comment"># This creates the needed folders/files, starts browser-sync servers, </span>
 <span class="hljs-comment"># &amp; watches project for file changes.</span>
@@ -31,13 +32,7 @@ $ gulp
 $ gulp build 
 
 <span class="hljs-comment"># Watches project for file changes. Running the needed tasks to rebuild files.</span>
-$ gulp watch</code></pre><pre class="hljs"><code><span class="hljs-comment"># Resets project to its original, downloaded "factory" state.</span>
-$ gulp reset -t/--type [req:str] 
-
-<span class="hljs-comment"># Resets the app directory, /., using the .factory/ directory as its source of files</span>
-$ gulp reset -t app 
-<span class="hljs-comment"># Resets the .factory/ directory using the ./, app directory, as its source of files.</span>
-$ gulp reset -t factory</code></pre><pre class="hljs"><code><span class="hljs-comment"># Will open the given file at the given port in browser.</span>
+$ gulp watch</code></pre><pre class="hljs"><code><span class="hljs-comment"># Will open the given file at the given port in browser.</span>
 $ gulp open -p/--port [req:num] <span class="hljs-_">-f</span>/--file [req:str] 
 
 $ gulp open -p 3000 <span class="hljs-_">-f</span> index.html <span class="hljs-comment"># Will open index.html at port 3000.  </span>
@@ -52,12 +47,12 @@ $ gulp purify --remove <span class="hljs-comment"># Delete pure.css and remove u
 <li><strong>JS-Libs</strong> &mdash; Add third-party libraries to <code>js/libs/</code>. Then make sure to update the <code>jslibs</code> <code>Gulp</code> task by adding the library path file to the <code>src</code> array. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
 <li><strong>HTML</strong> &mdash; Modify <code>html/source/i*.html</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>
 </ul>
-<h1 id="webapp-name">webapp-name</h1>
-<p>Webapp description.</p>
+<h1 id="{{#repo_name}}">{{#repo_name}}</h1>
+<p>{{#description}}</p>
 <h3 id="purpose">Purpose</h3>
-<p>The purpose of webapp-name is to...</p>
+<p>The purpose of {{#repo_name}} is to...</p>
 <h3 id="live-demo">Live Demo</h3>
-<p>Live demo can be accessed <a href="https://cgabriel5.github.io/webapp-name/">here</a>.</p>
+<p>Live demo can be accessed <a href="https://{{#git_id}}.github.io/{{#repo_name}}/">here</a>.</p>
 <h3 id="how-it-works">How It Works</h3>
 <p>Explain how it works...</p>
 <h3 id="how-to-use">How To Use</h3>
@@ -68,13 +63,14 @@ $ gulp purify --remove <span class="hljs-comment"># Delete pure.css and remove u
 </ul>
 <h3 id="contributing">Contributing</h3>
 <p>Contributions are welcome! Found a bug, feel like documentation is lacking/confusing and needs an update, have performance/feature suggestions or simply found a typo? Let me know! :)</p>
-<p>See how to contribute <a href="https://github.com/cgabriel5/webapp-name/blob/master/CONTRIBUTING.md">here</a>.</p>
+<p>See how to contribute <a href="https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/CONTRIBUTING.md">here</a>.</p>
 <h3 id="todo">TODO</h3>
 <ul class="list">
 <li>[ ] TODO item.</li>
 </ul>
 <h3 id="license">License</h3>
-<p>This project uses the <a href="https://github.com/cgabriel5/webapp-name/blob/master/LICENSE.txt">MIT License</a>.</p>
+<p>This project uses the <a href="https://github.com/{{#git_id}}/{{#repo_name}}/blob/master/LICENSE.txt">MIT License</a>.</p>
     </article>
-  </body>
+</body>
+
 </html>

@@ -1,11 +1,8 @@
 // IIFE start
 (function(window) {
     "use strict";
-
     var library = (function() {
-
         // =============================== Helper Functions
-
         /**
          * @description [Generates a simple ID containing letters and numbers.]
          * @param  {Number} length [The length the ID should be. Max length is 22 characters]
@@ -13,7 +10,9 @@
          * @source {http://stackoverflow.com/a/38622545}
          */
         function id(length) {
-            return Math.random().toString(36).substr(2, length);
+            return Math.random()
+                .toString(36)
+                .substr(2, length);
         }
         /**
          * @description [Returns index of given value in provided array.]
@@ -54,8 +53,7 @@
             // vars
             var true_array = [];
             // loop through ALO and pushing items into true_array
-            for (var i = 0, l = alo.length; i < l; i++)
-                true_array.push(alo[i]);
+            for (var i = 0, l = alo.length; i < l; i++) true_array.push(alo[i]);
             return true_array;
         }
         /**
@@ -65,8 +63,7 @@
          */
         var dtype = function(object) {
             // will always return something like "[object {type}]"
-            return Object.prototype.toString
-                .call(object)
+            return Object.prototype.toString.call(object)
                 .replace(/(\[object |\])/g, "")
                 .toLowerCase();
         };
@@ -81,7 +78,8 @@
             // get the object type
             var type = this(object);
             // prepare the types
-            types = "|" + types.toLowerCase().trim() + "|";
+            types = "|" + types.toLowerCase()
+                .trim() + "|";
             // check if the object's type is in the list
             return Boolean(-~types.indexOf("|" + type + "|"));
         };
@@ -112,55 +110,42 @@
             var constructor = cobject.constructor__,
                 methods = cobject.methods__,
                 parent = cobject.extend__;
-
             // extend if parent class provided
             if (parent) {
                 constructor.prototype = Object.create(parent.prototype);
                 constructor.prototype.constructor = constructor;
             }
-
             // cache prototype
             var prototype = constructor.prototype;
-
             // add class methods to prototype
             for (var method in methods) {
                 if (methods.hasOwnProperty(method)) {
                     prototype[method] = methods[method];
                 }
             }
-
             return constructor;
         }
-
         // =============================== Core Library Functions
-
         // =============================== Library Class
-
         var Library = class__({
             // class constructor
             constructor__: function() {
                 // cache arguments object
                 var args = arguments;
-
                 // if user does not invoke library with new keyword we use it for them by
                 // returning a new instance of the library with the new keyword.
                 if (!(this instanceof Library)) return new Library();
             },
-
             // class methods
             methods__: {},
-
             // class to extend
             extend__: false
         });
-
         // return library to add to global scope later...
         return Library;
     })();
     // =============================== Global Library Functions/Methods/Vars
-
     // =============================== Attach Library To Global Scope
-
     // add to global scope for ease of use
     // use global app var or create it if not present
     var app = window.app || (window.app = {});
@@ -169,17 +154,14 @@
     var libs = app.libs || (app.libs = {});
     // add the library to the libs object
     libs.YOUR_LIB_NAME = library;
-
     // IIFE end
 })(window);
-
 // https://developer.mozilla.org/en-US/docs/Web/Events/readystatechange
 // the readystatechange event is fired when the readyState attribute of a
 // document has changed
 document.onreadystatechange = function() {
     "use strict";
     /* [functions.utils] */
-
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
     // loading === document still loading
     // complete === document and all sub-resources have finished loading.
@@ -190,20 +172,16 @@ document.onreadystatechange = function() {
     // **Note: complete    === window.addEventListener("load", function() {...
     // [DOMContentLoaded](https://developer.mozilla.org/en-US/docs/Web/Events/DOMContentLoaded)
     // [load](https://developer.mozilla.org/en-US/docs/Web/Events/load)
-
     // document loaded and parsed. however, still loading subresources
     // user is able to interact with page.
     if (document.readyState == "interactive") {
         // app logic...
     }
-
     // or...
-
     // all resources have loaded (document + subresources)
     if (document.readyState == "complete") {
         // app logic...
     }
-
     // good explanation with images:
     // https://varvy.com/performance/document-ready-state.html
 };
