@@ -25,6 +25,3 @@ function vendor_prefix() {
 }
 // usage
 console.log(vendor_prefix());
-// other resources
-// [http://www.andismith.com/blog/2012/02/modernizr-prefixed]
-// [https://jonsuh.com/blog/detect-the-end-of-css-animations-and-transitions-with-javascript/]
