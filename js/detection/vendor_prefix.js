@@ -9,9 +9,12 @@ function vendor_prefix() {
     var styles = window.getComputedStyle(document.documentElement, null),
         // turn styles object to array then to string to find
         // moz, webkit, or ms prefix. otherwise use o (opera) as default
-        prefix = (Array.prototype.slice.call(styles).join("").match(/-(moz|webkit|ms)-/) || [null, (styles.OLink !== undefined ? "o" : "")])[1],
+        prefix = (Array.prototype.slice.call(styles)
+            .join("")
+            .match(/-(moz|webkit|ms)-/) || [null, (styles.OLink !== undefined ? "o" : "")])[1],
         // get the dom prefix equivalent
-        dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + prefix + ')', 'i'))[1]
+        dom = ('WebKit|Moz|MS|O')
+        .match(new RegExp('(' + prefix + ')', 'i'))[1]
         // return prefix object
     return {
         dom: dom,
@@ -20,6 +23,8 @@ function vendor_prefix() {
         js: prefix[0].toUpperCase() + prefix.substr(1)
     };
 }
-
 // usage
 console.log(vendor_prefix());
+// other resources
+// [http://www.andismith.com/blog/2012/02/modernizr-prefixed]
+// [https://jonsuh.com/blog/detect-the-end-of-css-animations-and-transitions-with-javascript/]

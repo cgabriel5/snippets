@@ -3,7 +3,6 @@
 // animationstart       animationstart      webkitAnimationStart        oanimationstart         MSAnimationStart
 // animationiteration   animationiteration  webkitAnimationIteration    oanimationiteration     MSAnimationIteration
 // animationend         animationend        webkitAnimationEnd          oanimationend           MSAnimationEnd
-
 /**
  * @description [Determines which animation[start|end|interation] event
  *               the user's browser supports and returns it.]
@@ -28,18 +27,17 @@ function which_animation_event(type) {
             // cache value
             var value = animations[animation];
             // determine if suffix needs to be capitalized
-            var end = (value.match(/[A-Z]/) ? (type.charAt(0).toUpperCase() + type.substring(1)) : type);
+            var end = (value.match(/[A-Z]/) ? (type.charAt(0)
+                .toUpperCase() + type.substring(1)) : type);
             // return prefixed event
             return value + end;
         }
     }
 }
-
 // usage
 document.addEventListener(which_animation_event("end"), function() {
     console.log('animation finished!');
 });
-
 /**
  * @description [Determines which animation[start|end|interation] event
  *               the user's browser supports and returns it.]
@@ -65,20 +63,22 @@ function which_transition_event(type) {
             // cache value
             var value = transitions[transition];
             // determine if suffix needs to be capitalized
-            var end = (value.match(/[A-Z]/) ? (type.charAt(0).toUpperCase() + type.substring(1)) : type);
+            var end = (value.match(/[A-Z]/) ? (type.charAt(0)
+                .toUpperCase() + type.substring(1)) : type);
             // return prefixed event
             return value + end;
         }
     }
 }
-
 // **Note: Only transitionend is supported. transitionstart is still experimental and should
 // not be used. transitioniteration does not even exist. Therefore, at the moment, only "end" should
 // be supplied.
-// transitionstart: https://developer.mozilla.org/en-US/docs/Web/Events/transitionstart
-// https://developer.mozilla.org/en-US/docs/Web/API/TransitionEvent
-
+// transitionstart: [https://developer.mozilla.org/en-US/docs/Web/Events/transitionstart]
+// [https://developer.mozilla.org/en-US/docs/Web/API/TransitionEvent]
 // usage
 document.addEventListener(which_transition_event("end"), function() {
     console.log('transition finished!');
 });
+// other resources
+// [http://www.andismith.com/blog/2012/02/modernizr-prefixed]
+// [https://jonsuh.com/blog/detect-the-end-of-css-animations-and-transitions-with-javascript/]
