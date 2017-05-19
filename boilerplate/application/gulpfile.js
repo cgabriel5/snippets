@@ -11,6 +11,7 @@ var __data__ = {}; // placeholder fillers
 // -------------------------------------
 var utils = require("./gulp/utils.js");
 var log = utils.log;
+var time = utils.time;
 var notify = utils.notify;
 var gulp = utils.gulp;
 var format = utils.format;
@@ -22,6 +23,8 @@ gulp.task("default", function(done) {
 });
 gulp.task("init", function(done) {
     prompt.start(); // start the prompt
+    prompt.message = time();
+    prompt.delimiter = " ";
     prompt.get({
         properties: {
             type: {
@@ -84,7 +87,7 @@ gulp.task("init", function(done) {
     }, function(err, result) {
         // kill prompt and show user error message
         if (err) {
-            log((err.message === "canceled") ? "Setup canceled.".red : err);
+            log(true, (err.message === "canceled") ? "Setup canceled.".red : err);
             return prompt.stop();
         }
         // get the input

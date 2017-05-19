@@ -24,8 +24,18 @@ var time = function() {
 var log = function() {
     // turn arguments into a true array
     var args = Array.prototype.slice.call(arguments);
+    // check if line breaks needs adding
+    var add_line_break = false;
+    if (args[0] === true) {
+        add_line_break = true;
+        args.shift();
+    }
     args.unshift(time()); // add time to log
-    console.log.apply(console, args);
+    if (add_line_break) {
+        console.log.call(console, "\n" + args.join(" "));
+    } else {
+        console.log.apply(console, args);
+    }
 };
 /**
  * @description [Creates an OS notifcation.]
