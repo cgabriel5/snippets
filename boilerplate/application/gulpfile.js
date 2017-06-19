@@ -112,7 +112,9 @@ gulp.task("init", function(done) {
                         email: result.email,
                         git_id: result.git_id,
                         repo_name: result.repo_name,
-                        private: result.private
+                        private: result.private,
+                        year: new Date()
+                            .getFullYear()
                     };
                     // get pkg info
                     var templates = {
