@@ -67,7 +67,7 @@
                 "webapp": ["fastclick.js"]
             }
         },
-        "order": ["cssapp", "csslibs", "csslibsfolder", "jsapp", "jslibs", "jslibsfolder", "img", "html", "readme"],
+        "order": ["cssapp", "csslibs", "csslibsfolder", "jsapp", "jslibsource", "jslibs", "jslibsfolder", "img", "html", "readme"],
         "tasks": {
             "cssapp": ["normalize.css", "base.css", "styles.css", "helpers.css"],
             "csslibs": ["font-awesome-4.7.0/css/font-awesome.css"],
