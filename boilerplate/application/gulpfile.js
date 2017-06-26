@@ -98,6 +98,14 @@ gulp.task("init", function(done) {
         config.read(function() {
             // set the application type
             config.set("__type__", __type__);
+            // clean the flavor paths
+            // cache the paths
+            var paths = config.data.paths.flavor;
+            var jsapp_paths = paths.jsapp[__type__];
+            var jslibs_paths = paths.jslibs[__type__];
+            // reset the paths
+            config.data.paths.flavor.jsapp = jsapp_paths;
+            config.data.paths.flavor.jslibs = jslibs_paths;
             // sort the keys
             config.data = alphabetize(config.data);
             // save file changes
