@@ -11,6 +11,10 @@ var minify_html = require("gulp-minify-html");
 var clean_css = require("gulp-clean-css");
 var uglify = require("gulp-uglify");
 var beautify = require("gulp-jsbeautifier");
+// // Uncomment for uglify-es
+// var composer = require("gulp-uglify/composer");
+// var uglify = composer(require("uglify-es"), console);
+// var beautify = require("gulp-jsbeautifier");
 // -------------------------------------
 var del = require("del");
 var bs = require("browser-sync");
