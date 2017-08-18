@@ -40,7 +40,8 @@ $ gulp open -p 3002 <span class="hljs-_">-f</span> readme.md <span class="hljs-c
 
 $ gulp purify <span class="hljs-comment"># Create pure.css and scan for any unused CSS.</span>
 $ gulp purify -D <span class="hljs-comment"># Delete pure.css file.</span>
-$ gulp purify --remove <span class="hljs-comment"># Delete pure.css and remove unused CSS from /css/source/styles.css.</span></code></pre><h2 id="§-files-to-modify">§ Files To Modify</h2>
+$ gulp purify --remove <span class="hljs-comment"># Delete pure.css and remove unused CSS from /css/source/styles.css.</span></code></pre><pre class="hljs"><code>$ gulp clean-files <span class="hljs-comment"># will run js-beautify on HTML, JS, CSS, &amp; JSON project files.</span>
+$ gulp findmin <span class="hljs-comment"># console logs all minified files in project</span></code></pre><h2 id="§-files-to-modify">§ Files To Modify</h2>
 <ul class="list">
 <li><strong>CSS</strong> &mdash; Modify <code>css/source/styles.css</code>. <code>Gulp</code> will handle auto-prefixing, minifying, and concatenation.</li>
 <li><strong>JS-App</strong> &mdash; Modify <code>js/source/modules/*.js</code> files. <code>Gulp</code> will handle file concatenation, minifying, and beautification.</li>

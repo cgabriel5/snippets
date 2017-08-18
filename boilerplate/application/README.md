@@ -50,6 +50,11 @@ $ gulp purify -D # Delete pure.css file.
 $ gulp purify --remove # Delete pure.css and remove unused CSS from /css/source/styles.css.
 ```
 
+```bash
+$ gulp clean-files # will run js-beautify on HTML, JS, CSS, & JSON project files.
+$ gulp findmin # console logs all minified files in project
+```
+
 ## § Files To Modify
 * **CSS** &mdash; Modify `css/source/styles.css`. `Gulp` will handle auto-prefixing, minifying, and concatenation.
 * **JS-App** &mdash; Modify `js/source/modules/*.js` files. `Gulp` will handle file concatenation, minifying, and beautification.
