@@ -1,16 +1,18 @@
 /**
- * @description [Throttles provided function.]
- * @param  {Function} func            [The function to throttle.]
- * @param  {Number} time              [The time to throttle by.]
- * @param  {Object} scope             [The scope in which to run function with.]
- * @return {Function}                 [The new throttled function.]
- * @source {https://remysharp.com/2010/07/21/throttling-function-calls}
+ * Throttles provided function.
+ *
+ * @param {function} func - The function to throttle.
+ * @param {number} time - The time to throttle by.
+ * @param {object} scope - The scope in which to run function with.
+ *
+ * @return {function} - The new throttled function.
+ * @resource [https://remysharp.com/2010/07/21/throttling-function-calls]
  */
-function throttle(func, time, scope) {
-    time = (time || 250);
+var throttle = function(func, time, scope) {
+    time = time || 250;
     var last, deferTimer;
     return function() {
-        var context = (scope || this),
+        var context = scope || this,
             now = +new Date(),
             args = arguments;
         if (last && now < last + time) {
@@ -25,7 +27,7 @@ function throttle(func, time, scope) {
             func.apply(context, args);
         }
     };
-}
+};
 
-// usage
+// Usage.
 var fn = throttle(function() { /* logic */ });
