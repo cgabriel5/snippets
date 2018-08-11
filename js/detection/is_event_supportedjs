@@ -1,0 +1,11 @@
+/**
+ * Checks whether the new Event constructor is supported.
+ *
+ * @return {boolean} - Boolean indicating support.
+ *
+ * @resource [https://stackoverflow.com/a/26596324]
+ * @resource [https://stackoverflow.com/a/42089476]
+ */
+var is_event_support = function() {
+	return typeof Event === "function";
+};
