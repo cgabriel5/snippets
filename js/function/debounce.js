@@ -1,20 +1,23 @@
 /**
- * @description [Debounces provided function.]
- * @param  {Function} func            [The function to debounce.]
- * @param  {Number} time              [The time to debounce by.]
- * @param  {Object} scope             [The scope in which to run function with.]
- * @param  {Boolean} run_immediately  [Flag indicating whether the function
- *                                     should run immediately.]
- * @return {Function}                 [The new debounced function.]
- * @source debouncing function from John Hann
- * @source {http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/}
- * @source {https://www.paulirish.com/2009/throttled-smartresize-jquery-event-handler/}
- * @resource [Another debounce function] {https://davidwalsh.name/javascript-debounce-function}
+ * Debounces provided function.
+ *
+ * @param {function} func - The function to debounce.
+ * @param {number} time - The time to debounce by.
+ * @param {object} scope - The scope in which to run function with.
+ * @param {boolean} run_immediately - Flag indicating whether the
+ *     function should run immediately.
+ *
+ * @return {function} - The new debounced function.
+ *
+ * @resource debouncing function from John Hann
+ * @resource [http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/]
+ * @resource [https://www.paulirish.com/2009/throttled-smartresize-jquery-event-handler/]
+ * @resource [https://davidwalsh.name/javascript-debounce-function]
  */
-function debounce(func, time, scope, run_immediately) {
+var debounce = function(func, time, scope, run_immediately) {
     var timeout;
     return function() {
-        var context = (scope || this),
+        var context = scope || this,
             args = arguments;
 
         function delayed() {
@@ -30,7 +33,7 @@ function debounce(func, time, scope, run_immediately) {
         }
         timeout = setTimeout(delayed, time || 100);
     };
-}
+};
 
-// usage
+// Usage.
 var fn = debounce(function() { /* logic */ });
