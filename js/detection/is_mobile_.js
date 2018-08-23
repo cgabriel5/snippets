@@ -8,13 +8,12 @@ var user_agent = function() {
 };
 
 /**
- * Detect whether the device a "mobile" device. Basically anything other than a
- *     desktop device.
+ * Detect whether the device is a "mobile" device. Basically anything
+ *     other than a desktop device.
  *
- * @return {boolean} - Boolean indicating whether the device is "mobile".
+ * @return {boolean} - Boolean indicating whether device is "mobile".
  */
 var is_mobile = function() {
-	// Only apply to Chrome WebKit/Desktop browser.
 	return user_agent().device.type;
 };
 

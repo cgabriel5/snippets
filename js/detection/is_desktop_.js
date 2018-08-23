@@ -30,7 +30,7 @@ var is_desktop_chrome = function() {
  *     and is not MacOS.
  *
  * @return {boolean} - Boolean indicating whether the above conditions
- *     are true..
+ *     are true.
  */
 var is_desktop_webkit = function() {
 	// Get the user agent object.
