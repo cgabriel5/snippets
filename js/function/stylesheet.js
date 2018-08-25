@@ -72,8 +72,8 @@ stylesheet.remove = function(cb) {
 	// Get the stylesheets.
 	var sheets = document.getElementsByTagName("style");
 
-	// Loop over and return the sheet with the matching title.
-	for (let i = 0, l = sheets.length; i < l; i++) {
+	// Loop backwards and run the remove logic function.
+	for (let i = sheets.length - 1; i > -1; i--) {
 		// Cache the sheet.
 		var sheet = sheets[i];
 
