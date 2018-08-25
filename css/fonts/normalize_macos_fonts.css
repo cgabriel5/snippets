@@ -1,0 +1,27 @@
+/* Safari renders fonts in a thin manner when compared
+with Chrome and Firefox. To make Safari render slightly
+thinker fonts add the first code block to your code,
+else to have thin fonts in all three browsers (Safari,
+Chrome, Firefox), add the second code block.
+
+[https://developer.mozilla.org/en-US/docs/Web/CSS/text-rendering]
+[https://developer.mozilla.org/en-US/docs/Web/CSS/font-kerning]
+[https://developer.mozilla.org/en-US/docs/Web/CSS/font-smooth]
+[http://www.usabilitypost.com/2010/08/26/font-smoothing/]
+[https://stackoverflow.com/a/45947381]
+[https://stackoverflow.com/a/17715571]
+*/
+
+/* Block 1: Safari thick font. */
+.osx-thick-fonts {
+	-webkit-font-smoothing: subpixel-antialiased;
+}
+
+
+/* Block 2: Make Chrome & Firefox have thin fonts like Safari on MacOS. */
+.universal-thick-fonts {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Note**: This is only for MacOS/OSX. */
