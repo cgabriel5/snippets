@@ -1,0 +1,163 @@
+/*Add the MacOS scrollbar styles:
+[https://stackoverflow.com/a/24405833]
+[https://gist.github.com/jbrewer/2571697]
+[https://stackoverflow.com/a/33809641]
+[https://gist.github.com/howar31/127f71018a9ef025291f9c76293972ea]
+[https://codepen.io/waterplea/pen/dVMopv]
+[https://poselab.com/en/blog/custom-scrollbars-in-webkit/]
+[https://stackoverflow.com/a/9356321]
+[https://css-tricks.com/custom-scrollbars-in-webkit/]
+[https://css-tricks.com/almanac/properties/s/scrollbar/]
+[https://scotch.io/tutorials/customize-the-browsers-scrollbar-with-css]
+*/
+
+/* MacOS Always Scrollbars */
+
+::-webkit-scrollbar {
+	width: 16px;
+	height: 16px;
+	background: #f8f8f8;
+}
+
+::-webkit-scrollbar:window-inactive {
+	background: #f8f8f850;
+}
+
+::-webkit-scrollbar-button {
+	width: 0;
+	height: 0;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #c1c1c1;
+	border-radius: 1000px;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #c1c1c150;
+	border-radius: 1000px;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #7d7d7d;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:window-inactive:hover {
+	background: #c1c1c150;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+	background: 0 0;
+	border-radius: 0;
+}
+
+::-webkit-scrollbar-track:vertical {
+	background: 0 0;
+	border-radius: 0;
+	border-left: 1px solid #eaeaea;
+}
+
+::-webkit-scrollbar-track:horizontal {
+	background: 0 0;
+	border-radius: 0;
+	border-top: 1px solid #eaeaea;
+}
+
+::-webkit-scrollbar-track:vertical:window-inactive {
+	border-left: 1px solid #eaeaea50;
+}
+
+::-webkit-scrollbar-track:horizontal:window-inactive {
+	border-top: 1px solid #eaeaea50;
+}
+
+::-webkit-scrollbar-corner {
+	background: #ffffff;
+	border-top: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+}
+
+/* MacOS "Floating" Scrollbars (White Background) */
+
+::-webkit-scrollbar {
+	width: 16px;
+	height: 16px;
+}
+
+::-webkit-scrollbar:hover {
+	width: 16px;
+	height: 16px;
+	background: #f8f8f8;
+}
+
+::-webkit-scrollbar:window-inactive {
+	background: transparent;
+}
+
+::-webkit-scrollbar-button {
+	width: 0;
+	height: 0;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #c1c1c1;
+	border-radius: 1000px;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+	background: #c1c1c150;
+	border-radius: 1000px;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #7d7d7d;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:window-inactive:hover {
+	background: #c1c1c150;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+	background: 0 0;
+	border-radius: 0;
+}
+
+::-webkit-scrollbar-track:vertical {
+	background: 0 0;
+	border-radius: 0;
+	border-left: 1px solid transparent;
+}
+
+::-webkit-scrollbar-track:vertical:hover {
+	background: 0 0;
+	border-radius: 0;
+	border-left: 1px solid #eaeaea;
+}
+
+::-webkit-scrollbar-track:horizontal {
+	background: 0 0;
+	border-radius: 0;
+	border-top: 1px solid #eaeaea;
+}
+
+::-webkit-scrollbar-corner {
+	background: #ffffff;
+	border-top: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+}
