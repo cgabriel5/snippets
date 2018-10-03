@@ -1,22 +1,29 @@
 /**
- * @description [Formats template with provided data object.]
- * @param  {String} template [The template to use.]
- * @param  {Object} data     [The object containing the data to replace placeholders with.]
- * @return {Undefined}  [Nothing is returned.]
+ * Formats template with provided data object.
+ *
+ * @param {string} template - The template to use.
+ * @param {object} data - The object containing the data to replace
+ *     placeholders with.
+ * @return {undefined} - Nothing.
  */
-function format(template, data) {
-    return template.replace(/\{\{\#(.*?)\}\}/g, function(match) {
-        match = match.replace(/^\{\{\#|\}\}$/g, "");
-        return data[match] ? data[match] : match;
-    });
-}
-// examples
-// the data object
+var format = function(template, data) {
+	return template.replace(/\{\{\#(.*?)\}\}/g, function(match) {
+		match = match.replace(/^\{\{\#|\}\}$/g, "");
+		// If a replacement does not exist, leave the placeholder as is.
+		return data[match] ? data[match] : `{{#${match}}}`;
+	});
+};
+
+// Usage.
+
+// The replacements object.
 var data = {
     "first-name": "John",
     "last-name": "Doe"
 };
-// the string to format
-var string = "Hello, my name is {{first-name}} {{last-name}}";
-// format the string
+
+// The string to format.
+var string = "Hello, my name is {{#first-name}} {{#last-name}}";
+
+// Format the string.
 var formatted = format(string, data);
