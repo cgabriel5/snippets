@@ -6,17 +6,19 @@
  * @resource [https://stackoverflow.com/a/8028584]
  */
 var percent_scrolled = function() {
-	var h = document.documentElement,
-		b = document.body,
+	var $h = document.documentElement,
+		$b = document.body,
 		st = "scrollTop",
 		sh = "scrollHeight";
 
 	// Calculate the percent.
 	var percent =
-		(h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100;
+		($h[st] || $b[st]) /
+		(($h[sh] || $b[sh]) - $h.clientHeight) *
+		100;
 
 	// If the page is not scrollable reset the percent to 0.
-	if (h.scrollHeight === h.clientHeight) {
+	if ($h.scrollHeight === $h.clientHeight) {
 		percent = 0;
 	}
 

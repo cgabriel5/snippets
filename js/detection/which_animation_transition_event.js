@@ -12,7 +12,7 @@
 var which_animation_event = function(type) {
     // Lowercase type.
     type = type.toLowerCase();
-    var el = document.createElement("div"),
+    var $el = document.createElement("div"),
         animations = {
             animation: "animation",
             OAnimation: "oAnimation",
@@ -22,7 +22,7 @@ var which_animation_event = function(type) {
             MSAnimation: "MSAnimation"
         };
     for (var animation in animations) {
-        if (el.style[animation] !== undefined) {
+        if ($el.style[animation] !== undefined) {
             // Cache value.
             var value = animations[animation];
 
@@ -56,7 +56,7 @@ var which_transition_event = function(type) {
     // Lowercase type.
     type = type.toLowerCase();
 
-    var el = document.createElement("div"),
+    var $el = document.createElement("div"),
         transitions = {
             transition: "transition",
             // Opera prefix info:
@@ -69,7 +69,7 @@ var which_transition_event = function(type) {
         };
 
     for (var transition in transitions) {
-        if (el.style[transition] !== undefined) {
+        if ($el.style[transition] !== undefined) {
             // Cache value.
             var value = transitions[transition];
 

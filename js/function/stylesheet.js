@@ -11,31 +11,31 @@
  */
 var stylesheet = function(content, title) {
 	// Create element.
-	var style = document.createElement("style");
+	var $style = document.createElement("style");
 
 	// Set type.
-	style.type = "text/css";
+	$style.type = "text/css";
 
 	// Set the title if provided.
 	if (title) {
-		style.setAttribute("data-title", title);
+		$style.setAttribute("data-title", title);
 	}
 
 	// Add the title marker to the contents.
 	var contents = `/*title:${title}*/\n` + content;
 
 	// Support for IE.
-	if (style.styleSheet) {
-		style.styleSheet.cssText = contents;
+	if ($style.styleSheet) {
+		$style.styleSheet.cssText = contents;
 	} else {
 		// All other browsers.
-		style.appendChild(document.createTextNode(contents));
+		$style.appendChild(document.createTextNode(contents));
 	}
 
 	// Append element to head tag.
-	document.getElementsByTagName("head")[0].appendChild(style);
+	document.getElementsByTagName("head")[0].appendChild($style);
 
-	return style;
+	return $style;
 };
 
 /**
@@ -48,14 +48,14 @@ var stylesheet = function(content, title) {
  */
 stylesheet.get = function(cb) {
 	// Get the stylesheets.
-	var sheets = document.getElementsByTagName("style");
+	var $sheets = document.getElementsByTagName("style");
 
 	// Loop over and return the sheet with the matching title.
-	for (let i = 0, l = sheets.length; i < l; i++) {
+	for (let i = 0, l = $sheets.length; i < l; i++) {
 		// Cache the sheet.
-		var sheet = sheets[i];
+		var $sheet = $sheets[i];
 
-		cb.apply(sheet, [sheet, sheet.innerHTML, sheets]);
+		cb.apply($sheet, [$sheet, $sheet.innerHTML, $sheets]);
 	}
 
 	return;
@@ -70,16 +70,16 @@ stylesheet.get = function(cb) {
  */
 stylesheet.remove = function(cb) {
 	// Get the stylesheets.
-	var sheets = document.getElementsByTagName("style");
+	var $sheets = document.getElementsByTagName("style");
 
 	// Loop backwards and run the remove logic function.
-	for (let i = sheets.length - 1; i > -1; i--) {
+	for (let i = $sheets.length - 1; i > -1; i--) {
 		// Cache the sheet.
-		var sheet = sheets[i];
+		var $sheet = $sheets[i];
 
 		// If callback returns true the sheet gets removed.
-		if (cb.apply(sheet, [sheet, sheet.innerHTML, sheets])) {
-			sheet.parentNode.removeChild(sheet);
+		if (cb.apply($sheet, [$sheet, $sheet.innerHTML, $sheets])) {
+			$sheet.parentNode.removeChild($sheet);
 		}
 	}
 };
@@ -116,14 +116,14 @@ stylesheet.definition = function(sheet, selector, rules, index) {
  */
 stylesheet.sheets = function(cb) {
 	// Get the sheets.
-	var sheets = document.styleSheets;
+	var $sheets = document.styleSheets;
 
 	// Loop over and return the sheet with the matching title.
-	for (let i = 0, l = sheets.length; i < l; i++) {
+	for (let i = 0, l = $sheets.length; i < l; i++) {
 		// Cache the sheet.
-		var sheet = sheets[i];
+		var $sheet = $sheets[i];
 
 		// Run the callback.
-		cb.apply(sheet, [sheet, sheets]);
+		cb.apply($sheet, [$sheet, $sheets]);
 	}
 };

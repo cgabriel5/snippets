@@ -7,7 +7,7 @@
  */
 var build_path = function(event) {
     // Cache target element.
-    var element = event.target;
+    var $element = event.target;
 
     // There must be a target element...else return empty path.
     if (!event.target) {
@@ -15,19 +15,19 @@ var build_path = function(event) {
     }
 
     // Start building path.
-    var parents = [element];
+    var $parents = [$element];
 
-    while (element) {
+    while ($element) {
         // The current parent element.
-        element = element.parentNode;
+        $element = $element.parentNode;
         // If parent exists add to array.
-        if (element) {
-            parents.push(element);
+        if ($element) {
+            $parents.push($element);
         }
     }
 
     // Finally, return the path!
-    return parents;
+    return $parents;
 };
 
 /**
@@ -48,26 +48,26 @@ var build_path = function(event) {
  */
 var is_target_el = function($el, classname, cb) {
     // Get the target element parents.
-    var parents = build_path({ target: $el });
+    var $parents = build_path({ target: $el });
 
     // Loop over the parents and check if any is a header
     // element.
-    for (var i = 0, l = parents.length; i < l; i++) {
-        var parent = parents[i];
+    for (var i = 0, l = $parents.length; i < l; i++) {
+        var $parent = $parents[i];
 
         // If a custom function is provided run it.
         if (cb) {
             // Run the function.
-            var result = cb.call(parent, parent, $el, parents);
+            var result = cb.call($parent, $parent, $el, $parents);
             if (result) {
                 return result;
             }
         } else if (classname) {
             // Get the classes.
-            var classes = parent.classList;
+            var clist = $parent.classList;
             // Check if the parent contains the provided class.
-            if (classes && classes.contains(classname)) {
-                return parent;
+            if (clist && clist.contains(classname)) {
+                return $parent;
             }
         }
     }
@@ -77,10 +77,10 @@ var is_target_el = function($el, classname, cb) {
 };
 
 // Custom check example for delegation check.
-is_target_el($target, null, function(parent, $el, parents) {
+is_target_el($target, null, function($parent, $el, $parents) {
     // If check logic passes return the parent (1st argument.).
     if (/*Check logic...*/) {
-        return parent;
+        return $parent;
     }
 });
 
