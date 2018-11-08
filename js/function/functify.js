@@ -52,3 +52,21 @@ var funcify = function(source, name, embed) {
 funcify.embed = function(source, name) {
     return this.apply(this, [].slice.call(arguments).concat(true));
 };
+
+// Usage.
+
+// Make function.
+var log_hello_world = funcify(
+    "function() { console.log('Hello World') };",
+    "hello_world"
+);
+// Run function.
+log_hello_world();
+
+// Make function but embed to document.
+var log_hello_world = funcify.embed(
+    "function() { console.log('Hello World') };",
+    "hello_world"
+);
+// Run function.
+log_hello_world();
