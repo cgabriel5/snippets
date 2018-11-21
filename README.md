@@ -1,6 +1,6 @@
 # snippets
 
-An online personal reference of snippets, concepts, and boiler code I have made/documented/found while my time programming.
+A personal collection of snippets, concepts, and boiler code I have made/documented/found over the course of my developing journey.
 
 ### Purpose
 
